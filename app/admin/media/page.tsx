@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Upload, Search, Trash2, Download, Eye, Calendar, Grid3X3, List } from "lucide-react"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, } from "@/components/ui/dialog";
+
 
 export default function AdminMediaPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -96,15 +98,120 @@ export default function AdminMediaPage() {
     { label: "Video", value: "28", color: "text-purple-600" },
     { label: "Dung lượng", value: "2.3 GB", color: "text-orange-600" },
   ]
+  const [fileType, setFileType] = useState("image");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+
+      // Nếu là ảnh thì tạo URL preview
+      if (file.type.startsWith("image/")) {
+        const url = URL.createObjectURL(file);
+        setPreviewUrl(url);
+      } else {
+        setPreviewUrl(null);
+      }
+    }
+  };
+  const handleSave = () => {
+    if (selectedFile) {
+      // TODO: Gửi file lên server hoặc xử lý file tại đây
+      console.log("Saving file:", selectedFile);
+    }
+    setOpen(false); // Đóng dialog sau khi lưu
+  };
+
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setOpen(false); // Đóng dialog khi hủy
+  };
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý thư viện</h1>
-        <Button className="bg-red-600 hover:bg-red-700">
-          <Upload className="h-4 w-4 mr-2" />
-          Tải lên file mới
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-red-600 hover:bg-red-700">
+              <Upload className="h-4 w-4 mr-2" />
+              Tải lên file mới
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Tải lên file</DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              {/* Select file type */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Loại thư viện</label>
+                <Select onValueChange={setFileType} defaultValue="image">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn loại file" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="image">Ảnh</SelectItem>
+                    <SelectItem value="video">Video</SelectItem>
+                    <SelectItem value="audio">Âm thanh</SelectItem>
+                    <SelectItem value="document">Tài liệu</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Upload input */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Chọn file</label>
+                <Input
+                  type="file"
+                  accept={
+                    fileType === "image"
+                      ? "image/*"
+                      : fileType === "video"
+                        ? "video/*"
+                        : fileType === "audio"
+                          ? "audio/*"
+                          : ".pdf,.doc,.docx,.xls,.xlsx,.txt"
+                  }
+                  onChange={handleFileChange}
+                />
+              </div>
+
+              {/* Preview */}
+              {selectedFile && (
+                <div className="mt-2 text-sm text-gray-700">
+                  <strong>File đã chọn:</strong> {selectedFile.name}
+                </div>
+              )}
+            </div>
+            <div className="text-end">
+              <Button className="mr-2" variant="outline" onClick={handleCancel}>
+                Hủy
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={!selectedFile}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Lưu
+              </Button>
+            </div>
+          </DialogContent>
+
+        </Dialog>
       </div>
 
       {/* Statistics */}
