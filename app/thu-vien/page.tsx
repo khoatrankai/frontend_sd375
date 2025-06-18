@@ -22,7 +22,7 @@ export default function LibraryPage() {
       {
         id: 1,
         title: "Diễn tập phòng thủ khu vực 2024",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         date: "15/12/2024",
         views: 1250,
         category: "Diễn tập",
@@ -31,7 +31,7 @@ export default function LibraryPage() {
       {
         id: 2,
         title: "Lễ kỷ niệm 79 năm QĐND Việt Nam",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         date: "22/12/2024",
         views: 980,
         category: "Sự kiện",
@@ -40,7 +40,7 @@ export default function LibraryPage() {
       {
         id: 3,
         title: "Hội thi Bàn tay vàng 2024",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         date: "08/12/2024",
         views: 756,
         category: "Thi đua",
@@ -49,7 +49,7 @@ export default function LibraryPage() {
       {
         id: 4,
         title: "Huấn luyện chiến đấu",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         date: "05/12/2024",
         views: 642,
         category: "Huấn luyện",
@@ -60,7 +60,7 @@ export default function LibraryPage() {
       {
         id: 1,
         title: "Phóng sự: Sư đoàn phòng không 375 - 58 năm xây dựng và phát triển",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         duration: "15:30",
         date: "20/12/2024",
         views: 2340,
@@ -70,7 +70,7 @@ export default function LibraryPage() {
       {
         id: 2,
         title: "Diễn tập phòng thủ khu vực - Highlights",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         duration: "08:45",
         date: "15/12/2024",
         views: 1890,
@@ -80,7 +80,7 @@ export default function LibraryPage() {
       {
         id: 3,
         title: "Lễ kỷ niệm 79 năm QĐND - Toàn cảnh",
-        thumbnail: "/placeholder.svg?height=200&width=300",
+        thumbnail: "/public/placeholder.svg?height=200&width=300",
         duration: "12:20",
         date: "22/12/2024",
         views: 1456,
@@ -228,7 +228,7 @@ export default function LibraryPage() {
           <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
               <img
-                src={item.thumbnail || "/placeholder.svg"}
+                src={item.thumbnail || "/public/placeholder.svg"}
                 alt={item.title}
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               />

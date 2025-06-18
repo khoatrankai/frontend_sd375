@@ -8,13 +8,13 @@ import { Clock, Eye, User, ChevronRight } from "lucide-react"
 
 export default function NewsPage() {
   const [activeCategory, setActiveCategory] = useState("all")
-
+  const [dataNews,setDataNews] = useState<any>([])
   const categories = [
-    { id: "all", name: "Tất cả", count: 45 },
-    { id: "domestic", name: "Trong nước", count: 15 },
-    { id: "international", name: "Quốc tế", count: 8 },
-    { id: "military", name: "Quân sự", count: 12 },
-    { id: "division", name: "Hoạt động Sư đoàn", count: 10 },
+    { id: "all", name: "Tất cả",nametag:"all", count: 45 },
+    { id: "domestic", name: "Trong nước",nametag:"trong_nuoc", count: 15 },
+    { id: "international", name: "Quốc tế",nametag:"quoc_te", count: 8 },
+    { id: "military", name: "Quân sự",nametag:"quan_su", count: 12 },
+    { id: "division", name: "Hoạt động Sư đoàn",nametag:"su_doan", count: 10 },
   ]
 
   const news = [
@@ -23,7 +23,7 @@ export default function NewsPage() {
       title: "Hội nghị tổng kết công tác năm 2024 và triển khai nhiệm vụ năm 2025",
       excerpt:
         "Sáng ngày 15/12/2024, Sư đoàn phòng không 375 đã tổ chức hội nghị tổng kết toàn diện các mặt công tác trong năm 2024 và triển khai phương hướng nhiệm vụ năm 2025...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       category: "division",
       categoryName: "Hoạt động Sư đoàn",
       author: "Ban biên tập",
@@ -37,7 +37,7 @@ export default function NewsPage() {
       title: "Diễn tập phòng thủ khu vực quy mô lớn năm 2024",
       excerpt:
         "Cuộc diễn tập nhằm nâng cao khả năng phối hợp tác chiến giữa các lực lượng trong khu vực phòng thủ, kiểm tra khả năng sẵn sàng chiến đấu của các đơn vị...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       category: "military",
       categoryName: "Quân sự",
       author: "Phòng Tham mưu",
@@ -51,7 +51,7 @@ export default function NewsPage() {
       title: "Kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam",
       excerpt:
         "Với tinh thần trang trọng và ý nghĩa sâu sắc, Sư đoàn phòng không 375 đã tổ chức lễ kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       category: "domestic",
       categoryName: "Trong nước",
       author: "Phòng Chính trị",
@@ -65,7 +65,7 @@ export default function NewsPage() {
       title: "Tình hình an ninh khu vực Đông Nam Á năm 2024",
       excerpt:
         "Báo cáo tổng quan về tình hình an ninh, quốc phòng khu vực Đông Nam Á trong năm 2024, những thách thức và cơ hội trong thời gian tới...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       category: "international",
       categoryName: "Quốc tế",
       author: "Phòng Tình báo",
@@ -79,7 +79,7 @@ export default function NewsPage() {
       title: "Hội thi 'Bàn tay vàng' năm 2024",
       excerpt:
         "Hội thi nhằm tôn vinh những cá nhân có thành tích xuất sắc trong công tác kỹ thuật, bảo dưỡng vũ khí trang bị...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       category: "division",
       categoryName: "Hoạt động Sư đoàn",
       author: "Phòng HC-KT",
@@ -126,10 +126,10 @@ export default function NewsPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Tin nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredNews.map((item) => (
+            {featuredNews.map((item:any) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative">
-                  <img src={item.image || "/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
+                  <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
                   <Badge className="absolute top-4 left-4 bg-red-600">{item.categoryName}</Badge>
                 </div>
                 <CardContent className="p-6">
@@ -172,7 +172,7 @@ export default function NewsPage() {
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
                     <img
-                      src={item.image || "/placeholder.svg"}
+                      src={item.image || "/public/placeholder.svg"}
                       alt={item.title}
                       className="w-full h-48 md:h-full object-cover"
                     />

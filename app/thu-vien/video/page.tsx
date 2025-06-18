@@ -22,7 +22,7 @@ export default function VideosPage() {
     {
       id: 1,
       title: "Phóng sự: Sư đoàn phòng không 375 - 58 năm xây dựng và phát triển",
-      thumbnail: "/placeholder.svg?height=200&width=350",
+      thumbnail: "/public/placeholder.svg?height=200&width=350",
       duration: "15:30",
       date: "20/12/2024",
       views: 2340,
@@ -33,7 +33,7 @@ export default function VideosPage() {
     {
       id: 2,
       title: "Diễn tập phòng thủ khu vực - Highlights",
-      thumbnail: "/placeholder.svg?height=200&width=350",
+      thumbnail: "/public/placeholder.svg?height=200&width=350",
       duration: "08:45",
       date: "15/12/2024",
       views: 1890,
@@ -44,7 +44,7 @@ export default function VideosPage() {
     {
       id: 3,
       title: "Lễ kỷ niệm 79 năm QĐND - Toàn cảnh",
-      thumbnail: "/placeholder.svg?height=200&width=350",
+      thumbnail: "/public/placeholder.svg?height=200&width=350",
       duration: "12:20",
       date: "22/12/2024",
       views: 1456,
@@ -55,7 +55,7 @@ export default function VideosPage() {
     {
       id: 4,
       title: "Huấn luyện chiến đấu - Kỹ năng bắn tên lửa",
-      thumbnail: "/placeholder.svg?height=200&width=350",
+      thumbnail: "/public/placeholder.svg?height=200&width=350",
       duration: "06:15",
       date: "10/12/2024",
       views: 1234,
@@ -66,7 +66,7 @@ export default function VideosPage() {
     {
       id: 5,
       title: "Tin tức: Hội nghị tổng kết năm 2024",
-      thumbnail: "/placeholder.svg?height=200&width=350",
+      thumbnail: "/public/placeholder.svg?height=200&width=350",
       duration: "04:30",
       date: "18/12/2024",
       views: 987,
@@ -77,7 +77,7 @@ export default function VideosPage() {
     {
       id: 6,
       title: "Thi đua Bàn tay vàng 2024",
-      thumbnail: "/placeholder.svg?height=200&width=350",
+      thumbnail: "/public/placeholder.svg?height=200&width=350",
       duration: "07:45",
       date: "08/12/2024",
       views: 756,
@@ -133,7 +133,7 @@ export default function VideosPage() {
           <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
               <img
-                src={video.thumbnail || "/placeholder.svg"}
+                src={video.thumbnail || "/public/placeholder.svg"}
                 alt={video.title}
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               />
@@ -188,7 +188,7 @@ export default function VideosPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <img
-                src="/placeholder.svg?height=300&width=500"
+                src="/public/placeholder.svg?height=300&width=500"
                 alt="Video nổi bật"
                 className="w-full h-64 object-cover rounded-lg"
               />

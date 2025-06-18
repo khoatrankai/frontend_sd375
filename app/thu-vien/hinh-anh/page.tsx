@@ -23,7 +23,7 @@ export default function ImagesPage() {
     {
       id: 1,
       title: "Diễn tập phòng thủ khu vực 2024",
-      thumbnail: "/placeholder.svg?height=300&width=400",
+      thumbnail: "/public/placeholder.svg?height=300&width=400",
       date: "15/12/2024",
       views: 1250,
       category: "exercise",
@@ -32,7 +32,7 @@ export default function ImagesPage() {
     {
       id: 2,
       title: "Lễ kỷ niệm 79 năm QĐND Việt Nam",
-      thumbnail: "/placeholder.svg?height=300&width=400",
+      thumbnail: "/public/placeholder.svg?height=300&width=400",
       date: "22/12/2024",
       views: 980,
       category: "ceremony",
@@ -41,7 +41,7 @@ export default function ImagesPage() {
     {
       id: 3,
       title: "Huấn luyện chiến đấu",
-      thumbnail: "/placeholder.svg?height=300&width=400",
+      thumbnail: "/public/placeholder.svg?height=300&width=400",
       date: "10/12/2024",
       views: 756,
       category: "training",
@@ -50,7 +50,7 @@ export default function ImagesPage() {
     {
       id: 4,
       title: "Sinh hoạt văn hóa",
-      thumbnail: "/placeholder.svg?height=300&width=400",
+      thumbnail: "/public/placeholder.svg?height=300&width=400",
       date: "08/12/2024",
       views: 642,
       category: "daily",
@@ -59,7 +59,7 @@ export default function ImagesPage() {
     {
       id: 5,
       title: "Xây dựng công trình",
-      thumbnail: "/placeholder.svg?height=300&width=400",
+      thumbnail: "/public/placeholder.svg?height=300&width=400",
       date: "05/12/2024",
       views: 523,
       category: "construction",
@@ -68,7 +68,7 @@ export default function ImagesPage() {
     {
       id: 6,
       title: "Thi đua quyết thắng",
-      thumbnail: "/placeholder.svg?height=300&width=400",
+      thumbnail: "/public/placeholder.svg?height=300&width=400",
       date: "03/12/2024",
       views: 445,
       category: "training",
@@ -130,7 +130,7 @@ export default function ImagesPage() {
           <Card key={image.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
               <img
-                src={image.thumbnail || "/placeholder.svg"}
+                src={image.thumbnail || "/public/placeholder.svg"}
                 alt={image.title}
                 className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${
                   viewMode === "grid" ? "h-48" : "h-32"

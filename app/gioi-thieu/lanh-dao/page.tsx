@@ -7,7 +7,7 @@ export default function LeadershipPage() {
     {
       name: "Đại tá Nguyễn Văn Minh",
       position: "Chỉ huy trưởng Sư đoàn",
-      avatar: "/placeholder.svg?height=150&width=150",
+      avatar: "/public/placeholder.svg?height=150&width=150",
       experience: "25 năm",
       education: "Thạc sĩ Quân sự, Học viện Phòng không - Không quân",
       achievements: ["Huân chương Bảo vệ Tổ quốc hạng Nhì", "Chiến sĩ thi đua toàn quốc"],
@@ -17,7 +17,7 @@ export default function LeadershipPage() {
     {
       name: "Đại tá Trần Văn Hùng",
       position: "Chính ủy Sư đoàn",
-      avatar: "/placeholder.svg?height=150&width=150",
+      avatar: "/public/placeholder.svg?height=150&width=150",
       experience: "23 năm",
       education: "Thạc sĩ Chính trị, Học viện Chính trị",
       achievements: ["Huân chương Lao động hạng Nhì", "Đảng viên xuất sắc"],
@@ -27,7 +27,7 @@ export default function LeadershipPage() {
     {
       name: "Thượng tá Lê Văn Đức",
       position: "Phó Chỉ huy trưởng kiêm Tham mưu trưởng",
-      avatar: "/placeholder.svg?height=150&width=150",
+      avatar: "/public/placeholder.svg?height=150&width=150",
       experience: "20 năm",
       education: "Cử nhân Quân sự, Học viện Phòng không - Không quân",
       achievements: ["Huân chương Chiến công hạng Ba", "Sĩ quan trẻ tiêu biểu"],
@@ -37,7 +37,7 @@ export default function LeadershipPage() {
     {
       name: "Thượng tá Phạm Văn Thành",
       position: "Phó Chính ủy",
-      avatar: "/placeholder.svg?height=150&width=150",
+      avatar: "/public/placeholder.svg?height=150&width=150",
       experience: "18 năm",
       education: "Cử nhân Chính trị, Học viện Chính trị",
       achievements: ["Bằng khen Thủ tướng Chính phủ", "Cán bộ chính trị xuất sắc"],
@@ -100,7 +100,7 @@ export default function LeadershipPage() {
                 <div className="flex items-start space-x-4">
                   <div className="relative">
                     <img
-                      src={leader.avatar || "/placeholder.svg"}
+                      src={leader.avatar || "/public/placeholder.svg"}
                       alt={leader.name}
                       className="w-24 h-24 rounded-full object-cover border-4 border-red-100"
                     />

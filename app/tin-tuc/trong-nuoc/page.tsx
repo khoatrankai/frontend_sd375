@@ -14,7 +14,7 @@ export default function DomesticNewsPage() {
       id: 1,
       title: "Thủ tướng Chính phủ gặp mặt các đại biểu Quân đội tiêu biểu",
       excerpt: "Thủ tướng Phạm Minh Chính đã có buổi gặp mặt, động viên các đại biểu Quân đội tiêu biểu toàn quốc...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "TTXVN",
       date: "20/12/2024",
       time: "2 giờ trước",
@@ -25,7 +25,7 @@ export default function DomesticNewsPage() {
       id: 2,
       title: "Kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam",
       excerpt: "Các địa phương trên cả nước tổ chức long trọng lễ kỷ niệm 79 năm Ngày thành lập QĐND Việt Nam...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Báo Quân đội nhân dân",
       date: "22/12/2024",
       time: "1 ngày trước",
@@ -36,7 +36,7 @@ export default function DomesticNewsPage() {
       id: 3,
       title: "Hội nghị Trung ương 8 khóa XIII thảo luận về phát triển kinh tế",
       excerpt: "Hội nghị Trung ương 8 tiếp tục thảo luận về phương hướng phát triển kinh tế-xã hội năm 2025...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "VGP",
       date: "18/12/2024",
       time: "3 ngày trước",
@@ -62,7 +62,7 @@ export default function DomesticNewsPage() {
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/3">
                   <img
-                    src={item.image || "/placeholder.svg"}
+                    src={item.image || "/public/placeholder.svg"}
                     alt={item.title}
                     className="w-full h-48 md:h-full object-cover"
                   />

@@ -76,7 +76,7 @@ export default function Sidebar() {
         <CardContent>
           <div className="relative">
             <img
-              src="/placeholder.svg?height=200&width=300"
+              src="/public/placeholder.svg?height=200&width=300"
               alt="Hình ảnh hoạt động"
               className="w-full h-48 object-cover rounded"
             />
@@ -95,7 +95,7 @@ export default function Sidebar() {
         <CardContent>
           <div className="relative">
             <img
-              src="/placeholder.svg?height=150&width=300"
+              src="/public/placeholder.svg?height=150&width=300"
               alt="Video thumbnail"
               className="w-full h-36 object-cover rounded"
             />

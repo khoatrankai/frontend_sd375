@@ -15,7 +15,7 @@ const mockPosts = [
     updatedAt: "2024-12-15T10:00:00Z",
     views: 245,
     featured: true,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/public/placeholder.svg?height=200&width=300",
     tags: ["hội nghị", "tổng kết", "2024"],
   },
   {
@@ -31,7 +31,7 @@ const mockPosts = [
     updatedAt: "2024-12-14T08:30:00Z",
     views: 189,
     featured: false,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/public/placeholder.svg?height=200&width=300",
     tags: ["diễn tập", "phòng không"],
   },
 ]

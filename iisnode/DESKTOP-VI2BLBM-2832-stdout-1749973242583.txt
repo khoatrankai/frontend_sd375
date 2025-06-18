@@ -1,1 +1,0 @@
-> Ready on http://localhost:\\.\pipe\c7564119-dc86-437b-b0a7-6aa1ee44295a

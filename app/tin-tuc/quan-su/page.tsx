@@ -23,7 +23,7 @@ export default function MilitaryNewsPage() {
       title: "Hệ thống tên lửa phòng không S-400: Khả năng và ứng dụng",
       excerpt:
         "Phân tích chi tiết về khả năng tác chiến và ưu điểm của hệ thống tên lửa phòng không S-400 trong bảo vệ không phần...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Thiếu tá Nguyễn Văn A",
       date: "20/12/2024",
       time: "2 giờ trước",
@@ -37,7 +37,7 @@ export default function MilitaryNewsPage() {
       title: "Chiến thuật phòng không tầng thấp trong điều kiện hiện đại",
       excerpt:
         "Nghiên cứu về các chiến thuật phòng không tầng thấp phù hợp với điều kiện tác chiến hiện đại và địa hình Việt Nam...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Trung tá Trần Văn B",
       date: "18/12/2024",
       time: "3 ngày trước",
@@ -51,7 +51,7 @@ export default function MilitaryNewsPage() {
       title: "Ứng dụng AI trong hệ thống chỉ huy tự động",
       excerpt:
         "Xu hướng ứng dụng trí tuệ nhân tạo trong các hệ thống chỉ huy tự động của lực lượng phòng không hiện đại...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Thượng tá Lê Văn C",
       date: "15/12/2024",
       time: "5 ngày trước",
@@ -64,7 +64,7 @@ export default function MilitaryNewsPage() {
       id: 4,
       title: "Phát triển công nghiệp quốc phòng trong thời đại 4.0",
       excerpt: "Định hướng phát triển công nghiệp quốc phòng Việt Nam trong bối cảnh cách mạng công nghiệp 4.0...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Đại tá Phạm Văn D",
       date: "12/12/2024",
       time: "1 tuần trước",
@@ -77,7 +77,7 @@ export default function MilitaryNewsPage() {
       id: 5,
       title: "Radar cảnh báo sớm: Mắt thần của phòng không",
       excerpt: "Vai trò quan trọng của hệ thống radar cảnh báo sớm trong mạng lưới phòng không quốc gia...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Thiếu tá Hoàng Văn E",
       date: "10/12/2024",
       time: "10 ngày trước",
@@ -90,7 +90,7 @@ export default function MilitaryNewsPage() {
       id: 6,
       title: "Chiến thuật phối hợp binh chủng trong tác chiến phòng không",
       excerpt: "Phương pháp phối hợp hiệu quả giữa các binh chủng trong tác chiến phòng không hiện đại...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Trung tá Vũ Văn F",
       date: "08/12/2024",
       time: "2 tuần trước",
@@ -140,7 +140,7 @@ export default function MilitaryNewsPage() {
             {featuredNews.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative">
-                  <img src={item.image || "/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
+                  <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
                   <Badge className="absolute top-4 left-4 bg-red-600">{item.categoryName}</Badge>
                   <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center">
                     <Eye className="h-3 w-3 mr-1" />
@@ -183,7 +183,7 @@ export default function MilitaryNewsPage() {
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
                     <img
-                      src={item.image || "/placeholder.svg"}
+                      src={item.image || "/public/placeholder.svg"}
                       alt={item.title}
                       className="w-full h-48 md:h-full object-cover"
                     />

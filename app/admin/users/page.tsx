@@ -40,7 +40,7 @@ export default function AdminUsersPage() {
       statusName: "Hoạt động",
       unit: "Chỉ huy sư đoàn",
       lastLogin: "15/12/2024",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/public/placeholder.svg?height=40&width=40",
     },
     {
       id: 2,
@@ -53,7 +53,7 @@ export default function AdminUsersPage() {
       statusName: "Hoạt động",
       unit: "Phòng Chính trị",
       lastLogin: "14/12/2024",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/public/placeholder.svg?height=40&width=40",
     },
     {
       id: 3,
@@ -66,7 +66,7 @@ export default function AdminUsersPage() {
       statusName: "Hoạt động",
       unit: "Phòng Tham mưu",
       lastLogin: "13/12/2024",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/public/placeholder.svg?height=40&width=40",
     },
     {
       id: 4,
@@ -79,7 +79,7 @@ export default function AdminUsersPage() {
       statusName: "Không hoạt động",
       unit: "Phòng HC-KT",
       lastLogin: "10/12/2024",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/public/placeholder.svg?height=40&width=40",
     },
     {
       id: 5,
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
       statusName: "Chờ kích hoạt",
       unit: "Phòng TC-BC",
       lastLogin: "Chưa đăng nhập",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/public/placeholder.svg?height=40&width=40",
     },
   ]
 
@@ -200,7 +200,7 @@ export default function AdminUsersPage() {
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={user.avatar || "/placeholder.svg"}
+                    src={user.avatar || "/public/placeholder.svg"}
                     alt={user.name}
                     className="w-12 h-12 rounded-full object-cover"
                   />

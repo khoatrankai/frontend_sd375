@@ -11,44 +11,44 @@ export default function FeaturedImages() {
   const imageSets = [
     [
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Diễn tập phòng thủ khu vực",
         views: 1250,
       },
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Lễ kỷ niệm 79 năm QĐND",
         views: 980,
       },
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Hội thi Bàn tay vàng",
         views: 756,
       },
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Thi đua quyết thắng",
         views: 642,
       },
     ],
     [
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Huấn luyện chiến đấu",
         views: 890,
       },
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Kiểm tra sẵn sàng chiến đấu",
         views: 723,
       },
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Hội nghị Đảng ủy",
         views: 567,
       },
       {
-        src: "/placeholder.svg?height=200&width=300",
+        src: "/public/placeholder.svg?height=200&width=300",
         title: "Thăm gia đình chính sách",
         views: 445,
       },
@@ -82,7 +82,7 @@ export default function FeaturedImages() {
           <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
               <img
-                src={image.src || "/placeholder.svg"}
+                src={image.src || "/public/placeholder.svg"}
                 alt={image.title}
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               />

@@ -30,6 +30,14 @@ const nextConfig = {
       },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: '/public/:path*',
+        destination: '/:path*', // Chuyển /public/header.png -> /header.png
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig

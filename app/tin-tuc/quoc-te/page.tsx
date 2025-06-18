@@ -15,7 +15,7 @@ export default function InternationalNewsPage() {
       title: "NATO tăng cường hợp tác quốc phòng với các đối tác châu Á-Thái Bình Dương",
       excerpt:
         "Liên minh NATO công bố kế hoạch mở rộng hợp tác với các quốc gia trong khu vực châu Á-Thái Bình Dương...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Reuters",
       date: "20/12/2024",
       time: "3 giờ trước",
@@ -27,7 +27,7 @@ export default function InternationalNewsPage() {
       id: 2,
       title: "Trung Quốc thử nghiệm thành công hệ thống phòng thủ tên lửa mới",
       excerpt: "Quân đội Trung Quốc thông báo đã thử nghiệm thành công hệ thống phòng thủ tên lửa thế hệ mới...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Xinhua",
       date: "19/12/2024",
       time: "1 ngày trước",
@@ -39,7 +39,7 @@ export default function InternationalNewsPage() {
       id: 3,
       title: "Mỹ và Nhật Bản tăng cường hợp tác an ninh biển",
       excerpt: "Hai nước cam kết tăng cường tuần tra chung và chia sẻ thông tin tình báo trong khu vực...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "AP",
       date: "18/12/2024",
       time: "2 ngày trước",
@@ -51,7 +51,7 @@ export default function InternationalNewsPage() {
       id: 4,
       title: "Nga triển khai hệ thống radar cảnh báo sớm tại Bắc Cực",
       excerpt: "Bộ Quốc phòng Nga thông báo triển khai hệ thống radar hiện đại tại khu vực Bắc Cực...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "TASS",
       date: "17/12/2024",
       time: "3 ngày trước",
@@ -105,7 +105,7 @@ export default function InternationalNewsPage() {
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/3">
                   <img
-                    src={item.image || "/placeholder.svg"}
+                    src={item.image || "/public/placeholder.svg"}
                     alt={item.title}
                     className="w-full h-48 md:h-full object-cover"
                   />

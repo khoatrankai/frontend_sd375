@@ -23,7 +23,7 @@ export default function DivisionNewsPage() {
       title: "Hội nghị tổng kết công tác năm 2024 và triển khai nhiệm vụ năm 2025",
       excerpt:
         "Sáng ngày 15/12/2024, Sư đoàn phòng không 375 đã tổ chức hội nghị tổng kết toàn diện các mặt công tác trong năm 2024...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Ban biên tập",
       date: "15/12/2024",
       time: "2 giờ trước",
@@ -36,7 +36,7 @@ export default function DivisionNewsPage() {
       id: 2,
       title: "Diễn tập phòng thủ khu vực quy mô lớn năm 2024",
       excerpt: "Cuộc diễn tập nhằm nâng cao khả năng phối hợp tác chiến giữa các lực lượng trong khu vực phòng thủ...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Phòng Tham mưu",
       date: "12/12/2024",
       time: "4 giờ trước",
@@ -50,7 +50,7 @@ export default function DivisionNewsPage() {
       title: "Hội thi 'Bàn tay vàng' năm 2024 - Tôn vinh tài năng kỹ thuật",
       excerpt:
         "Hội thi nhằm tôn vinh những cá nhân có thành tích xuất sắc trong công tác kỹ thuật, bảo dưỡng vũ khí trang bị...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Phòng HC-KT",
       date: "08/12/2024",
       time: "1 tuần trước",
@@ -64,7 +64,7 @@ export default function DivisionNewsPage() {
       title: "Thi đua quyết thắng quý IV/2024 - Kết quả ấn tượng",
       excerpt:
         "Phong trào thi đua quyết thắng quý IV/2024 đã thu được nhiều kết quả tích cực, góp phần nâng cao chất lượng...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Phòng Chính trị",
       date: "05/12/2024",
       time: "10 ngày trước",
@@ -78,7 +78,7 @@ export default function DivisionNewsPage() {
       title: "Kiểm tra công tác sẵn sàng chiến đấu các đơn vị trực thuộc",
       excerpt:
         "Ban chỉ huy Sư đoàn tiến hành kiểm tra đột xuất công tác sẵn sàng chiến đấu tại các đơn vị trực thuộc...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Phòng Tham mưu",
       date: "03/12/2024",
       time: "2 tuần trước",
@@ -92,7 +92,7 @@ export default function DivisionNewsPage() {
       title: "Sinh hoạt văn hóa chào mừng kỷ niệm 79 năm QĐND Việt Nam",
       excerpt:
         "Chương trình văn nghệ chào mừng kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam với nhiều tiết mục ý nghĩa...",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/public/placeholder.svg?height=200&width=300",
       author: "Đoàn thanh niên",
       date: "20/12/2024",
       time: "2 ngày trước",
@@ -161,7 +161,7 @@ export default function DivisionNewsPage() {
             {featuredNews.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative">
-                  <img src={item.image || "/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
+                  <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
                   <Badge className="absolute top-4 left-4 bg-red-600">{item.categoryName}</Badge>
                   <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center">
                     <Eye className="h-3 w-3 mr-1" />
@@ -204,7 +204,7 @@ export default function DivisionNewsPage() {
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
                     <img
-                      src={item.image || "/placeholder.svg"}
+                      src={item.image || "/public/placeholder.svg"}
                       alt={item.title}
                       className="w-full h-48 md:h-full object-cover"
                     />

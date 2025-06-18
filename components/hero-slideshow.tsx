@@ -9,17 +9,17 @@ export default function HeroSlideshow() {
 
   const slides = [
     {
-      image: "/placeholder.svg?height=400&width=800",
+      image: "/public/placeholder.svg?height=400&width=800",
       title: "Sư đoàn phòng không 375 - Bảo vệ vững chắc vùng trời Tổ quốc",
       description: "Đơn vị anh hùng với truyền thống vẻ vang trong sự nghiệp bảo vệ Tổ quốc",
     },
     {
-      image: "/placeholder.svg?height=400&width=800",
+      image: "/public/placeholder.svg?height=400&width=800",
       title: "Diễn tập phòng thủ khu vực năm 2024",
       description: "Nâng cao khả năng sẵn sàng chiến đấu, bảo vệ vùng trời quan trọng",
     },
     {
-      image: "/placeholder.svg?height=400&width=800",
+      image: "/public/placeholder.svg?height=400&width=800",
       title: "Thi đua quyết thắng - Xây dựng đơn vị vững mạnh toàn diện",
       description: "Phát huy truyền thống, đoàn kết, kỷ luật, sáng tạo trong công tác",
     },
@@ -49,7 +49,7 @@ export default function HeroSlideshow() {
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
-          <img src={slide.image || "/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
+          <img src={slide.image || "/public/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div className="text-center text-white p-8">
               <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>

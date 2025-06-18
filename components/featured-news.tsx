@@ -13,21 +13,21 @@ export default function FeaturedNews() {
     {
       title: "Hội nghị tổng kết công tác năm 2024 và triển khai nhiệm vụ năm 2025",
       excerpt: "Sư đoàn phòng không 375 tổ chức hội nghị tổng kết toàn diện các mặt công tác trong năm 2024...",
-      image: "/placeholder.svg?height=300&width=500",
+      image: "/public/placeholder.svg?height=300&width=500",
       category: "Tin chính",
       time: "2 giờ trước",
     },
     {
       title: "Diễn tập phòng thủ khu vực quy mô lớn",
       excerpt: "Cuộc diễn tập nhằm nâng cao khả năng phối hợp tác chiến giữa các lực lượng...",
-      image: "/placeholder.svg?height=300&width=500",
+      image: "/public/placeholder.svg?height=300&width=500",
       category: "Huấn luyện",
       time: "4 giờ trước",
     },
     {
       title: "Kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam",
       excerpt: "Lễ kỷ niệm long trọng với sự tham gia của toàn thể cán bộ, chiến sĩ...",
-      image: "/placeholder.svg?height=300&width=500",
+      image: "/public/placeholder.svg?height=300&width=500",
       category: "Sự kiện",
       time: "1 ngày trước",
     },
@@ -88,7 +88,7 @@ export default function FeaturedNews() {
                   index === currentMainNews ? "opacity-100" : "opacity-0"
                 }`}
               >
-                <img src={news.image || "/placeholder.svg"} alt={news.title} className="w-full h-full object-cover" />
+                <img src={news.image || "/public/placeholder.svg"} alt={news.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex items-center space-x-2 mb-2">

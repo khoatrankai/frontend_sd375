@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "next lint"
+    "build": "next build",
+    "start": "node server.js",
+    "lint": "next lint"
   },
   "dependencies": {
     "@fastify/static": "latest",
@@ -55,6 +55,7 @@
     "@sap/hana-client": "latest",
     "@tailwindcss/typography": "latest",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.10.0",
     "bcryptjs": "latest",
     "better-sqlite3": "latest",
     "class-transformer": "latest",
@@ -108,6 +109,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.4",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

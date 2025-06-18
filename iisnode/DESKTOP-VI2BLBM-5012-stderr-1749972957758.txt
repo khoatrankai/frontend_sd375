@@ -1,8 +1,0 @@
- ⚠ Invalid next.config.js options detected: 
- ⚠     Unrecognized key(s) in object: 'appDir' at "experimental"
- ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
-Application has thrown an uncaught exception and is terminated:
-Error: Could not find a production build in the '.next' directory. Try building your app with 'next build' before starting the production server. https://nextjs.org/docs/messages/production-start-no-build-id
-    at setupFsCheck (D:\sd375\node_modules\next\dist\server\lib\router-utils\filesystem.js:148:41)
-    at async initialize (D:\sd375\node_modules\next\dist\server\lib\router-server.js:109:23)
-    at async NextCustomServer.prepare (D:\sd375\node_modules\next\dist\server\next.js:276:28)

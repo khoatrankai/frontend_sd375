@@ -24,7 +24,7 @@ export default function IntroductionPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <img
-                src="/placeholder.svg?height=300&width=500"
+                src="/public/placeholder.svg?height=300&width=500"
                 alt="Sư đoàn phòng không 375"
                 className="w-full h-64 object-cover rounded-lg"
               />

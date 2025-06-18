@@ -1,15 +1,27 @@
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api"
 
 class ApiClient {
-  private baseURL: string
+  private axiosInstance: AxiosInstance
   private token: string | null = null
 
   constructor(baseURL: string) {
-    this.baseURL = baseURL
-    // Get token from localStorage if available
-    if (typeof window !== "undefined") {
-      this.token = localStorage.getItem("auth_token")
-    }
+    this.token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null
+
+    this.axiosInstance = axios.create({
+      baseURL,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    this.axiosInstance.interceptors.request.use((config) => {
+      if (this.token) {
+        config.headers.Authorization = `Bearer ${this.token}`
+      }
+      return config
+    })
   }
 
   setToken(token: string) {
@@ -26,90 +38,48 @@ class ApiClient {
     }
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`
-
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...options.headers,
-    }
-
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`
-    }
-
-    const config: RequestInit = {
-      ...options,
-      headers,
-    }
-
+  private async handleRequest<T>(request: Promise<AxiosResponse<T>>): Promise<T> {
     try {
-      const response = await fetch(url, config)
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.json()
-      return data
-    } catch (error) {
+      const response = await request
+      return response.data
+    } catch (error: any) {
       console.error("API request failed:", error)
-      throw error
+      throw error.response?.data || error
     }
   }
 
-  async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
-    const url = new URL(`${this.baseURL}${endpoint}`)
-    if (params) {
-      Object.keys(params).forEach((key) => {
-        if (params[key] !== undefined && params[key] !== null) {
-          url.searchParams.append(key, params[key].toString())
-        }
+  get<T>(endpoint: string, params?: Record<string, any>) {
+    return this.handleRequest<T>(
+      this.axiosInstance.get<T>(endpoint, { params })
+    )
+  }
+
+  post<T>(endpoint: string, data?: any) {
+    return this.handleRequest<T>(
+      this.axiosInstance.post<T>(endpoint, data)
+    )
+  }
+
+  put<T>(endpoint: string, data?: any) {
+    return this.handleRequest<T>(
+      this.axiosInstance.put<T>(endpoint, data)
+    )
+  }
+
+  delete<T>(endpoint: string) {
+    return this.handleRequest<T>(
+      this.axiosInstance.delete<T>(endpoint)
+    )
+  }
+
+  upload<T>(endpoint: string, formData: FormData) {
+    return this.handleRequest<T>(
+      this.axiosInstance.post<T>(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       })
-    }
-
-    return this.request<T>(url.pathname + url.search)
-  }
-
-  async post<T>(endpoint: string, data?: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
-    })
-  }
-
-  async put<T>(endpoint: string, data?: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "PUT",
-      body: data ? JSON.stringify(data) : undefined,
-    })
-  }
-
-  async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "DELETE",
-    })
-  }
-
-  async upload<T>(endpoint: string, formData: FormData): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`
-
-    const headers: HeadersInit = {}
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`
-    }
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: formData,
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    return response.json()
+    )
   }
 }
 

@@ -185,7 +185,7 @@ export default function ImprovedLayout({ children }: ImprovedLayoutProps) {
                 <h4 className="font-semibold mb-3">Hình ảnh</h4>
                 <div className="relative">
                   <img
-                    src="/placeholder.svg?height=150&width=250"
+                    src="/public/placeholder.svg?height=150&width=250"
                     alt="Hoạt động Sư đoàn"
                     className="w-full h-32 object-cover rounded"
                   />

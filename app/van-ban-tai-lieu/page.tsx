@@ -15,15 +15,15 @@ export default function DocumentsPage() {
   const [selectedOrgan, setSelectedOrgan] = useState("")
 
   const documents = [
-    {
-      title: "Chỉ thị số 01/CT-F375 về công tác chuẩn bị năm 2025",
-      type: "Chỉ thị",
-      unit: "Chỉ huy sư đoàn",
-      organ: "Sư đoàn F375",
-      date: "15/12/2024",
-      downloads: 45,
-      size: "2.3 MB",
-    },
+      {
+        title: "Chỉ thị số 01/CT-F375 về công tác chuẩn bị năm 2025",
+        type: "Chỉ thị",
+        unit: "Chỉ huy sư đoàn",
+        organ: "Sư đoàn F375",
+        date: "15/12/2024",
+        downloads: 45,
+        size: "2.3 MB",
+      },
     {
       title: "Thông báo về việc tổ chức hội nghị tổng kết",
       type: "Thông báo",

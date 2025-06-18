@@ -15,7 +15,7 @@ const ADMIN_USER = {
   statusName: "Hoạt động",
   unit: "Chỉ huy sư đoàn",
   lastLogin: new Date().toLocaleDateString("vi-VN"),
-  avatar: "/placeholder.svg?height=40&width=40",
+  avatar: "/public/placeholder.svg?height=40&width=40",
 }
 
 export async function POST(request: NextRequest) {

@@ -30,7 +30,7 @@ export default function AdminMediaPage() {
       size: "2.3 MB",
       date: "15/12/2024",
       downloads: 45,
-      thumbnail: "/placeholder.svg?height=150&width=200",
+      thumbnail: "/public/placeholder.svg?height=150&width=200",
     },
     {
       id: 2,
@@ -40,7 +40,7 @@ export default function AdminMediaPage() {
       size: "156.7 MB",
       date: "12/12/2024",
       downloads: 23,
-      thumbnail: "/placeholder.svg?height=150&width=200",
+      thumbnail: "/public/placeholder.svg?height=150&width=200",
     },
     {
       id: 3,
@@ -50,7 +50,7 @@ export default function AdminMediaPage() {
       size: "4.2 MB",
       date: "10/12/2024",
       downloads: 67,
-      thumbnail: "/placeholder.svg?height=150&width=200",
+      thumbnail: "/public/placeholder.svg?height=150&width=200",
     },
     {
       id: 4,
@@ -60,7 +60,7 @@ export default function AdminMediaPage() {
       size: "12.8 MB",
       date: "08/12/2024",
       downloads: 89,
-      thumbnail: "/placeholder.svg?height=150&width=200",
+      thumbnail: "/public/placeholder.svg?height=150&width=200",
     },
     {
       id: 5,
@@ -70,7 +70,7 @@ export default function AdminMediaPage() {
       size: "1.8 MB",
       date: "05/12/2024",
       downloads: 34,
-      thumbnail: "/placeholder.svg?height=150&width=200",
+      thumbnail: "/public/placeholder.svg?height=150&width=200",
     },
     {
       id: 6,
@@ -80,7 +80,7 @@ export default function AdminMediaPage() {
       size: "5.6 MB",
       date: "03/12/2024",
       downloads: 56,
-      thumbnail: "/placeholder.svg?height=150&width=200",
+      thumbnail: "/public/placeholder.svg?height=150&width=200",
     },
   ]
 
@@ -183,7 +183,7 @@ export default function AdminMediaPage() {
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
-                      src={file.thumbnail || "/placeholder.svg"}
+                      src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.name}
                       className="w-full h-32 object-cover"
                     />
@@ -227,7 +227,7 @@ export default function AdminMediaPage() {
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <img
-                      src={file.thumbnail || "/placeholder.svg"}
+                      src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.name}
                       className="w-12 h-12 object-cover rounded"
                     />
