@@ -6,6 +6,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 export default function AdminLayout({
   children,
@@ -13,7 +14,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
+  const pathname = usePathname();
   const menuItems = [
     { href: "/admin/dashboard", icon: Home, label: "Tổng quan" },
     { href: "/admin/posts", icon: FileText, label: "Bài viết" },
@@ -24,7 +25,15 @@ export default function AdminLayout({
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <>
+      {
+        pathname.startsWith('/admin/login') ?<>
+      {
+        children
+      }  
+        
+      </>:
+<div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${
@@ -79,5 +88,8 @@ export default function AdminLayout({
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
     </div>
+      }
+    </>
+    
   )
 }

@@ -4,7 +4,7 @@ import type { LoginCredentials, AuthResponse, User } from "@/lib/types"
 export class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<AuthResponse>("/auth/login", credentials)
+      const response = await apiClient.post<AuthResponse>("/auth/admin/login", credentials)
 
       if (response.success && response.token) {
         apiClient.setToken(response.token)

@@ -9,7 +9,6 @@ import { useEffect } from "react";
 export default function LayoutHeader({ children }: { children: React.ReactNode }) {
 
     const pathname = usePathname();
-  const noHeaderPaths = ['/admin']; // Danh sách các đường dẫn không hiển thị Header
   
   return (
     <>
