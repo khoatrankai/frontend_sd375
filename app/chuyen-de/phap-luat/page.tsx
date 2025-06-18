@@ -1,0 +1,282 @@
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Scale, Clock, Eye, User, ChevronRight, FileText, Shield, Gavel } from "lucide-react"
+
+export default function LawPage() {
+  const [selectedFilter, setSelectedFilter] = useState("all")
+
+  const filters = [
+    { id: "all", name: "Tất cả", count: 8 },
+    { id: "defense-law", name: "Luật Quốc phòng", count: 3 },
+    { id: "military-law", name: "Luật Quân sự", count: 2 },
+    { id: "regulations", name: "Quy định", count: 3 },
+  ]
+
+  const articles = [
+    {
+      id: 1,
+      title: "Luật Quốc phòng 2018 - Những điểm mới và ý nghĩa",
+      excerpt:
+        "Phân tích những điểm mới trong Luật Quốc phòng 2018, tác động và ý nghĩa đối với hoạt động của lực lượng vũ trang. Những thay đổi quan trọng trong tổ chức và hoạt động...",
+      author: "Thiếu tá Lê Văn C",
+      date: "10/12/2024",
+      views: 756,
+      readTime: "10 phút",
+      category: "defense-law",
+      categoryName: "Luật Quốc phòng",
+      featured: true,
+      tags: ["Luật Quốc phòng", "Pháp luật", "Quy định", "2018"],
+    },
+    {
+      id: 2,
+      title: "Quy định về kỷ luật trong quân đội - Cập nhật mới nhất",
+      excerpt:
+        "Tổng hợp các quy định mới nhất về kỷ luật trong quân đội, hướng dẫn thực hiện và những lưu ý quan trọng trong việc áp dụng các biện pháp kỷ luật...",
+      author: "Trung tá Nguyễn Văn D",
+      date: "08/12/2024",
+      views: 642,
+      readTime: "8 phút",
+      category: "regulations",
+      categoryName: "Quy định",
+      featured: true,
+      tags: ["Kỷ luật", "Quy định", "Quân đội", "Hướng dẫn"],
+    },
+    {
+      id: 3,
+      title: "Luật Dân quân tự vệ và tác động đến quốc phòng toàn dân",
+      excerpt:
+        "Nghiên cứu về Luật Dân quân tự vệ, vai trò của lực lượng dân quân tự vệ trong hệ thống quốc phòng toàn dân và an ninh nhân dân...",
+      author: "Đại úy Phạm Thị E",
+      date: "05/12/2024",
+      views: 523,
+      readTime: "12 phút",
+      category: "defense-law",
+      categoryName: "Luật Quốc phòng",
+      featured: false,
+      tags: ["Dân quân tự vệ", "Quốc phòng", "Toàn dân", "An ninh"],
+    },
+    {
+      id: 4,
+      title: "Pháp luật quân sự trong thời kỳ hội nhập",
+      excerpt:
+        "Phân tích sự phát triển của pháp luật quân sự Việt Nam trong bối cảnh hội nhập quốc tế, những thách thức và cơ hội trong việc hoàn thiện hệ thống pháp luật...",
+      author: "Thiếu tá Hoàng Văn F",
+      date: "03/12/2024",
+      views: 445,
+      readTime: "15 phút",
+      category: "military-law",
+      categoryName: "Luật Quân sự",
+      featured: false,
+      tags: ["Pháp luật quân sự", "Hội nhập", "Quốc tế", "Phát triển"],
+    },
+    {
+      id: 5,
+      title: "Quy chế công tác cán bộ trong quân đội",
+      excerpt:
+        "Hướng dẫn chi tiết về quy chế công tác cán bộ, từ tuyển dụng, đào tạo, bổ nhiệm đến đánh giá và luân chuyển cán bộ trong các đơn vị quân đội...",
+      author: "Trung tá Vũ Văn G",
+      date: "01/12/2024",
+      views: 367,
+      readTime: "11 phút",
+      category: "regulations",
+      categoryName: "Quy định",
+      featured: false,
+      tags: ["Cán bộ", "Quy chế", "Tuyển dụng", "Đánh giá"],
+    },
+  ]
+
+  const filteredArticles =
+    selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
+
+  const featuredArticles = filteredArticles.filter((article) => article.featured)
+  const regularArticles = filteredArticles.filter((article) => !article.featured)
+
+  const stats = [
+    { label: "Văn bản pháp luật", value: "8", icon: FileText, color: "text-blue-600" },
+    { label: "Lượt tra cứu", value: "3,733", icon: Eye, color: "text-green-600" },
+    { label: "Chuyên gia pháp lý", value: "5", icon: User, color: "text-purple-600" },
+    { label: "Cập nhật", value: "Hàng tháng", icon: Shield, color: "text-orange-600" },
+  ]
+
+  return (
+    <div className="space-y-8">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">Thông tin Pháp luật</h1>
+        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          Chuyên đề về pháp luật quốc phòng, luật quân sự và các quy định liên quan đến hoạt động quân đội
+        </p>
+      </div>
+
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat, index) => (
+          <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${stat.color.replace("text-", "bg-").replace("-600", "-100")}`}
+              >
+                <stat.icon className={`h-8 w-8 ${stat.color}`} />
+              </div>
+              <div className="text-3xl font-bold text-gray-800 mb-2">{stat.value}</div>
+              <div className="text-sm text-gray-600">{stat.label}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {filters.map((filter) => (
+          <Button
+            key={filter.id}
+            variant={selectedFilter === filter.id ? "default" : "outline"}
+            onClick={() => setSelectedFilter(filter.id)}
+            className="flex items-center space-x-2"
+          >
+            <Scale className="h-4 w-4" />
+            <span>{filter.name}</span>
+            <Badge variant="secondary" className="ml-2">
+              {filter.count}
+            </Badge>
+          </Button>
+        ))}
+      </div>
+
+      {/* Featured Articles */}
+      {featuredArticles.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Bài viết nổi bật</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {featuredArticles.map((article) => (
+              <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Badge className="bg-red-600">{article.categoryName}</Badge>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {article.readTime}
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {article.tags.map((tag, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center">
+                        <User className="h-4 w-4 mr-1" />
+                        {article.author}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {article.date}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Eye className="h-4 w-4 mr-1" />
+                      {article.views}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Regular Articles */}
+      <section>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">
+          {selectedFilter === "all" ? "Tất cả bài viết" : filters.find((f) => f.id === selectedFilter)?.name}
+        </h2>
+        <div className="space-y-6">
+          {regularArticles.map((article) => (
+            <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Badge variant="outline">{article.categoryName}</Badge>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {article.readTime}
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {article.tags.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center">
+                          <User className="h-4 w-4 mr-1" />
+                          {article.author}
+                        </div>
+                        <div className="flex items-center">
+                          <Eye className="h-4 w-4 mr-1" />
+                          {article.views}
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        Đọc thêm
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Legal Framework Showcase */}
+      <Card className="bg-gradient-to-r from-purple-50 to-purple-100 mt-12">
+        <CardContent className="p-8">
+          <h3 className="text-2xl font-bold text-center mb-6">Hệ thống pháp luật quốc phòng</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Scale className="h-8 w-8 text-white" />
+              </div>
+              <h4 className="font-semibold mb-2">Luật Quốc phòng</h4>
+              <p className="text-sm text-gray-600">Khung pháp lý tổng thể cho hoạt động quốc phòng</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Gavel className="h-8 w-8 text-white" />
+              </div>
+              <h4 className="font-semibold mb-2">Luật Quân sự</h4>
+              <p className="text-sm text-gray-600">Quy định về tổ chức và hoạt động quân đội</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <FileText className="h-8 w-8 text-white" />
+              </div>
+              <h4 className="font-semibold mb-2">Quy định nội bộ</h4>
+              <p className="text-sm text-gray-600">Các quy chế và hướng dẫn thực hiện</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
