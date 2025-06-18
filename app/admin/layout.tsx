@@ -64,10 +64,19 @@ export default function AdminLayout({
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t">
-          <Button variant="outline" className="w-full">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              if (confirm("Bạn có chắc muốn đăng xuất?")) {
+                window.location.href = "/admin/login";
+              }
+            }}
+            className="w-full flex items-center justify-center border rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-100"
+          >
             <LogOut className="h-4 w-4 mr-2" />
             Đăng xuất
-          </Button>
+          </a>
         </div>
       </div>
 

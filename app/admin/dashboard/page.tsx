@@ -27,14 +27,36 @@ export default function AdminDashboard() {
         <div className="px-6 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">Bảng điều khiển Admin</h1>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Settings className="h-4 w-4 mr-2" />
-              Cài đặt
-            </Button>
-            <Button variant="outline" size="sm">
-              <LogOut className="h-4 w-4 mr-2" />
-              Đăng xuất
-            </Button>
+            <button>
+              <a
+                href="#"
+                onClick={(e) => {
+                  
+                    window.location.href = "/admin/settings";
+                  
+                }}
+                className="w-full flex items-center justify-center border rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-100"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Cài Đặt
+              </a>
+            </button>
+            <button>
+                <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              if (confirm("Bạn có chắc muốn đăng xuất?")) {
+                window.location.href = "/admin/login";
+              }
+            }}
+            className="w-full flex items-center justify-center border rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-100"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Đăng xuất
+          </a>
+            </button>
+            
           </div>
         </div>
       </header>

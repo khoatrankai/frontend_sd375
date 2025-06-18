@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building } from "lucide-react"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { DialogHeader } from "@/components/ui/dialog"
+import { Label } from "recharts"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -116,10 +120,98 @@ export default function AdminDocumentsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý văn bản</h1>
-        <Button className="bg-red-600 hover:bg-red-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Thêm văn bản mới
-        </Button>
+        <Dialog >
+          <DialogTrigger asChild>
+            <Button
+              className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Thêm văn bản mới
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Tạo văn bản mới</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Tiêu đề *</Label>
+                <Input placeholder="Nhập tiêu đề văn bản" />
+              </div>
+
+              <div>
+                <Label>Mô tả *</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Nhập mô tả văn bản"
+                  rows={10}
+                />
+              </div>
+
+              <div>
+                <Label>Số văn bản</Label>
+                <Input placeholder="Nhập số văn bản" />
+              </div>
+
+              <div>
+                <Label>Danh mục *</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn danh mục" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* Thêm các danh mục */}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label>Tải lên file</Label>
+                <div className="space-y-2">
+                  <Input
+                    id="fileUrl"
+                    type="file"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 50 * 1024 * 1024) {
+                          alert("Kích thước file không được vượt quá 50MB");
+                          return;
+                        }
+                      }
+                    }}
+                  />
+
+                  {(
+                    <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                      <span className="text-sm text-green-700">
+                        ✓ File đã được tải lên
+                      </span>
+                      <button
+                        className="text-red-500 text-sm"
+                      >
+                        Xóa
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button >
+                  Hủy
+                </Button>
+                <Button onClick={() => {
+                  // Thêm logic tạo văn bản ở đây
+                }}>
+                  Lưu
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Statistics */}

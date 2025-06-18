@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Edit, Trash2, Eye, Calendar, User, Filter } from "lucide-react"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, } from "@/components/ui/dialog";
+import { Label } from "recharts"
+
 
 export default function AdminPostsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -97,10 +100,85 @@ export default function AdminPostsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý bài viết</h1>
-        <Button className="bg-red-600 hover:bg-red-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Thêm bài viết mới
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-red-600 hover:bg-red-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Thêm bài viết mới
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Thêm bài viết mới</DialogTitle>
+            </DialogHeader>
+
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
+                <Input placeholder="Nhập tiêu đề bài viết" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
+                <Input placeholder="Nhập tóm tắt bài viết" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                <textarea
+                  className="mt-1 w-full border rounded-md p-2"
+                  rows={10}
+                  placeholder="Nhập nội dung bài viết"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label >Danh mục</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn danh mục" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
+                      <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                      <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label >Hình ảnh</Label>
+                  <div className="space-y-2">
+                    <Input
+                      id="imageFile"
+                      type="file"
+                      accept="image/*"
+
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  className="rounded"
+                />
+                <label htmlFor="featured" className="text-sm text-gray-700">
+                  Gắn bài viết nổi bật
+                </label>
+              </div>
+
+
+              <DialogFooter>
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                  Lưu bài viết
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
       </div>
 
       {/* Statistics */}
