@@ -90,43 +90,72 @@ export default function AdminPostsPage() {
   })
 
   const stats = [
-    { label: "Tổng bài viết", value: "156", color: "text-blue-600" },
+    { label: "Tổng bảng tin", value: "156", color: "text-blue-600" },
     { label: "Đã xuất bản", value: "142", color: "text-green-600" },
     { label: "Bản nháp", value: "8", color: "text-yellow-600" },
     { label: "Chờ duyệt", value: "6", color: "text-red-600" },
   ]
+  const handleDelete = () => {
+    const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
+
+    if (confirmDelete) {
+      // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
+      console.log("Đã xoá bảng tin");
+
+      // 👉 Thông báo
+      if (Notification.permission === "granted") {
+        new Notification("Đã xoá bảng tin", {
+          body: "bảng tin đã được xoá thành công.",
+        });
+      } else if (Notification.permission !== "denied") {
+        // Yêu cầu quyền nếu chưa được cấp
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Đã xoá bảng tin", {
+              body: "bảng tin đã được xoá thành công.",
+            });
+          } else {
+            alert("Đã xoá bảng tin.");
+          }
+        });
+      } else {
+        alert("Đã xoá bảng tin.");
+      }
+    }
+  };
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">Quản lý bài viết</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Quản lý bảng tin</h1>
         <Dialog>
           <DialogTrigger asChild>
             <Button className="bg-red-600 hover:bg-red-700">
               <Plus className="h-4 w-4 mr-2" />
-              Thêm bài viết mới
+              Thêm bảng tin mới
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>Thêm bài viết mới</DialogTitle>
+              <DialogTitle>Thêm bảng tin mới</DialogTitle>
             </DialogHeader>
 
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                <Input placeholder="Nhập tiêu đề bài viết" />
+                <Input placeholder="Nhập tiêu đề bảng tin" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
-                <Input placeholder="Nhập tóm tắt bài viết" />
+                <Input placeholder="Nhập tóm tắt bảng tin" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                 <textarea
                   className="mt-1 w-full border rounded-md p-2"
                   rows={10}
-                  placeholder="Nhập nội dung bài viết"
+                  placeholder="Nhập nội dung bảng tin"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -165,14 +194,14 @@ export default function AdminPostsPage() {
                   className="rounded"
                 />
                 <label htmlFor="featured" className="text-sm text-gray-700">
-                  Gắn bài viết nổi bật
+                  Gắn bảng tin nổi bật
                 </label>
               </div>
 
 
               <DialogFooter>
                 <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Lưu bài viết
+                  Lưu bảng tin
                 </Button>
               </DialogFooter>
             </form>
@@ -209,7 +238,7 @@ export default function AdminPostsPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <Input
-                placeholder="Tìm kiếm bài viết..."
+                placeholder="Tìm kiếm bảng tin..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -256,7 +285,7 @@ export default function AdminPostsPage() {
       {/* Posts Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách bài viết ({filteredPosts.length})</CardTitle>
+          <CardTitle>Danh sách bảng tin ({filteredPosts.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -291,21 +320,160 @@ export default function AdminPostsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogContent className="sm:max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle>Xem bảng tin</DialogTitle>
+                      </DialogHeader>
+
+                      <form className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Tiêu đề</label>
+                          <Input placeholder="Tiêu đề bảng tin" disabled />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Tóm tắt</label>
+                          <Input placeholder="Tóm tắt bảng tin" disabled />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                          <textarea
+                            className="mt-1 w-full border rounded-md p-2"
+                            rows={10}
+                            placeholder="Nội dung bảng tin"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Danh mục</Label>
+                            <Select disabled>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn danh mục" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
+                                <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                                <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label>Hình ảnh</Label>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              className="cursor-pointer"
+                              disabled
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="featured" className="rounded" disabled />
+                          <label htmlFor="featured" className="text-sm text-gray-700">
+                            Gắn bảng tin nổi bật
+                          </label>
+                        </div>
+
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="sm:max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle>Cập nhật bảng tin mới</DialogTitle>
+                      </DialogHeader>
+
+                      <form className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
+                          <Input placeholder="Nhập tiêu đề bảng tin" />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
+                          <Input placeholder="Nhập tóm tắt bảng tin" />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                          <textarea
+                            className="mt-1 w-full border rounded-md p-2"
+                            rows={10}
+                            placeholder="Nhập nội dung bảng tin"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Danh mục</Label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn danh mục" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
+                                <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                                <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label>Hình ảnh</Label>
+                            <div className="space-y-2">
+                              <Input
+                                id="imageFile"
+                                type="file"
+                                accept="image/*"
+                                className="cursor-pointer"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="featured" className="rounded" />
+                          <label htmlFor="featured" className="text-sm text-gray-700">
+                            Gắn bảng tin nổi bật
+                          </label>
+                        </div>
+
+                        <DialogFooter>
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            Cập nhật
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                    onClick={handleDelete}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
+
                 </div>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
-    </div>
+    </div >
   )
 }

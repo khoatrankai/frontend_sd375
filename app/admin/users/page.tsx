@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Edit, Trash2, Shield, User, Calendar, Mail, Phone } from "lucide-react"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { DialogFooter, DialogHeader } from "@/components/ui/dialog"
+import { Label } from "recharts"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -116,10 +120,134 @@ export default function AdminUsersPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý người dùng</h1>
-        <Button className="bg-red-600 hover:bg-red-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Thêm người dùng mới
-        </Button>
+        <Dialog >
+          <DialogTrigger asChild>
+            <Button className="bg-red-600 hover:bg-red-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Thêm Người dùng mới
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+            <DialogHeader className="flex-shrink-0">
+              <DialogTitle>Thêm Người dùng mới</DialogTitle>
+            </DialogHeader>
+
+            <form className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Tên Người Dùng(*)</label>
+                <input
+                  className="mt-1 w-full border rounded-md p-2"
+                  placeholder="Nhập Tên Người Dùng ..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Chức Vụ(*)</label>
+                <input
+                  className="mt-1 w-full border rounded-md p-2"
+                  placeholder="Nhập Chức Vụ ..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Cấp bậc(*)</label>
+                <Select>
+                  <SelectTrigger className="mt-1 w-full border rounded-md p-2">
+                    <SelectValue placeholder="Chọn Cấp bậc..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      "Thiếu úy", "Trung úy", "Thượng úy", "Đại úy",
+                      "Thiếu tá", "Trung tá", "Thượng tá", "Đại tá",
+                      "Thiếu tướng", "Trung tướng", "Thượng tướng", "Đại tướng"
+                    ].map((rank) => (
+                      <SelectItem key={rank} value={rank}>
+                        {rank}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">mail(*)</label>
+                <input
+                  className="mt-1 w-full border rounded-md p-2"
+                  placeholder="Nhập mail ..."
+                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Số Điện Thoại(*)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={10}
+                    className="mt-1 w-full border rounded-md p-2"
+                    placeholder="Nhập Số Điện Thoại ..."
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Thành Tích(*)</label>
+                <Textarea
+                  className="mt-1 w-full border rounded-md p-2"
+                  placeholder="Nhập Thành Tích ..."
+                  rows={10}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Kinh Nghiệm(*)</label>
+                <input
+                  className="mt-1 w-full border rounded-md p-2"
+                  placeholder="Nhập Kinh Nghiệm ..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Học Vấn(*)</label>
+                <input
+                  className="mt-1 w-full border rounded-md p-2"
+                  placeholder="Nhập Học Vấn ..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="">Phòng</label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn Phòng" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
+                      <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                      <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label htmlFor="">Avatar</label>
+                  <div className="space-y-2">
+                    <Input
+                      id="imageFile"
+                      type="file"
+                      accept="image/*"
+
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button  >
+                  Hủy
+                </Button>
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                  Lưu
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
       </div>
 
       {/* Statistics */}

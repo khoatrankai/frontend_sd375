@@ -136,7 +136,34 @@ export default function AdminMediaPage() {
       }
     };
   }, [previewUrl]);
+  const handleDelete = () => {
+    const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
 
+    if (confirmDelete) {
+      // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
+      console.log("Đã xoá bài viết");
+
+      // 👉 Thông báo
+      if (Notification.permission === "granted") {
+        new Notification("Đã xoá bài viết", {
+          body: "Bài viết đã được xoá thành công.",
+        });
+      } else if (Notification.permission !== "denied") {
+        // Yêu cầu quyền nếu chưa được cấp
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Đã xoá bài viết", {
+              body: "Bài viết đã được xoá thành công.",
+            });
+          } else {
+            alert("Đã xoá bài viết.");
+          }
+        });
+      } else {
+        alert("Đã xoá bài viết.");
+      }
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -167,7 +194,7 @@ export default function AdminMediaPage() {
                     <SelectItem value="image">Ảnh</SelectItem>
                     <SelectItem value="video">Video</SelectItem>
                     <SelectItem value="audio">Âm thanh</SelectItem>
-                    <SelectItem value="document">Tài liệu</SelectItem>
+                    <SelectItem value="document">Phần mềm</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -184,7 +211,7 @@ export default function AdminMediaPage() {
                         ? "video/*"
                         : fileType === "audio"
                           ? "audio/*"
-                          : ".pdf,.doc,.docx,.xls,.xlsx,.txt"
+                          : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
                   }
                   onChange={handleFileChange}
                 />
@@ -320,9 +347,14 @@ export default function AdminMediaPage() {
                       <Button variant="outline" size="sm">
                         <Download className="h-3 w-3" />
                       </Button>
-                      <Button variant="outline" size="sm" className="text-red-600">
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                      <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                     </div>
                   </div>
                 </div>
@@ -358,7 +390,12 @@ export default function AdminMediaPage() {
                     <Button variant="outline" size="sm">
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" className="text-red-600">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                      onClick={handleDelete}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

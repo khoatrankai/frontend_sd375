@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building } from "lucide-react"
-import { Dialog, DialogContent, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
 import { Label } from "recharts"
 import { Textarea } from "@/components/ui/textarea"
@@ -115,6 +115,61 @@ export default function AdminDocumentsPage() {
     { label: "Bản nháp", value: "8", color: "text-yellow-600" },
     { label: "Chờ duyệt", value: "5", color: "text-red-600" },
   ]
+  const handleDelete = () => {
+    const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
+
+    if (confirmDelete) {
+      // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
+      console.log("Đã xoá bài viết");
+
+      // 👉 Thông báo
+      if (Notification.permission === "granted") {
+        new Notification("Đã xoá bài viết", {
+          body: "Bài viết đã được xoá thành công.",
+        });
+      } else if (Notification.permission !== "denied") {
+        // Yêu cầu quyền nếu chưa được cấp
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Đã xoá bài viết", {
+              body: "Bài viết đã được xoá thành công.",
+            });
+          } else {
+            alert("Đã xoá bài viết.");
+          }
+        });
+      } else {
+        alert("Đã xoá bài viết.");
+      }
+    }
+  };
+  const handleDownloadAll = async () => {
+    const fileUrls = [
+      "https://example.com/file1.pdf",
+      "https://example.com/image.jpg",
+    ];
+
+    for (const url of fileUrls) {
+      try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = url.split("/").pop() || "download"; // đặt tên file
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // cleanup
+        URL.revokeObjectURL(a.href);
+      } catch (err) {
+        console.error("Lỗi tải file:", err);
+      }
+    }
+  };
+
+
 
   return (
     <div className="p-6 space-y-6">
@@ -198,19 +253,19 @@ export default function AdminDocumentsPage() {
                   )}
                 </div>
               </div>
-
-              <div className="flex justify-end space-x-2 pt-4">
-                <Button >
+              <DialogFooter>
+                <Button type="button" >
                   Hủy
                 </Button>
-                <Button onClick={() => {
-                  // Thêm logic tạo văn bản ở đây
-                }}>
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                   Lưu
                 </Button>
-              </div>
+              </DialogFooter>
+
+
             </div>
           </DialogContent>
+
         </Dialog>
       </div>
 
@@ -323,13 +378,103 @@ export default function AdminDocumentsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={handleDownloadAll}>
                     <Download className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+
+                  <Dialog >
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Tạo văn bản mới</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Tiêu đề *</Label>
+                          <Input placeholder="Nhập tiêu đề văn bản" />
+                        </div>
+
+                        <div>
+                          <Label>Mô tả *</Label>
+                          <Textarea
+                            id="description"
+                            placeholder="Nhập mô tả văn bản"
+                            rows={10}
+                          />
+                        </div>
+
+                        <div>
+                          <Label>Số văn bản</Label>
+                          <Input placeholder="Nhập số văn bản" />
+                        </div>
+
+                        <div>
+                          <Label>Danh mục *</Label>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Chọn danh mục" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {/* Thêm các danh mục */}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label>Tải lên file</Label>
+                          <div className="space-y-2">
+                            <Input
+                              id="fileUrl"
+                              type="file"
+                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  if (file.size > 50 * 1024 * 1024) {
+                                    alert("Kích thước file không được vượt quá 50MB");
+                                    return;
+                                  }
+                                }
+                              }}
+                            />
+
+                            {(
+                              <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                                <span className="text-sm text-green-700">
+                                  ✓ File đã được tải lên
+                                </span>
+                                <button
+                                  className="text-red-500 text-sm"
+                                >
+                                  Xóa
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="button" >
+                            Hủy
+                          </Button>
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            Lưu
+                          </Button>
+                        </DialogFooter>
+                      </div>
+                    </DialogContent>
+
+                  </Dialog>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                    onClick={handleDelete}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
