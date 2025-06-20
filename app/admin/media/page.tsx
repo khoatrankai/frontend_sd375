@@ -105,18 +105,13 @@ export default function AdminMediaPage() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
+    if (!file) return;
 
-      // Nếu là ảnh thì tạo URL preview
-      if (file.type.startsWith("image/")) {
-        const url = URL.createObjectURL(file);
-        setPreviewUrl(url);
-      } else {
-        setPreviewUrl(null);
-      }
-    }
+    setSelectedFile(file);
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
   };
+
   const handleSave = () => {
     if (selectedFile) {
       // TODO: Gửi file lên server hoặc xử lý file tại đây
@@ -164,6 +159,10 @@ export default function AdminMediaPage() {
       }
     }
   };
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+  };
+
 
   return (
     <div className="p-6 space-y-6">
@@ -220,10 +219,37 @@ export default function AdminMediaPage() {
               {/* Preview */}
               {selectedFile && (
                 <div className="mt-2 text-sm text-gray-700">
-                  <strong>File đã chọn:</strong> {selectedFile.name}
+                  <span className="text-sm text-green-700">
+                    ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                  </span>
+                  <button
+                    onClick={handleRemoveFile}
+                    className="text-red-500 text-sm hover:underline"
+                  >
+                    Xóa
+                  </button>
+                  {previewUrl && (
+                    <div className="mt-2">
+                      {fileType === "image" && (
+                        <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                      )}
+                      {fileType === "video" && (
+                        <video src={previewUrl} controls className="max-h-40 rounded" />
+                      )}
+                      {fileType === "audio" && (
+                        <audio src={previewUrl} controls className="w-full" />
+                      )}
+                      {fileType === "document" && (
+                        <div className="text-sm text-gray-500">
+                          Không thể xem trước phần mềm
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
+
             <div className="text-end">
               <Button className="mr-2" variant="outline" onClick={handleCancel}>
                 Hủy
@@ -340,21 +366,98 @@ export default function AdminMediaPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 mt-3">
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <Eye className="h-3 w-3 mr-1" />
-                        Xem
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="flex-1">
+                            <Eye className="h-3 w-3 mr-1" />
+                          </Button>
+
+                        </DialogTrigger>
+
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Tải lên file</DialogTitle>
+                          </DialogHeader>
+
+                          <div className="space-y-4">
+                            {/* Select file type */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1">Loại thư viện</label>
+                              <Select onValueChange={setFileType} defaultValue="image" disabled >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn loại file" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="image">Ảnh</SelectItem>
+                                  <SelectItem value="video">Video</SelectItem>
+                                  <SelectItem value="audio">Âm thanh</SelectItem>
+                                  <SelectItem value="document">Phần mềm</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            {/* Upload input */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1">Chọn file</label>
+                              <Input
+                                type="file"
+                                accept={
+                                  fileType === "image"
+                                    ? "image/*"
+                                    : fileType === "video"
+                                      ? "video/*"
+                                      : fileType === "audio"
+                                        ? "audio/*"
+                                        : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
+                                }
+                                disabled
+                                onChange={handleFileChange}
+                              />
+                            </div>
+
+                            {/* Preview */}
+                            {selectedFile && (
+                              <div className="mt-2 text-sm text-gray-700">
+                                <span className="text-sm text-green-700">
+                                  ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                                </span>
+                                
+                                {previewUrl && (
+                                  <div className="mt-2">
+                                    {fileType === "image" && (
+                                      <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                                    )}
+                                    {fileType === "video" && (
+                                      <video src={previewUrl} controls className="max-h-40 rounded" />
+                                    )}
+                                    {fileType === "audio" && (
+                                      <audio src={previewUrl} controls className="w-full" />
+                                    )}
+                                    {fileType === "document" && (
+                                      <div className="text-sm text-gray-500">
+                                        Không thể xem trước phần mềm
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                        </DialogContent>
+
+                      </Dialog>
                       <Button variant="outline" size="sm">
                         <Download className="h-3 w-3" />
                       </Button>
                       <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700"
-                    onClick={handleDelete}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={handleDelete}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -384,9 +487,87 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <Eye className="h-3 w-3 mr-1" />
+                        </Button>
+
+                      </DialogTrigger>
+
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Tải lên file</DialogTitle>
+                        </DialogHeader>
+
+                        <div className="space-y-4">
+                          {/* Select file type */}
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Loại thư viện</label>
+                            <Select onValueChange={setFileType} defaultValue="image" disabled >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn loại file" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="image">Ảnh</SelectItem>
+                                <SelectItem value="video">Video</SelectItem>
+                                <SelectItem value="audio">Âm thanh</SelectItem>
+                                <SelectItem value="document">Phần mềm</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Upload input */}
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Chọn file</label>
+                            <Input
+                              type="file"
+                              accept={
+                                fileType === "image"
+                                  ? "image/*"
+                                  : fileType === "video"
+                                    ? "video/*"
+                                    : fileType === "audio"
+                                      ? "audio/*"
+                                      : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
+                              }
+                              disabled
+                              onChange={handleFileChange}
+                            />
+                          </div>
+
+                          {/* Preview */}
+                          {selectedFile && (
+                            <div className="mt-2 text-sm text-gray-700">
+                              <span className="text-sm text-green-700">
+                                ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                              </span>
+                              
+                              {previewUrl && (
+                                <div className="mt-2">
+                                  {fileType === "image" && (
+                                    <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                                  )}
+                                  {fileType === "video" && (
+                                    <video src={previewUrl} controls className="max-h-40 rounded" />
+                                  )}
+                                  {fileType === "audio" && (
+                                    <audio src={previewUrl} controls className="w-full" />
+                                  )}
+                                  {fileType === "document" && (
+                                    <div className="text-sm text-gray-500">
+                                      Không thể xem trước phần mềm
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                      </DialogContent>
+
+                    </Dialog>
                     <Button variant="outline" size="sm">
                       <Download className="h-4 w-4" />
                     </Button>

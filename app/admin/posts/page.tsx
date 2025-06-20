@@ -124,7 +124,21 @@ export default function AdminPostsPage() {
     }
   };
   const [open, setOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl);
+    }
+  };
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setOpen(false); // Đóng dialog khi hủy
+  };
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -136,75 +150,120 @@ export default function AdminPostsPage() {
               Thêm bảng tin mới
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
+          <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+            <DialogHeader className="flex-shrink-0">
               <DialogTitle>Thêm bảng tin mới</DialogTitle>
             </DialogHeader>
-
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                <Input placeholder="Nhập tiêu đề bảng tin" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
-                <Input placeholder="Nhập tóm tắt bảng tin" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                <textarea
-                  className="mt-1 w-full border rounded-md p-2"
-                  rows={10}
-                  placeholder="Nhập nội dung bảng tin"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+              <form className="space-y-4">
                 <div>
-                  <Label >Danh mục</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn danh mục" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
-                      <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                      <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
+                  <Input placeholder="Nhập tiêu đề bảng tin" />
                 </div>
-
                 <div>
-                  <Label >Hình ảnh</Label>
-                  <div className="space-y-2">
-                    <Input
-                      id="imageFile"
-                      type="file"
-                      accept="image/*"
+                  <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
+                  <Input placeholder="Nhập tóm tắt bảng tin" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                  <textarea
+                    className="mt-1 w-full border rounded-md p-2"
+                    rows={10}
+                    placeholder="Nhập nội dung bảng tin"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="">Danh mục</label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn danh mục" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="tin-trong-nuoc">Tin trong nước </SelectItem>
+                        <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
+                        <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                        <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                      className="cursor-pointer"
-                    />
+                  <div>
+                    <label htmlFor="">Hình ảnh</label>
+
+                    <div className="space-y-2">
+                      <Input
+                        id="imageFile"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="cursor-pointer"
+                      />
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="mt-2 w-32 h-32 object-cover rounded border"
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="">Hoạt động quân sự</label>
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  className="rounded"
-                />
-                <label htmlFor="featured" className="text-sm text-gray-700">
-                  Gắn bảng tin nổi bật
-                </label>
-              </div>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="vu-khi-trang-bi">Vũ khí trang bị</SelectItem>
+                        <SelectItem value="chien-thuat">Chiến Thuật</SelectItem>
+                        <SelectItem value="cong-nghe-quan-su">Công nghệ quân sự</SelectItem>
+                        <SelectItem value="quoc-phong">Quốc Phòng</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label htmlFor="">Hoạt động sư đoàn</label>
+
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                        <SelectItem value="thi-dua">Thi đua</SelectItem>
+                        <SelectItem value="hoi-nghi">Hội Nghị</SelectItem>
+                        <SelectItem value="sinh-hoat">Sinh Hoạt</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
 
-              <DialogFooter>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Lưu bảng tin
-                </Button>
-              </DialogFooter>
-            </form>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    className="rounded"
+                  />
+                  <label htmlFor="featured" className="text-sm text-gray-700">
+                    Gắn bảng tin nổi bật
+                  </label>
+                </div>
+              </form>
+            </div>
+            <DialogFooter className="flex-shrink-0 mt-4">
+              <Button className="mr-2" variant="outline" onClick={handleCancel}>
+                Hủy
+              </Button>
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                Lưu bảng tin
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
 
@@ -320,142 +379,245 @@ export default function AdminPostsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
+                  {/* <Dialog open={open} onOpenChange={setOpen}> */}
+
                   <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
                     <Eye className="h-4 w-4" />
                   </Button>
                   <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogContent className="sm:max-w-lg">
-                      <DialogHeader>
+                    <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+                      <DialogHeader className="flex-shrink-0">
                         <DialogTitle>Xem bảng tin</DialogTitle>
                       </DialogHeader>
 
-                      <form className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Tiêu đề</label>
-                          <Input placeholder="Tiêu đề bảng tin" disabled />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Tóm tắt</label>
-                          <Input placeholder="Tóm tắt bảng tin" disabled />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                          <textarea
-                            className="mt-1 w-full border rounded-md p-2"
-                            rows={10}
-                            placeholder="Nội dung bảng tin"
-                            disabled
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
+                      <div className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+                        <form className="space-y-4">
                           <div>
-                            <Label>Danh mục</Label>
-                            <Select disabled>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn danh mục" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
-                                <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                                <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
+                            <Input placeholder="Nhập tiêu đề bảng tin" disabled />
                           </div>
-
                           <div>
-                            <Label>Hình ảnh</Label>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              className="cursor-pointer"
+                            <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
+                            <Input placeholder="Nhập tóm tắt bảng tin" disabled />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                            <textarea
+                              className="mt-1 w-full border rounded-md p-2"
+                              rows={10}
+                              placeholder="Nhập nội dung bảng tin"
                               disabled
                             />
                           </div>
-                        </div>
 
-                        <div className="flex items-center space-x-2">
-                          <input type="checkbox" id="featured" className="rounded" disabled />
-                          <label htmlFor="featured" className="text-sm text-gray-700">
-                            Gắn bảng tin nổi bật
-                          </label>
-                        </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label>Danh mục</label>
+                              <Select disabled>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn danh mục" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="tin-trong-nuoc">Tin trong nước</SelectItem>
+                                  <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
+                                  <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                                  <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
 
-                      </form>
+                            <div>
+                              <label>Hình ảnh</label>
+                              <Input
+                                id="imageFile"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+
+                                className="cursor-pointer"
+                                disabled
+                              />
+                              {imagePreview && (
+                                <img
+                                  src={imagePreview}
+                                  alt="Preview"
+                                  className="mt-2 w-32 h-32 object-cover rounded border"
+                                />
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label>Hoạt động quân sự</label>
+                              <Select disabled>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn hoạt động" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="vu-khi-trang-bi">Vũ khí trang bị</SelectItem>
+                                  <SelectItem value="chien-thuat">Chiến Thuật</SelectItem>
+                                  <SelectItem value="cong-nghe-quan-su">Công nghệ quân sự</SelectItem>
+                                  <SelectItem value="quoc-phong">Quốc Phòng</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label>Hoạt động sư đoàn</label>
+                              <Select disabled>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn hoạt động" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                                  <SelectItem value="thi-dua">Thi đua</SelectItem>
+                                  <SelectItem value="hoi-nghi">Hội Nghị</SelectItem>
+                                  <SelectItem value="sinh-hoat">Sinh Hoạt</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <input type="checkbox" id="featured" className="rounded" disabled />
+                            <label htmlFor="featured" className="text-sm text-gray-700">
+                              Gắn bảng tin nổi bật
+                            </label>
+                          </div>
+                        </form>
+                      </div>
+
+                      {/* Ẩn nút lưu */}
+                      {/* <DialogFooter className="flex-shrink-0 mt-4">
+      <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+        Lưu bảng tin
+      </Button>
+    </DialogFooter> */}
                     </DialogContent>
                   </Dialog>
-                  <Dialog>
+
+                  <Dialog >
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
 
-                    <DialogContent className="sm:max-w-lg">
-                      <DialogHeader>
-                        <DialogTitle>Cập nhật bảng tin mới</DialogTitle>
+                    <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+                      <DialogHeader className="flex-shrink-0">
+                        <DialogTitle>cập nhật bảng tin </DialogTitle>
                       </DialogHeader>
-
-                      <form className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                          <Input placeholder="Nhập tiêu đề bảng tin" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
-                          <Input placeholder="Nhập tóm tắt bảng tin" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                          <textarea
-                            className="mt-1 w-full border rounded-md p-2"
-                            rows={10}
-                            placeholder="Nhập nội dung bảng tin"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
+                      <div className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+                        <form className="space-y-4">
                           <div>
-                            <Label>Danh mục</Label>
-                            <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn danh mục" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
-                                <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                                <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
+                            <Input placeholder="Nhập tiêu đề bảng tin" />
                           </div>
-
                           <div>
-                            <Label>Hình ảnh</Label>
-                            <div className="space-y-2">
-                              <Input
-                                id="imageFile"
-                                type="file"
-                                accept="image/*"
-                                className="cursor-pointer"
-                              />
+                            <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
+                            <Input placeholder="Nhập tóm tắt bảng tin" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                            <textarea
+                              className="mt-1 w-full border rounded-md p-2"
+                              rows={10}
+                              placeholder="Nhập nội dung bảng tin"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label htmlFor="">Danh mục</label>
+                              <Select>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn danh mục" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="tin-trong-nuoc">Tin trong nước </SelectItem>
+                                  <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
+                                  <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
+                                  <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label htmlFor="">Hình ảnh</label>
+
+                              <div className="space-y-2">
+                                <Input
+                                  id="imageFile"
+                                  type="file"
+                                  onChange={handleFileChange}
+                                  accept="image/*"
+                                  className="cursor-pointer"
+                                />
+                                {imagePreview && (
+                                  <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="mt-2 w-32 h-32 object-cover rounded border"
+                                  />
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label htmlFor="">Hoạt động quân sự</label>
 
-                        <div className="flex items-center space-x-2">
-                          <input type="checkbox" id="featured" className="rounded" />
-                          <label htmlFor="featured" className="text-sm text-gray-700">
-                            Gắn bảng tin nổi bật
-                          </label>
-                        </div>
+                              <Select>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn hoạt động" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="vu-khi-trang-bi">Vũ khí trang bị</SelectItem>
+                                  <SelectItem value="chien-thuat">Chiến Thuật</SelectItem>
+                                  <SelectItem value="cong-nghe-quan-su">Công nghệ quân sự</SelectItem>
+                                  <SelectItem value="quoc-phong">Quốc Phòng</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <label htmlFor="">Hoạt động sư đoàn</label>
 
-                        <DialogFooter>
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                            Cập nhật
-                          </Button>
-                        </DialogFooter>
-                      </form>
+                              <Select>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn hoạt động" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                                  <SelectItem value="thi-dua">Thi đua</SelectItem>
+                                  <SelectItem value="hoi-nghi">Hội Nghị</SelectItem>
+                                  <SelectItem value="sinh-hoat">Sinh Hoạt</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id="featured"
+                              className="rounded"
+                            />
+                            <label htmlFor="featured" className="text-sm text-gray-700">
+                              Gắn bảng tin nổi bật
+                            </label>
+                          </div>
+                        </form>
+                      </div>
+                      <DialogFooter className="flex-shrink-0 mt-4">
+                        <Button className="mr-2" variant="outline" onClick={handleCancel}>
+                          Hủy
+                        </Button>
+                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                          Lưu bảng tin
+                        </Button>
+                      </DialogFooter>
                     </DialogContent>
                   </Dialog>
 

@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building } from "lucide-react"
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
-import { Label } from "recharts"
 import { Textarea } from "@/components/ui/textarea"
 
 export default function AdminDocumentsPage() {
@@ -168,6 +167,22 @@ export default function AdminDocumentsPage() {
       }
     }
   };
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 50 * 1024 * 1024) {
+        alert("Kích thước file không được vượt quá 50MB");
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+  };
 
 
 
@@ -191,12 +206,12 @@ export default function AdminDocumentsPage() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Tiêu đề *</Label>
+                <label>Tiêu đề *</label>
                 <Input placeholder="Nhập tiêu đề văn bản" />
               </div>
 
               <div>
-                <Label>Mô tả *</Label>
+                <label>Mô tả *</label>
                 <Textarea
                   id="description"
                   placeholder="Nhập mô tả văn bản"
@@ -205,12 +220,12 @@ export default function AdminDocumentsPage() {
               </div>
 
               <div>
-                <Label>Số văn bản</Label>
+                <label>Số văn bản</label>
                 <Input placeholder="Nhập số văn bản" />
               </div>
 
               <div>
-                <Label>Danh mục *</Label>
+                <label>Danh mục *</label>
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Chọn danh mục" />
@@ -222,30 +237,23 @@ export default function AdminDocumentsPage() {
               </div>
 
               <div>
-                <Label>Tải lên file</Label>
-                <div className="space-y-2">
+                <label htmlFor="">Tải file lên</label>
+                <div className="space-y-2 mt-2">
                   <Input
                     id="fileUrl"
                     type="file"
                     accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        if (file.size > 50 * 1024 * 1024) {
-                          alert("Kích thước file không được vượt quá 50MB");
-                          return;
-                        }
-                      }
-                    }}
+                    onChange={handleFileChange}
                   />
 
-                  {(
-                    <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                  {selectedFile && (
+                    <div className="flex items-center gap-2 p-2 bg-green-50 rounded border border-green-300">
                       <span className="text-sm text-green-700">
-                        ✓ File đã được tải lên
+                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
                       </span>
                       <button
-                        className="text-red-500 text-sm"
+                        onClick={handleRemoveFile}
+                        className="text-red-500 text-sm hover:underline"
                       >
                         Xóa
                       </button>
@@ -395,12 +403,12 @@ export default function AdminDocumentsPage() {
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
-                          <Label>Tiêu đề *</Label>
+                          <label>Tiêu đề *</label>
                           <Input placeholder="Nhập tiêu đề văn bản" />
                         </div>
 
                         <div>
-                          <Label>Mô tả *</Label>
+                          <label>Mô tả *</label>
                           <Textarea
                             id="description"
                             placeholder="Nhập mô tả văn bản"
@@ -409,12 +417,12 @@ export default function AdminDocumentsPage() {
                         </div>
 
                         <div>
-                          <Label>Số văn bản</Label>
+                          <label>Số văn bản</label>
                           <Input placeholder="Nhập số văn bản" />
                         </div>
 
                         <div>
-                          <Label>Danh mục *</Label>
+                          <label>Danh mục *</label>
                           <Select>
                             <SelectTrigger>
                               <SelectValue placeholder="Chọn danh mục" />
@@ -426,30 +434,23 @@ export default function AdminDocumentsPage() {
                         </div>
 
                         <div>
-                          <Label>Tải lên file</Label>
-                          <div className="space-y-2">
+                          <label htmlFor="">Tải file lên</label>
+                          <div className="space-y-2 mt-2">
                             <Input
                               id="fileUrl"
                               type="file"
                               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  if (file.size > 50 * 1024 * 1024) {
-                                    alert("Kích thước file không được vượt quá 50MB");
-                                    return;
-                                  }
-                                }
-                              }}
+                              onChange={handleFileChange}
                             />
 
-                            {(
-                              <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                            {selectedFile && (
+                              <div className="flex items-center gap-2 p-2 bg-green-50 rounded border border-green-300">
                                 <span className="text-sm text-green-700">
-                                  ✓ File đã được tải lên
+                                  ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
                                 </span>
                                 <button
-                                  className="text-red-500 text-sm"
+                                  onClick={handleRemoveFile}
+                                  className="text-red-500 text-sm hover:underline"
                                 >
                                   Xóa
                                 </button>

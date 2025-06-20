@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X } from "lucide-react"
+import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X, Info } from "lucide-react"
 import { usePathname } from "next/navigation"
 
 export default function AdminLayout({
@@ -17,10 +17,10 @@ export default function AdminLayout({
   const pathname = usePathname();
   const menuItems = [
     { href: "/admin/dashboard", icon: Home, label: "Tổng quan" },
-    { href: "#", icon: Home, label: "Giới thiệu" },
+    { href: "/admin/introduce", icon: Info, label: "Giới thiệu" },
     { href: "/admin/posts", icon: FileText, label: "Bảng tin" },
     { href: "/admin/media", icon: ImageIcon, label: "Thư viện" },
-    { href: "#", icon: ImageIcon, label: "Chuyên đề" },
+    { href: "/admin/topic", icon: ImageIcon, label: "Chuyên đề" },
     { href: "/admin/documents", icon: FileText, label: "Văn bản" },
     { href: "/admin/users", icon: Users, label: "Người dùng" },
     { href: "/admin/settings", icon: Settings, label: "Cài đặt" },

@@ -115,7 +115,48 @@ export default function AdminUsersPage() {
     { label: "Quản trị viên", value: "3", color: "text-purple-600" },
     { label: "Chờ kích hoạt", value: "4", color: "text-orange-600" },
   ]
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+  };
+  const handleDelete = () => {
+    const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
+
+    if (confirmDelete) {
+      // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
+      console.log("Đã xoá bài viết");
+
+      // 👉 Thông báo
+      if (Notification.permission === "granted") {
+        new Notification("Đã xoá bài viết", {
+          body: "Bài viết đã được xoá thành công.",
+        });
+      } else if (Notification.permission !== "denied") {
+        // Yêu cầu quyền nếu chưa được cấp
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Đã xoá bài viết", {
+              body: "Bài viết đã được xoá thành công.",
+            });
+          } else {
+            alert("Đã xoá bài viết.");
+          }
+        });
+      } else {
+        alert("Đã xoá bài viết.");
+      }
+    }
+  };
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -216,23 +257,47 @@ export default function AdminUsersPage() {
                       <SelectValue placeholder="Chọn Phòng" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="tin-trong-nuoc-va-quoc-te">Tin trong nước và quốc tế</SelectItem>
-                      <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                      <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                      <SelectItem value="tin-trong-nuoc-va-quoc-te">Chỉ huy sư đoàn</SelectItem>
+                      <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                      <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                      <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <label htmlFor="">Avatar</label>
+                  <label className="block text-sm font-medium text-gray-700">Avatar</label>
                   <div className="space-y-2">
                     <Input
                       id="imageFile"
                       type="file"
                       accept="image/*"
-
                       className="cursor-pointer"
+                      onChange={handleFileChange}
                     />
+
+                    {selectedFile && (
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                        {previewUrl && (
+                          <img
+                            src={previewUrl}
+                            alt="Preview"
+                            className="w-24 h-24 object-cover rounded"
+                          />
+                        )}
+                        <div>
+                          <span className="text-sm text-green-700 block">
+                            ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                          </span>
+                          <button
+                            onClick={handleRemoveFile}
+                            className="text-red-500 text-sm hover:underline mt-1"
+                          >
+                            Xóa
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -382,10 +447,163 @@ export default function AdminUsersPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+
+                    <Dialog >
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+                        <DialogHeader className="flex-shrink-0">
+                          <DialogTitle>Cập nhật người dùng </DialogTitle>
+                        </DialogHeader>
+
+                        <form className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Tên Người Dùng(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Tên Người Dùng ..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Chức Vụ(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Chức Vụ ..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Cấp bậc(*)</label>
+                            <Select>
+                              <SelectTrigger className="mt-1 w-full border rounded-md p-2">
+                                <SelectValue placeholder="Chọn Cấp bậc..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {[
+                                  "Thiếu úy", "Trung úy", "Thượng úy", "Đại úy",
+                                  "Thiếu tá", "Trung tá", "Thượng tá", "Đại tá",
+                                  "Thiếu tướng", "Trung tướng", "Thượng tướng", "Đại tướng"
+                                ].map((rank) => (
+                                  <SelectItem key={rank} value={rank}>
+                                    {rank}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">mail(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập mail ..."
+                            />
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Số Điện Thoại(*)</label>
+                              <input
+                                type="number"
+                                min={1}
+                                max={10}
+                                className="mt-1 w-full border rounded-md p-2"
+                                placeholder="Nhập Số Điện Thoại ..."
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Thành Tích(*)</label>
+                            <Textarea
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Thành Tích ..."
+                              rows={10}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Kinh Nghiệm(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Kinh Nghiệm ..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Học Vấn(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Học Vấn ..."
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label htmlFor="">Phòng</label>
+                              <Select>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn Phòng" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="tin-trong-nuoc-va-quoc-te">Chỉ huy sư đoàn</SelectItem>
+                                  <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                                  <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                                  <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Avatar</label>
+                              <div className="space-y-2">
+                                <Input
+                                  id="imageFile"
+                                  type="file"
+                                  accept="image/*"
+                                  className="cursor-pointer"
+                                  onChange={handleFileChange}
+                                />
+
+                                {selectedFile && (
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                    {previewUrl && (
+                                      <img
+                                        src={previewUrl}
+                                        alt="Preview"
+                                        className="w-24 h-24 object-cover rounded"
+                                      />
+                                    )}
+                                    <div>
+                                      <span className="text-sm text-green-700 block">
+                                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                                      </span>
+                                      <button
+                                        onClick={handleRemoveFile}
+                                        className="text-red-500 text-sm hover:underline mt-1"
+                                      >
+                                        Xóa
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button  >
+                              Hủy
+                            </Button>
+                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                              Lưu
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                      onClick={handleDelete}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
