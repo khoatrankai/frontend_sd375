@@ -1,13 +1,14 @@
-import { apiClient } from "@/lib/api"
+
+import { apiLogin } from "@/lib/apiLogin"
 import type { LoginCredentials, AuthResponse, User } from "@/lib/types"
 
 export class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<AuthResponse>("/auth/login", credentials)
+      const response = await apiLogin.post<AuthResponse>("/auth/login", credentials)
 
       if (response.success && response.token) {
-        apiClient.setToken(response.token)
+        apiLogin.setToken(response.token)
       }
 
       return response
@@ -21,17 +22,17 @@ export class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await apiClient.post("/auth/logout")
+      await apiLogin.post("/auth/logout")
     } catch (error) {
       console.error("Logout error:", error)
     } finally {
-      apiClient.removeToken()
+      apiLogin.removeToken()
     }
   }
 
   async getCurrentUser(): Promise<User | null> {
     try {
-      const response = await apiClient.get<{ success: boolean; data: User }>("/auth/me")
+      const response = await apiLogin.get<{ success: boolean; data: User }>("/auth/me")
       return response.success ? response.data : null
     } catch (error) {
       console.error("Get current user error:", error)
@@ -41,10 +42,10 @@ export class AuthService {
 
   async refreshToken(): Promise<boolean> {
     try {
-      const response = await apiClient.post<{ success: boolean; token: string }>("/auth/refresh")
+      const response = await apiLogin.post<{ success: boolean; token: string }>("/auth/refresh")
 
       if (response.success && response.token) {
-        apiClient.setToken(response.token)
+        apiLogin.setToken(response.token)
         return true
       }
 

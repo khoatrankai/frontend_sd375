@@ -12,7 +12,7 @@ export class UsersService {
   async getUsers(params?: PaginationParams): Promise<UsersResponse> {
     try {
       const response = await apiClient.get<ApiResponse<UsersResponse>>("/users", params)
-      return response.data || { users: [], total: 0, page: 1, limit: 10 }
+      return response || { users: [], total: 0, page: 1, limit: 10 }
     } catch (error) {
       console.error("Get users error:", error)
       return { users: [], total: 0, page: 1, limit: 10 }
@@ -22,7 +22,7 @@ export class UsersService {
   async getUser(id: number): Promise<User | null> {
     try {
       const response = await apiClient.get<ApiResponse<User>>(`/users/${id}`)
-      return response.data || null
+      return response || null
     } catch (error) {
       console.error("Get user error:", error)
       return null
@@ -32,7 +32,7 @@ export class UsersService {
   async createUser(user: Omit<User, "id" | "lastLogin">): Promise<User | null> {
     try {
       const response = await apiClient.post<ApiResponse<User>>("/users", user)
-      return response.data || null
+      return response || null
     } catch (error) {
       console.error("Create user error:", error)
       return null
@@ -42,7 +42,7 @@ export class UsersService {
   async updateUser(id: number, user: Partial<User>): Promise<User | null> {
     try {
       const response = await apiClient.put<ApiResponse<User>>(`/users/${id}`, user)
-      return response.data || null
+      return response || null
     } catch (error) {
       console.error("Update user error:", error)
       return null

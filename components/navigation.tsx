@@ -90,7 +90,7 @@ export default function Navigation() {
                 {item.submenu ? (
                   <div className="relative">
                     <button
-                      className={`flex items-center space-x-2 px-4 py-4 hover:bg-green-600 transition-all duration-200 rounded-t-lg ${
+                      className={`flex items-center space-x-2 px-4 bg-transparent py-4 hover:bg-green-600 transition-all duration-200 rounded-t-lg ${
                         isActive(item.submenu[0]?.href || "") ? "bg-green-600 text-yellow-300" : ""
                       }`}
                       onMouseEnter={() => setActiveDropdown(item.id)}

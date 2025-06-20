@@ -5,7 +5,7 @@ export class SettingsService {
   async getSettings(): Promise<SiteSettings | null> {
     try {
       const response = await apiClient.get<ApiResponse<SiteSettings>>("/settings")
-      return response.data || null
+      return response || null
     } catch (error) {
       console.error("Get settings error:", error)
       return null
@@ -45,7 +45,7 @@ export class SettingsService {
   async getBackupHistory(): Promise<any[]> {
     try {
       const response = await apiClient.get<ApiResponse<any[]>>("/settings/backups")
-      return response.data || []
+      return response || []
     } catch (error) {
       console.error("Get backup history error:", error)
       return []

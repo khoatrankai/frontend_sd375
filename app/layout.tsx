@@ -1,14 +1,20 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
+// import { Inter } from "next/font/google"
+// import localFont from "next/font/local"  
+// import "./globals.css"
 import Header from "@/components/header"
 import Navigation from "@/components/navigation"
 import Sidebar from "@/components/sidebar"
 import Footer from "@/components/footer"
 import LayoutHeader from "./LayoutPage"
 
-const inter = Inter({ subsets: ["latin"] })
+// const inter = Inter({ subsets: ["latin"] })
+// const inter = localFont({
+//   src: "../public/fonts/inter/Inter-Regular.woff2",  // đường dẫn đến file font
+//   display: "swap",
+//   variable: "--font-inter",
+// })
 
 export const metadata: Metadata = {
   title: "Sư đoàn phòng không 375 - Cổng thông tin điện tử",
@@ -23,7 +29,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body className={inter.className}>
+      <head>
+        <link rel="stylesheet" href="/build.css" />
+      </head>
+      <body>
        <LayoutHeader>
         {children}
        </LayoutHeader>

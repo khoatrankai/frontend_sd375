@@ -5,7 +5,7 @@ export class MediaService {
   async getFiles(params?: PaginationParams): Promise<MediaResponse> {
     try {
       const response = await apiClient.get<ApiResponse<MediaResponse>>("/media", params)
-      return response.data || { files: [], total: 0, page: 1, limit: 10 }
+      return response || { files: [], total: 0, page: 1, limit: 10 }
     } catch (error) {
       console.error("Get media files error:", error)
       return { files: [], total: 0, page: 1, limit: 10 }
@@ -21,7 +21,7 @@ export class MediaService {
       }
 
       const response = await apiClient.upload<ApiResponse<MediaFile>>("/media/upload", formData)
-      return response.data || null
+      return response || null
     } catch (error) {
       console.error("Upload file error:", error)
       return null
@@ -41,7 +41,7 @@ export class MediaService {
   async updateFile(id: number, data: { name?: string; description?: string }): Promise<MediaFile | null> {
     try {
       const response = await apiClient.put<ApiResponse<MediaFile>>(`/media/${id}`, data)
-      return response.data || null
+      return response || null
     } catch (error) {
       console.error("Update file error:", error)
       return null
@@ -51,7 +51,7 @@ export class MediaService {
   async getFilesByType(type: string, params?: PaginationParams): Promise<MediaResponse> {
     try {
       const response = await apiClient.get<ApiResponse<MediaResponse>>(`/media/type/${type}`, params)
-      return response.data || { files: [], total: 0, page: 1, limit: 10 }
+      return response || { files: [], total: 0, page: 1, limit: 10 }
     } catch (error) {
       console.error("Get files by type error:", error)
       return { files: [], total: 0, page: 1, limit: 10 }

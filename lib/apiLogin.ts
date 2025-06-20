@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_CLIENT || "/api"
 
-class ApiClient {
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api"
+
+class ApiLogin {
   private axiosInstance: AxiosInstance
   private token: string | null = null
 
@@ -82,4 +83,4 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL)
+export const apiLogin = new ApiLogin(API_BASE_URL)
