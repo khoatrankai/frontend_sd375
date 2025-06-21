@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building, Eye } from "lucide-react"
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { usePathname } from "next/navigation"
@@ -341,12 +341,18 @@ export default function AdminDocumentsPage() {
                       </div>
 
                       <DialogFooter >
-                        <Button type="button" >
-                          Hủy
-                        </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                          Lưu
-                        </Button>
+                        <DialogClose asChild>
+
+                          <Button type="button"  >
+                            Hủy
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            Lưu
+                          </Button>
+                        </DialogClose>
                       </DialogFooter>
 
 
@@ -444,12 +450,18 @@ export default function AdminDocumentsPage() {
                       </div>
 
                       <DialogFooter >
-                        <Button type="button" >
-                          Hủy
-                        </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                          Lưu
-                        </Button>
+                        <DialogClose asChild>
+
+                          <Button type="button"  >
+                            Hủy
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            Lưu
+                          </Button>
+                        </DialogClose>
                       </DialogFooter>
 
 
@@ -547,12 +559,18 @@ export default function AdminDocumentsPage() {
                       </div>
 
                       <DialogFooter >
-                        <Button type="button" >
-                          Hủy
-                        </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                          Lưu
-                        </Button>
+                        <DialogClose asChild>
+
+                          <Button type="button"  >
+                            Hủy
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            Lưu
+                          </Button>
+                        </DialogClose>
                       </DialogFooter>
 
 
@@ -650,12 +668,18 @@ export default function AdminDocumentsPage() {
                       </div>
 
                       <DialogFooter >
-                        <Button type="button" >
-                          Hủy
-                        </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                          Lưu
-                        </Button>
+                        <DialogClose asChild>
+
+                          <Button type="button"  >
+                            Hủy
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            Lưu
+                          </Button>
+                        </DialogClose>
                       </DialogFooter>
 
 
@@ -721,7 +745,7 @@ export default function AdminDocumentsPage() {
                       <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
 
                         <DialogHeader >
-                          <DialogTitle>CCHC & Chuyển đổi số</DialogTitle>
+                          <DialogTitle> Xem CCHC & Chuyển đổi số</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
@@ -795,14 +819,7 @@ export default function AdminDocumentsPage() {
                             <Input placeholder="Xem tên và cấp bậc " disabled />
                           </div>
 
-                          <DialogFooter >
-                            <Button type="button" >
-                              Hủy
-                            </Button>
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                              Lưu
-                            </Button>
-                          </DialogFooter>
+
 
 
                         </div>
@@ -821,7 +838,7 @@ export default function AdminDocumentsPage() {
                       <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
 
                         <DialogHeader >
-                          <DialogTitle>CCHC & Chuyển đổi số</DialogTitle>
+                          <DialogTitle>Xem thông tin tuyên truyền</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
@@ -895,14 +912,7 @@ export default function AdminDocumentsPage() {
                             <Input placeholder="Xem tên và cấp bậc " disabled />
                           </div>
 
-                          <DialogFooter >
-                            <Button type="button" >
-                              Hủy
-                            </Button>
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                              Lưu
-                            </Button>
-                          </DialogFooter>
+
 
 
                         </div>
@@ -921,7 +931,7 @@ export default function AdminDocumentsPage() {
                       <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
 
                         <DialogHeader >
-                          <DialogTitle>CCHC & Chuyển đổi số</DialogTitle>
+                          <DialogTitle>Xem thông tin Pháp luật</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
@@ -995,14 +1005,7 @@ export default function AdminDocumentsPage() {
                             <Input placeholder="Xem tên và cấp bậc " disabled />
                           </div>
 
-                          <DialogFooter >
-                            <Button type="button" >
-                              Hủy
-                            </Button>
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                              Lưu
-                            </Button>
-                          </DialogFooter>
+
 
 
                         </div>
@@ -1021,7 +1024,7 @@ export default function AdminDocumentsPage() {
                       <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
 
                         <DialogHeader >
-                          <DialogTitle>CCHC & Chuyển đổi số</DialogTitle>
+                          <DialogTitle>Xem thông tin KHQS</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
@@ -1075,7 +1078,7 @@ export default function AdminDocumentsPage() {
                                   >
                                     <span>{field}</span>
                                     <button
-                                    disabled
+                                      disabled
                                       onClick={() => {
                                         const updated = fields.filter((_, i) => i !== index)
                                         setFields(updated)
@@ -1096,14 +1099,7 @@ export default function AdminDocumentsPage() {
                             <Input placeholder="Xem tên và cấp bậc " disabled />
                           </div>
 
-                          <DialogFooter >
-                            <Button type="button" >
-                              Hủy
-                            </Button>
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                              Lưu
-                            </Button>
-                          </DialogFooter>
+
 
 
                         </div>
@@ -1201,12 +1197,18 @@ export default function AdminDocumentsPage() {
                             </div>
 
                             <DialogFooter >
-                              <Button type="button" >
-                                Hủy
-                              </Button>
-                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                                Lưu
-                              </Button>
+                              <DialogClose asChild>
+
+                                <Button type="button"  >
+                                  Hủy
+                                </Button>
+                              </DialogClose>
+                              <DialogClose asChild>
+
+                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                  Lưu
+                                </Button>
+                              </DialogClose>
                             </DialogFooter>
 
 
@@ -1301,12 +1303,18 @@ export default function AdminDocumentsPage() {
                             </div>
 
                             <DialogFooter >
-                              <Button type="button" >
-                                Hủy
-                              </Button>
-                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                                Lưu
-                              </Button>
+                              <DialogClose asChild>
+
+                                <Button type="button"  >
+                                  Hủy
+                                </Button>
+                              </DialogClose>
+                              <DialogClose asChild>
+
+                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                  Lưu
+                                </Button>
+                              </DialogClose>
                             </DialogFooter>
 
 
@@ -1401,12 +1409,18 @@ export default function AdminDocumentsPage() {
                             </div>
 
                             <DialogFooter >
-                              <Button type="button" >
-                                Hủy
-                              </Button>
-                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                                Lưu
-                              </Button>
+                              <DialogClose asChild>
+
+                                <Button type="button"  >
+                                  Hủy
+                                </Button>
+                              </DialogClose>
+                              <DialogClose asChild>
+
+                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                  Lưu
+                                </Button>
+                              </DialogClose>
                             </DialogFooter>
 
 
@@ -1501,12 +1515,18 @@ export default function AdminDocumentsPage() {
                             </div>
 
                             <DialogFooter >
-                              <Button type="button" >
-                                Hủy
-                              </Button>
-                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                                Lưu
-                              </Button>
+                              <DialogClose asChild>
+
+                                <Button type="button"  >
+                                  Hủy
+                                </Button>
+                              </DialogClose>
+                              <DialogClose asChild>
+
+                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                  Lưu
+                                </Button>
+                              </DialogClose>
                             </DialogFooter>
 
 

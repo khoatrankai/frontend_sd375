@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, Edit, Trash2, Shield, User, Calendar, Mail, Phone } from "lucide-react"
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Plus, Search, Edit, Trash2, Shield, User, Calendar, Mail, Phone, Eye } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { DialogFooter, DialogHeader } from "@/components/ui/dialog"
 import { Label } from "recharts"
 import { Textarea } from "@/components/ui/textarea"
+
 
 export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -168,8 +169,8 @@ export default function AdminUsersPage() {
               Thêm Người dùng mới
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
-            <DialogHeader className="flex-shrink-0">
+          <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+            <DialogHeader >
               <DialogTitle>Thêm Người dùng mới</DialogTitle>
             </DialogHeader>
 
@@ -302,12 +303,18 @@ export default function AdminUsersPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button  >
-                  Hủy
-                </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Lưu
-                </Button>
+                <DialogClose asChild>
+
+                  <Button type="button"  >
+                    Hủy
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                    Lưu
+                  </Button>
+                </DialogClose>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -447,15 +454,158 @@ export default function AdminUsersPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
+                    <Dialog >
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                        <DialogHeader >
+                          <DialogTitle> Người dùng </DialogTitle>
+                        </DialogHeader>
 
+                        <form className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Tên Người Dùng(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Tên Người Dùng ..."
+                              disabled />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Chức Vụ(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Chức Vụ ..."
+                              disabled />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Cấp bậc(*)</label>
+                            <Select disabled>
+                              <SelectTrigger className="mt-1 w-full border rounded-md p-2">
+                                <SelectValue placeholder="Chọn Cấp bậc..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {[
+                                  "Thiếu úy", "Trung úy", "Thượng úy", "Đại úy",
+                                  "Thiếu tá", "Trung tá", "Thượng tá", "Đại tá",
+                                  "Thiếu tướng", "Trung tướng", "Thượng tướng", "Đại tướng"
+                                ].map((rank) => (
+                                  <SelectItem key={rank} value={rank}>
+                                    {rank}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">mail(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập mail ..."
+                              disabled />
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Số Điện Thoại(*)</label>
+                              <input
+                                type="number"
+                                min={1}
+                                max={10}
+                                className="mt-1 w-full border rounded-md p-2"
+                                placeholder="Nhập Số Điện Thoại ..."
+                                disabled />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Thành Tích(*)</label>
+                            <Textarea
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Thành Tích ..."
+                              rows={10}
+                              disabled />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Kinh Nghiệm(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Kinh Nghiệm ..."
+                              disabled />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Học Vấn(*)</label>
+                            <input
+                              className="mt-1 w-full border rounded-md p-2"
+                              placeholder="Nhập Học Vấn ..."
+                              disabled />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label htmlFor="">Phòng</label>
+                              <Select disabled>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn Phòng" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="tin-trong-nuoc-va-quoc-te">Chỉ huy sư đoàn</SelectItem>
+                                  <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                                  <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                                  <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Avatar</label>
+                              <div className="space-y-2">
+                                <Input
+                                  id="imageFile"
+                                  type="file"
+                                  accept="image/*"
+                                  className="cursor-pointer"
+                                  onChange={handleFileChange}
+                                  disabled />
+
+                                {selectedFile && (
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                    {previewUrl && (
+                                      <img
+                                        src={previewUrl}
+                                        alt="Preview"
+                                        className="w-24 h-24 object-cover rounded"
+                                      />
+                                    )}
+                                    <div>
+                                      <span className="text-sm text-green-700 block">
+                                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                                      </span>
+                                      <button
+                                        disabled
+                                        onClick={handleRemoveFile}
+                                        className="text-red-500 text-sm hover:underline mt-1"
+                                      >
+                                        Xóa
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                     <Dialog >
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm">
                           <Edit className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
-                        <DialogHeader className="flex-shrink-0">
+                      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                        <DialogHeader >
                           <DialogTitle>Cập nhật người dùng </DialogTitle>
                         </DialogHeader>
 
@@ -588,12 +738,18 @@ export default function AdminUsersPage() {
                             </div>
                           </div>
                           <DialogFooter>
-                            <Button  >
-                              Hủy
-                            </Button>
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                              Lưu
-                            </Button>
+                            <DialogClose asChild>
+
+                              <Button type="button"  >
+                                Hủy
+                              </Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+
+                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                Lưu
+                              </Button>
+                            </DialogClose>
                           </DialogFooter>
                         </form>
                       </DialogContent>

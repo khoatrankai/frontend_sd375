@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Edit, Trash2, Eye, Calendar, User, Filter } from "lucide-react"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, } from "@/components/ui/dialog";
 import { Label } from "recharts"
+import { DialogClose } from "@/components/ui/dialog";
 
 
 export default function AdminPostsPage() {
@@ -123,7 +124,7 @@ export default function AdminPostsPage() {
       }
     }
   };
-  const [open, setOpen] = useState(false);
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -135,26 +136,25 @@ export default function AdminPostsPage() {
       setImagePreview(imageUrl);
     }
   };
-  const handleCancel = () => {
-    setSelectedFile(null);
-    setOpen(false); // Đóng dialog khi hủy
-  };
+
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý bảng tin</h1>
-        <Dialog>
+        <Dialog >
           <DialogTrigger asChild>
             <Button className="bg-red-600 hover:bg-red-700">
               <Plus className="h-4 w-4 mr-2" />
               Thêm bảng tin mới
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
-            <DialogHeader className="flex-shrink-0">
+          <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+            <DialogHeader >
               <DialogTitle>Thêm bảng tin mới</DialogTitle>
             </DialogHeader>
-            <div className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+            <div className=" space-y-4 mt-4 ">
               <form className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
@@ -257,12 +257,17 @@ export default function AdminPostsPage() {
               </form>
             </div>
             <DialogFooter className="flex-shrink-0 mt-4">
-              <Button className="mr-2" variant="outline" onClick={handleCancel}>
-                Hủy
-              </Button>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                Lưu bảng tin
-              </Button>
+              <DialogClose asChild>
+                <Button type="button" className="mr-2">
+                  Hủy
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                  Lưu bảng tin
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -379,35 +384,39 @@ export default function AdminPostsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {/* <Dialog open={open} onOpenChange={setOpen}> */}
+                  {/* <Dialog o> */}
 
-                  <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
-                      <DialogHeader className="flex-shrink-0">
+                  <Dialog >
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                      <DialogHeader>
                         <DialogTitle>Xem bảng tin</DialogTitle>
                       </DialogHeader>
 
-                      <div className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+                      <div className="space-y-4 mt-4">
                         <form className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
                             <Input placeholder="Nhập tiêu đề bảng tin" disabled />
                           </div>
+
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
                             <Input placeholder="Nhập tóm tắt bảng tin" disabled />
                           </div>
+
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                             <textarea
                               className="mt-1 w-full border rounded-md p-2"
                               rows={10}
                               placeholder="Nhập nội dung bảng tin"
-                              disabled
-                            />
+                              disabled />
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
@@ -428,22 +437,22 @@ export default function AdminPostsPage() {
 
                             <div>
                               <label>Hình ảnh</label>
-                              <Input
-                                id="imageFile"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
-
-                                className="cursor-pointer"
-                                disabled
-                              />
-                              {imagePreview && (
-                                <img
-                                  src={imagePreview}
-                                  alt="Preview"
-                                  className="mt-2 w-32 h-32 object-cover rounded border"
-                                />
-                              )}
+                              <div className="space-y-2">
+                                <Input
+                                  id="imageFile"
+                                  type="file"
+                                  onChange={handleFileChange}
+                                  accept="image/*"
+                                  className="cursor-pointer"
+                                  disabled />
+                                {imagePreview && (
+                                  <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="mt-2 w-32 h-32 object-cover rounded border"
+                                  />
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -485,17 +494,21 @@ export default function AdminPostsPage() {
                               Gắn bảng tin nổi bật
                             </label>
                           </div>
+
+                          <DialogFooter>
+                            <DialogClose asChild>
+
+                              <Button type="button" >
+                                Hủy
+                              </Button>
+                            </DialogClose>
+
+                          </DialogFooter>
                         </form>
                       </div>
-
-                      {/* Ẩn nút lưu */}
-                      {/* <DialogFooter className="flex-shrink-0 mt-4">
-      <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-        Lưu bảng tin
-      </Button>
-    </DialogFooter> */}
                     </DialogContent>
                   </Dialog>
+
 
                   <Dialog >
                     <DialogTrigger asChild>
@@ -504,20 +517,23 @@ export default function AdminPostsPage() {
                       </Button>
                     </DialogTrigger>
 
-                    <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
-                      <DialogHeader className="flex-shrink-0">
-                        <DialogTitle>cập nhật bảng tin </DialogTitle>
+                    <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>Cập nhật bảng tin</DialogTitle>
                       </DialogHeader>
-                      <div className="overflow-y-auto flex-grow space-y-4 mt-4 pr-2">
+
+                      <div className="space-y-4 mt-4">
                         <form className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
                             <Input placeholder="Nhập tiêu đề bảng tin" />
                           </div>
+
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
                             <Input placeholder="Nhập tóm tắt bảng tin" />
                           </div>
+
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                             <textarea
@@ -526,15 +542,16 @@ export default function AdminPostsPage() {
                               placeholder="Nhập nội dung bảng tin"
                             />
                           </div>
+
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <label htmlFor="">Danh mục</label>
+                              <label>Danh mục</label>
                               <Select>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn danh mục" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="tin-trong-nuoc">Tin trong nước </SelectItem>
+                                  <SelectItem value="tin-trong-nuoc">Tin trong nước</SelectItem>
                                   <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
                                   <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
                                   <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
@@ -543,8 +560,7 @@ export default function AdminPostsPage() {
                             </div>
 
                             <div>
-                              <label htmlFor="">Hình ảnh</label>
-
+                              <label>Hình ảnh</label>
                               <div className="space-y-2">
                                 <Input
                                   id="imageFile"
@@ -563,10 +579,10 @@ export default function AdminPostsPage() {
                               </div>
                             </div>
                           </div>
+
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <label htmlFor="">Hoạt động quân sự</label>
-
+                              <label>Hoạt động quân sự</label>
                               <Select>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
@@ -579,9 +595,9 @@ export default function AdminPostsPage() {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <div>
-                              <label htmlFor="">Hoạt động sư đoàn</label>
 
+                            <div>
+                              <label>Hoạt động sư đoàn</label>
                               <Select>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
@@ -594,30 +610,33 @@ export default function AdminPostsPage() {
                                 </SelectContent>
                               </Select>
                             </div>
-
-
                           </div>
 
                           <div className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id="featured"
-                              className="rounded"
-                            />
+                            <input type="checkbox" id="featured" className="rounded" />
                             <label htmlFor="featured" className="text-sm text-gray-700">
                               Gắn bảng tin nổi bật
                             </label>
                           </div>
+
+                          <DialogFooter>
+                            <DialogClose asChild>
+
+                              <Button type="submit">Hủy</Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+
+                              <Button
+                                type="submit"
+
+                                className="bg-blue-600 hover:bg-blue-700"
+                              >
+                                Lưu
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
                         </form>
                       </div>
-                      <DialogFooter className="flex-shrink-0 mt-4">
-                        <Button className="mr-2" variant="outline" onClick={handleCancel}>
-                          Hủy
-                        </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                          Lưu bảng tin
-                        </Button>
-                      </DialogFooter>
                     </DialogContent>
                   </Dialog>
 
