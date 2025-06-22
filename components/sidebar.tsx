@@ -2,17 +2,32 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Search, ExternalLink, Play, Volume2 } from "lucide-react"
+import { newsService } from "@/services/news.service"
+import { useEffect, useState } from "react"
 
 export default function Sidebar() {
   const quickLinks = ["Bộ Quốc phòng", "Quân khu 7", "Báo Quân đội nhân dân", "VOV Giao thông", "Thời tiết"]
 
-  const newsItems = [
+  const [newsItems,setNewsItem] = useState([
     "Hội nghị tổng kết công tác năm 2024",
     "Diễn tập phòng thủ khu vực",
     "Thi đua quyết thắng 2024",
     "Huấn luyện chiến đấu",
-  ]
+  ])
+  const [newsFilter,setNewsFilter] = useState([])
+  const fetchData = async()=>{
+    const res = await newsService.getPosts() as any
+    if(res.statusCode === 200){
+      setNewsItem(res.data)
+    }
+  }
 
+  useEffect(()=>{
+    setNewsFilter(newsFilter.filter((i:any)=> !i.featured).filter((i:any,index)=> index > 3))
+  },[newsItems])
+useEffect(()=>{
+  fetchData()
+},[])
   return (
     <aside className="w-80 p-4 space-y-6 bg-gray-50">
       {/* Thanh tìm kiếm */}
@@ -37,9 +52,9 @@ export default function Sidebar() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3 max-h-64 overflow-y-auto">
-            {newsItems.map((item, index) => (
-              <div key={index} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer">
-                <p className="text-sm text-gray-700 line-clamp-2">{item}</p>
+            {newsFilter.map((item:any) => (
+              <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer">
+                <p className="text-sm text-gray-700 line-clamp-2">{item.title}</p>
                 <span className="text-xs text-gray-500">2 giờ trước</span>
               </div>
             ))}

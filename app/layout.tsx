@@ -1,21 +1,24 @@
 import type React from "react"
 import type { Metadata } from "next"
 // import { Inter } from "next/font/google"
-// import localFont from "next/font/local"  
-// import "./globals.css"
-import Header from "@/components/header"
-import Navigation from "@/components/navigation"
-import Sidebar from "@/components/sidebar"
-import Footer from "@/components/footer"
+import localFont from "next/font/local"  
+import "./globals.css"
+// import Header from "@/components/header"
+// import Navigation from "@/components/navigation"
+// import Sidebar from "@/components/sidebar"
+// import Footer from "@/components/footer"
 import LayoutHeader from "./LayoutPage"
 
-// const inter = Inter({ subsets: ["latin"] })
-// const inter = localFont({
-//   src: "../public/fonts/inter/Inter-Regular.woff2",  // đường dẫn đến file font
-//   display: "swap",
-//   variable: "--font-inter",
-// })
-
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
 export const metadata: Metadata = {
   title: "Sư đoàn phòng không 375 - Cổng thông tin điện tử",
   description: "Cổng thông tin điện tử chính thức của Sư đoàn phòng không 375",
@@ -29,10 +32,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <head>
+      {/* <head>
         <link rel="stylesheet" href="/build.css" />
-      </head>
-      <body>
+      </head> */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}>
        <LayoutHeader>
         {children}
        </LayoutHeader>
