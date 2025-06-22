@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building } from "lucide-react"
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building, Eye } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -183,6 +183,7 @@ export default function AdminDocumentsPage() {
   const handleRemoveFile = () => {
     setSelectedFile(null);
   };
+  const [open, setOpen] = useState(false);
 
 
 
@@ -209,31 +210,39 @@ export default function AdminDocumentsPage() {
                 <label>Tiêu đề *</label>
                 <Input placeholder="Nhập tiêu đề văn bản" />
               </div>
-
-              <div>
-                <label>Mô tả *</label>
-                <Textarea
-                  id="description"
-                  placeholder="Nhập mô tả văn bản"
-                  rows={10}
-                />
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label>Loại văn bản *</label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn loại văn bản" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="chi-thi">Chỉ thị</SelectItem>
+                      <SelectItem value="thong-bao">THông báo</SelectItem>
+                      <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
+                      <SelectItem value="quy-dinh">Quy định</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex-1">
+                  <label>Đơn vị đăng tải *</label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn loại văn bản" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                      <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                      <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                      <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-
               <div>
-                <label>Số văn bản</label>
-                <Input placeholder="Nhập số văn bản" />
-              </div>
-
-              <div>
-                <label>Danh mục *</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn danh mục" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* Thêm các danh mục */}
-                  </SelectContent>
-                </Select>
+                <label>Người đăng tải(kèm cấp bậc) *</label>
+                <Input placeholder="Nhập người đăng tải" />
               </div>
 
               <div>
@@ -262,12 +271,18 @@ export default function AdminDocumentsPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" >
-                  Hủy
-                </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Lưu
-                </Button>
+                <DialogClose asChild>
+
+                  <Button type="button"  >
+                    Hủy
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                    Lưu
+                  </Button>
+                </DialogClose>
               </DialogFooter>
 
 
@@ -392,45 +407,53 @@ export default function AdminDocumentsPage() {
 
                   <Dialog >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" >
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
 
                     <DialogContent className="max-w-2xl">
                       <DialogHeader>
-                        <DialogTitle>Tạo văn bản mới</DialogTitle>
+                        <DialogTitle>Cập nhật văn bản </DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
                           <label>Tiêu đề *</label>
                           <Input placeholder="Nhập tiêu đề văn bản" />
                         </div>
-
-                        <div>
-                          <label>Mô tả *</label>
-                          <Textarea
-                            id="description"
-                            placeholder="Nhập mô tả văn bản"
-                            rows={10}
-                          />
+                        <div className="flex gap-4">
+                          <div className="flex-1">
+                            <label>Loại văn bản *</label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn loại văn bản" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="chi-thi">Chỉ thị</SelectItem>
+                                <SelectItem value="thong-bao">THông báo</SelectItem>
+                                <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
+                                <SelectItem value="quy-dinh">Quy định</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex-1">
+                            <label>Đơn vị đăng tải *</label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn loại văn bản" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                                <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                                <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                                <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
-
                         <div>
-                          <label>Số văn bản</label>
-                          <Input placeholder="Nhập số văn bản" />
-                        </div>
-
-                        <div>
-                          <label>Danh mục *</label>
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Chọn danh mục" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {/* Thêm các danh mục */}
-                            </SelectContent>
-                          </Select>
+                          <label>Người đăng tải(kèm cấp bậc) *</label>
+                          <Input placeholder="Nhập người đăng tải" />
                         </div>
 
                         <div>
@@ -459,13 +482,21 @@ export default function AdminDocumentsPage() {
                           </div>
                         </div>
                         <DialogFooter>
-                          <Button type="button" >
-                            Hủy
-                          </Button>
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                            Lưu
-                          </Button>
+                          <DialogClose asChild>
+
+                            <Button type="button"  >
+                              Hủy
+                            </Button>
+                          </DialogClose>
+                          <DialogClose asChild>
+
+                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                              Lưu
+                            </Button>
+                          </DialogClose>
                         </DialogFooter>
+
+
                       </div>
                     </DialogContent>
 

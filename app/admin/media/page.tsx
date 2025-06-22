@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Upload, Search, Trash2, Download, Eye, Calendar, Grid3X3, List } from "lucide-react"
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, } from "@/components/ui/dialog";
 
 
 export default function AdminMediaPage() {
@@ -251,16 +251,18 @@ export default function AdminMediaPage() {
             </div>
 
             <div className="text-end">
-              <Button className="mr-2" variant="outline" onClick={handleCancel}>
-                Hủy
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={!selectedFile}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Lưu
-              </Button>
+              <DialogClose asChild>
+
+                <Button type="button"  >
+                  Hủy
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 ml-2">
+                  Lưu
+                </Button>
+              </DialogClose>
             </div>
           </DialogContent>
 
@@ -421,7 +423,7 @@ export default function AdminMediaPage() {
                                 <span className="text-sm text-green-700">
                                   ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
                                 </span>
-                                
+
                                 {previewUrl && (
                                   <div className="mt-2">
                                     {fileType === "image" && (
@@ -542,7 +544,7 @@ export default function AdminMediaPage() {
                               <span className="text-sm text-green-700">
                                 ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
                               </span>
-                              
+
                               {previewUrl && (
                                 <div className="mt-2">
                                   {fileType === "image" && (
