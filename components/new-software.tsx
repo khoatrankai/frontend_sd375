@@ -36,7 +36,6 @@ export default function NewSoftware() {
       featured: true,
     },
   ])
-
   useEffect(()=>{
     fetchData()
   },[])
