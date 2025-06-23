@@ -1,10 +1,13 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Download, Calendar, Star } from "lucide-react"
+import { useEffect, useState } from "react"
+import { softwareService } from "@/services/software.service"
 
 export default function NewSoftware() {
-  const software = [
+  const [software,setSoftware] = useState([
     {
       name: "Phần mềm quản lý văn bản v2.1",
       description: "Hệ thống quản lý văn bản điện tử cho các đơn vị",
@@ -32,7 +35,17 @@ export default function NewSoftware() {
       downloads: 89,
       featured: true,
     },
-  ]
+  ])
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  const fetchData = async()=>{
+    const res = await softwareService.getSoftwares()
+    if(res.statusCode === 200){
+      setSoftware(res.data)
+    }
+  }
 
   return (
     <section className="mb-8">

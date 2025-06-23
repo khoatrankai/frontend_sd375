@@ -4,26 +4,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Search, ExternalLink, Play, Volume2 } from "lucide-react"
 import { newsService } from "@/services/news.service"
 import { useEffect, useState } from "react"
+import TimeAgo from "./time-ago"
 
 export default function Sidebar() {
   const quickLinks = ["Bộ Quốc phòng", "Quân khu 7", "Báo Quân đội nhân dân", "VOV Giao thông", "Thời tiết"]
 
-  const [newsItems,setNewsItem] = useState([
-    "Hội nghị tổng kết công tác năm 2024",
-    "Diễn tập phòng thủ khu vực",
-    "Thi đua quyết thắng 2024",
-    "Huấn luyện chiến đấu",
+  const [newsItems,setNewsItem] = useState<any>([
   ])
   const [newsFilter,setNewsFilter] = useState([])
   const fetchData = async()=>{
-    const res = await newsService.getPosts() as any
+    const res = await newsService.getPosts({page:0,limit:10}) as any
     if(res.statusCode === 200){
       setNewsItem(res.data)
     }
   }
 
   useEffect(()=>{
-    setNewsFilter(newsFilter.filter((i:any)=> !i.featured).filter((i:any,index)=> index > 3))
+    setNewsFilter(newsItems.filter((i:any)=> !i.featured).filter((i:any,index:number)=> index > 3))
   },[newsItems])
 useEffect(()=>{
   fetchData()
@@ -55,7 +52,7 @@ useEffect(()=>{
             {newsFilter.map((item:any) => (
               <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer">
                 <p className="text-sm text-gray-700 line-clamp-2">{item.title}</p>
-                <span className="text-xs text-gray-500">2 giờ trước</span>
+                <span className="text-xs text-gray-500">{<TimeAgo date={item.created_at}/>}</span>
               </div>
             ))}
           </div>

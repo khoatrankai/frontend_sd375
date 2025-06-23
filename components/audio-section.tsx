@@ -1,40 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, SkipForward, SkipBack } from "lucide-react"
+import { tracksService } from "@/services/tracks.service"
 
 export default function AudioSection() {
   const [currentTrack, setCurrentTrack] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
 
-  const tracks = [
-    {
-      title: "Quốc ca Việt Nam",
-      artist: "Văn Cao",
-      duration: "03:45",
-      category: "Quốc ca",
-    },
-    {
-      title: "Bộ đội Cụ Hồ",
-      artist: "Quân đội nhân dân",
-      duration: "04:12",
-      category: "Ca khúc cách mạng",
-    },
-    {
-      title: "Tiến quân ca",
-      artist: "Nguyễn Văn Cao",
-      duration: "02:58",
-      category: "Hành khúc",
-    },
-    {
-      title: "Đường tới ngày vinh quang",
-      artist: "Văn Cao",
-      duration: "03:30",
-      category: "Ca khúc cách mạng",
-    },
-  ]
+  const [tracks,setTracks] = useState<any>([
+  ])
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  const fetchData = async()=>{
+    const res = await tracksService.getTracks()
+    if(res.statusCode === 200){
+      setTracks(res.data)
+    }
+  }
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
@@ -63,9 +51,9 @@ export default function AudioSection() {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-1">{tracks[currentTrack].title}</h3>
-              <p className="text-gray-600">{tracks[currentTrack].artist}</p>
-              <p className="text-sm text-gray-500">{tracks[currentTrack].category}</p>
+              <h3 className="text-lg font-bold text-gray-800 mb-1">{tracks?.[currentTrack]?.title}</h3>
+              <p className="text-gray-600">{tracks?.[currentTrack]?.artist}</p>
+              <p className="text-sm text-gray-500">{tracks?.[currentTrack]?.category?.name}</p>
             </div>
 
             <div className="flex items-center justify-center space-x-4 mb-4">
@@ -88,19 +76,17 @@ export default function AudioSection() {
 
             <div className="flex justify-between text-sm text-gray-500">
               <span>01:15</span>
-              <span>{tracks[currentTrack].duration}</span>
+              <span>{tracks?.[currentTrack]?.duration}</span>
             </div>
           </CardContent>
         </Card>
-
-        {/* Playlist */}
         <Card>
           <CardHeader>
             <CardTitle>Danh sách phát</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {tracks.map((track, index) => (
+              {tracks?.map((track:any, index:number) => (
                 <div
                   key={index}
                   className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${

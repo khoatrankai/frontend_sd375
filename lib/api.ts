@@ -65,6 +65,12 @@ class ApiClient {
     )
   }
 
+   patch<T>(endpoint: string, data?: any) {
+    return this.handleRequest<T>(
+      this.axiosInstance.patch<T>(endpoint, data)
+    )
+  }
+
   delete<T>(endpoint: string) {
     return this.handleRequest<T>(
       this.axiosInstance.delete<T>(endpoint)
