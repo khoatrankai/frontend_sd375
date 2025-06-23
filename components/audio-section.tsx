@@ -80,8 +80,6 @@ export default function AudioSection() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Playlist */}
         <Card>
           <CardHeader>
             <CardTitle>Danh sách phát</CardTitle>
