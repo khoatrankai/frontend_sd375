@@ -1,70 +1,34 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { newsService } from "@/services/news.service"
+import TimeAgo from "./time-ago"
 
 export default function FeaturedNews() {
   const [currentMainNews, setCurrentMainNews] = useState(0)
 
-  const mainNews = [
-    {
-      title: "Hội nghị tổng kết công tác năm 2024 và triển khai nhiệm vụ năm 2025",
-      excerpt: "Sư đoàn phòng không 375 tổ chức hội nghị tổng kết toàn diện các mặt công tác trong năm 2024...",
-      image: "/public/placeholder.svg?height=300&width=500",
-      category: "Tin chính",
-      time: "2 giờ trước",
-    },
-    {
-      title: "Diễn tập phòng thủ khu vực quy mô lớn",
-      excerpt: "Cuộc diễn tập nhằm nâng cao khả năng phối hợp tác chiến giữa các lực lượng...",
-      image: "/public/placeholder.svg?height=300&width=500",
-      category: "Huấn luyện",
-      time: "4 giờ trước",
-    },
-    {
-      title: "Kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam",
-      excerpt: "Lễ kỷ niệm long trọng với sự tham gia của toàn thể cán bộ, chiến sĩ...",
-      image: "/public/placeholder.svg?height=300&width=500",
-      category: "Sự kiện",
-      time: "1 ngày trước",
-    },
-  ]
+  const [mainNews,setMainNews] = useState([
+   
+  ])
 
-  const sideNews = [
-    {
-      title: "Thi đua quyết thắng quý IV/2024",
-      time: "3 giờ trước",
-      category: "Thi đua",
-    },
-    {
-      title: 'Hội thi "Bàn tay vàng" năm 2024',
-      time: "5 giờ trước",
-      category: "Thi đua",
-    },
-    {
-      title: "Kiểm tra công tác sẵn sàng chiến đấu",
-      time: "6 giờ trước",
-      category: "Kiểm tra",
-    },
-    {
-      title: "Hội nghị Đảng ủy Sư đoàn tháng 12",
-      time: "8 giờ trước",
-      category: "Đảng ủy",
-    },
-    {
-      title: "Tập huấn nghiệp vụ chuyên môn",
-      time: "1 ngày trước",
-      category: "Đào tạo",
-    },
-    {
-      title: "Thăm hỏi gia đình chính sách",
-      time: "1 ngày trước",
-      category: "Xã hội",
-    },
-  ]
+  const [sideNews,setSideNews] = useState([
+   
+  ])
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  const fetchData = async()=>{
+    const res = await newsService.getPosts({limit:9,page:0}) as any
+    if(res.statusCode === 200){
+      setMainNews(res.data.filter((dt:any)=> dt.featured))
+      setSideNews(res.data.filter((dt:any)=> !dt.featured))
+    }
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -81,7 +45,7 @@ export default function FeaturedNews() {
         {/* Main news slideshow - 2/3 width */}
         <div className="lg:col-span-2">
           <div className="relative h-96 overflow-hidden rounded-lg shadow-lg">
-            {mainNews.map((news, index) => (
+            {mainNews.map((news:any, index) => (
               <div
                 key={index}
                 className={`absolute inset-0 transition-opacity duration-500 ${
@@ -92,10 +56,10 @@ export default function FeaturedNews() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Badge variant="destructive">{news.category}</Badge>
+                      <Badge variant="destructive">{news.category.name}</Badge>
                       <div className="flex items-center text-sm text-gray-200">
                         <Clock className="h-4 w-4 mr-1" />
-                        {news.time}
+                        {<TimeAgo date={news.created_at} />}
                       </div>
                     </div>
                     <h3 className="text-xl font-bold mb-2 line-clamp-2">{news.title}</h3>
@@ -137,16 +101,18 @@ export default function FeaturedNews() {
 
         {/* Side news - 1/3 width */}
         <div className="space-y-3">
-          {sideNews.map((news, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+          {sideNews.map((news:any, index) => (
+            <Card onClick={()=>{
+              
+            }} key={index} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <Badge variant="outline" className="text-xs">
-                    {news.category}
+                    {news.category.name}
                   </Badge>
                   <div className="flex items-center text-xs text-gray-500">
                     <Clock className="h-3 w-3 mr-1" />
-                    {news.time}
+                    {<TimeAgo date={news.created_at} />}
                   </div>
                 </div>
                 <h4 className="font-medium text-sm line-clamp-2 text-gray-800 hover:text-red-600 transition-colors">

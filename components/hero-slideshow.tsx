@@ -1,13 +1,13 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { slideService } from "@/services/slides.service"
 
 export default function HeroSlideshow() {
   const [currentSlide, setCurrentSlide] = useState(0)
 
-  const slides = [
+  const [slides,setSlides] = useState([
     {
       image: "/public/placeholder.svg?height=400&width=800",
       title: "Sư đoàn phòng không 375 - Bảo vệ vững chắc vùng trời Tổ quốc",
@@ -23,7 +23,19 @@ export default function HeroSlideshow() {
       title: "Thi đua quyết thắng - Xây dựng đơn vị vững mạnh toàn diện",
       description: "Phát huy truyền thống, đoàn kết, kỷ luật, sáng tạo trong công tác",
     },
-  ]
+  ])
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  const fetchData = async()=>{
+    const res = await slideService.getSlides() as any
+    console.log(res)
+    if(res.statusCode === 200){
+      setSlides(res.data)
+    }
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {
