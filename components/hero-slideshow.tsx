@@ -61,7 +61,7 @@ export default function HeroSlideshow() {
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
-          <img src={process.env.NEXT_PUBLIC_API_CLIENT+slide.image || "/public/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
+          <img src={slide.image || "/public/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div className="text-center text-white p-8">
               <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>

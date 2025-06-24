@@ -56,7 +56,7 @@ export default function FeaturedImages() {
                 alt={image.title}
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               /> */}
-              <Image src={process.env.NEXT_PUBLIC_API_CLIENT+image.thumbnail || "/public/placeholder.svg"} alt="" className="w-full min-h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+              <Image src={image.thumbnail || "/public/placeholder.svg"} alt="" className="w-full min-h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
               {/* <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
                 <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div> */}

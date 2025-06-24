@@ -89,7 +89,7 @@ class ApiClient {
 
    uploadPatch<T>(endpoint: string, formData: FormData) {
     return this.handleRequest<T>(
-      this.axiosInstance.post<T>(endpoint, formData, {
+      this.axiosInstance.patch<T>(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

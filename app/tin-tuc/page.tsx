@@ -98,7 +98,7 @@ export default function NewsPage() {
             {featuredNews.map((item:any) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative">
-                  <img src={process.env.NEXT_PUBLIC_API_CLIENT+item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
+                  <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
                   <Badge className="absolute top-4 left-4 bg-red-600">{types.find((i)=> i.id === item.type)?.name}</Badge>
                 </div>
                 <CardContent className="p-6">
@@ -141,7 +141,7 @@ export default function NewsPage() {
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
                     <img
-                      src={process.env.NEXT_PUBLIC_API_CLIENT+item.image || "/public/placeholder.svg"}
+                      src={item.image || "/public/placeholder.svg"}
                       alt={item.title}
                       className="w-full h-48 md:h-full object-cover"
                     />

@@ -52,7 +52,7 @@ export default function FeaturedNews() {
                   index === currentMainNews ? "opacity-100" : "opacity-0"
                 }`}
               >
-                <img src={process.env.NEXT_PUBLIC_API_CLIENT+news.image || "/public/placeholder.svg"} alt={news.title} className="w-full h-full object-cover" />
+                <img src={news.image || "/public/placeholder.svg"} alt={news.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex items-center space-x-2 mb-2">

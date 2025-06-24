@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, SkipForward, SkipBack } from "lucide-react"
 import { tracksService } from "@/services/tracks.service"
+import AudioPlayerUI from "./audio-player.ui"
 
 export default function AudioSection() {
   const [currentTrack, setCurrentTrack] = useState(0)
@@ -42,44 +43,7 @@ export default function AudioSection() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Audio Player */}
-        <Card className="bg-gradient-to-br from-red-50 to-red-100">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Volume2 className="h-5 w-5 mr-2 text-red-600" />
-              Đang phát
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-1">{tracks?.[currentTrack]?.title}</h3>
-              <p className="text-gray-600">{tracks?.[currentTrack]?.artist}</p>
-              <p className="text-sm text-gray-500">{tracks?.[currentTrack]?.category?.name}</p>
-            </div>
-
-            <div className="flex items-center justify-center space-x-4 mb-4">
-              <Button variant="outline" size="icon" onClick={prevTrack}>
-                <SkipBack className="h-4 w-4" />
-              </Button>
-
-              <Button size="icon" className="h-12 w-12 bg-red-600 hover:bg-red-700" onClick={togglePlay}>
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-              </Button>
-
-              <Button variant="outline" size="icon" onClick={nextTrack}>
-                <SkipForward className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div className="bg-red-600 h-2 rounded-full w-1/3"></div>
-            </div>
-
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>01:15</span>
-              <span>{tracks?.[currentTrack]?.duration}</span>
-            </div>
-          </CardContent>
-        </Card>
+        <AudioPlayerUI duration={tracks?.[currentTrack]?.duration} category={tracks?.[currentTrack]?.category?.name} artist={tracks?.[currentTrack]?.artist} title={tracks?.[currentTrack]?.title} src={tracks?.[currentTrack]?.link} />
         <Card>
           <CardHeader>
             <CardTitle>Danh sách phát</CardTitle>
