@@ -65,6 +65,12 @@ class ApiClient {
     )
   }
 
+   patch<T>(endpoint: string, data?: any) {
+    return this.handleRequest<T>(
+      this.axiosInstance.patch<T>(endpoint, data)
+    )
+  }
+
   delete<T>(endpoint: string) {
     return this.handleRequest<T>(
       this.axiosInstance.delete<T>(endpoint)
@@ -74,6 +80,16 @@ class ApiClient {
   upload<T>(endpoint: string, formData: FormData) {
     return this.handleRequest<T>(
       this.axiosInstance.post<T>(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    )
+  }
+
+   uploadPatch<T>(endpoint: string, formData: FormData) {
+    return this.handleRequest<T>(
+      this.axiosInstance.patch<T>(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

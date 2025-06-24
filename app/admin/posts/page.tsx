@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,85 +10,97 @@ import { Plus, Search, Edit, Trash2, Eye, Calendar, User, Filter } from "lucide-
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, } from "@/components/ui/dialog";
 import { Label } from "recharts"
 import { DialogClose } from "@/components/ui/dialog";
+import { newsService } from "@/services/news.service"
+import { apiClient } from "@/lib/api"
 
 
 export default function AdminPostsPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedStatus, setSelectedStatus] = useState("all")
+  const refBtn = useRef(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const [categories, setCategories] = useState<any>([])
 
-  const categories = [
-    { id: "all", name: "Tất cả danh mục" },
-    { id: "news", name: "Tin tức" },
-    { id: "activities", name: "Hoạt động" },
-    { id: "training", name: "Huấn luyện" },
-    { id: "announcements", name: "Thông báo" },
-  ]
+  const [selectedActivity, setSelectedActivity] = useState<string | undefined>(undefined);
+  const [categoriesActivity, setcategoriesActivity] = useState<any>([])
 
-  const statuses = [
-    { id: "all", name: "Tất cả trạng thái" },
-    { id: "published", name: "Đã xuất bản" },
-    { id: "draft", name: "Bản nháp" },
-    { id: "pending", name: "Chờ duyệt" },
-  ]
+  const [Region, setRegion] = useState<any>([])
+  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(undefined);
 
-  const posts = [
-    {
-      id: 1,
-      title: "Hội nghị tổng kết công tác năm 2024",
-      category: "activities",
-      categoryName: "Hoạt động",
-      status: "published",
-      statusName: "Đã xuất bản",
-      author: "Admin",
-      date: "15/12/2024",
-      views: 1250,
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Diễn tập phòng thủ khu vực 2024",
-      category: "training",
-      categoryName: "Huấn luyện",
-      status: "published",
-      statusName: "Đã xuất bản",
-      author: "Phòng Tham mưu",
-      date: "12/12/2024",
-      views: 980,
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "Thông báo về lịch nghỉ Tết Nguyên đán 2025",
-      category: "announcements",
-      categoryName: "Thông báo",
-      status: "draft",
-      statusName: "Bản nháp",
-      author: "Admin",
-      date: "10/12/2024",
-      views: 0,
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "Tin tức quốc tế về tình hình an ninh",
-      category: "news",
-      categoryName: "Tin tức",
-      status: "pending",
-      statusName: "Chờ duyệt",
-      author: "Phòng Chính trị",
-      date: "08/12/2024",
-      views: 0,
-      featured: false,
-    },
-  ]
+  const [News, setNews] = useState<any>([])
+  const [selectedNews, setSelectedNews] = useState<string | undefined>(undefined);
 
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || post.category === selectedCategory
-    const matchesStatus = selectedStatus === "all" || post.status === selectedStatus
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  const [title, setTitle] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [isFeatured, setIsFeatured] = useState(false);
+  const fileName = News.image?.split('/').pop();
+
+
+
+  const handleSubmit = async (e: React.ChangeEvent<any>) => {
+    // e.preventDefault();
+
+    // Tạo đối tượng FormData để dễ dàng truyền file cùng các trường text
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("excerpt", excerpt);
+    formData.append("region", selectedRegion as string);
+    formData.append("category", selectedCategory as string);
+    formData.append("categoryActivity", selectedActivity as string);
+    formData.append("featured", e.target.featured.checked); // Nếu dùng checkbox
+    if (selectedFile) {
+      formData.append("coverImage", selectedFile);
+    }
+
+    try {
+      // Gửi dữ liệu đến API backend
+      const response = await apiClient.upload('/news', formData)
+
+      if (!response) {
+        throw new Error("Lỗi khi lưu dữ liệu.");
+      }
+
+      // Xử lý sau khi lưu thành công: reset form hoặc thông báo cho người dùng
+      console.log("Đã lưu thành công!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+
+
+  useEffect(() => {
+    fetchData()
+    fetchDataActivity()
+    fetchDataRegion()
+    fetchDataNews()
+  }, [])
+  const fetchData = async () => {
+    const res = await newsService.getCategories()
+    if (res.statusCode === 200) {
+      setCategories(res.data)
+    }
+  }
+  const fetchDataRegion = async () => {
+    const res = await newsService.getRegion()
+    if (res.statusCode === 200) {
+      setRegion(res.data)
+    }
+  }
+  const fetchDataNews = async () => {
+    const res = await newsService.getNews()
+    if (res.statusCode === 200) {
+      setNews(res.data)
+    }
+  }
+  const fetchDataActivity = async () => {
+    const res = await newsService.getcategoriesActivity()
+    if (res.statusCode === 200) {
+      setcategoriesActivity(res.data)
+    }
+  }
+
+
 
   const stats = [
     { label: "Tổng bảng tin", value: "156", color: "text-blue-600" },
@@ -96,48 +108,70 @@ export default function AdminPostsPage() {
     { label: "Bản nháp", value: "8", color: "text-yellow-600" },
     { label: "Chờ duyệt", value: "6", color: "text-red-600" },
   ]
-  const handleDelete = () => {
-    const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
-
+  const handleDelete = (id: string) => {
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa dòng này?");
     if (confirmDelete) {
-      // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
-      console.log("Đã xoá bảng tin");
-
-      // 👉 Thông báo
-      if (Notification.permission === "granted") {
-        new Notification("Đã xoá bảng tin", {
-          body: "bảng tin đã được xoá thành công.",
-        });
-      } else if (Notification.permission !== "denied") {
-        // Yêu cầu quyền nếu chưa được cấp
-        Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            new Notification("Đã xoá bảng tin", {
-              body: "bảng tin đã được xoá thành công.",
-            });
-          } else {
-            alert("Đã xoá bảng tin.");
-          }
-        });
-      } else {
-        alert("Đã xoá bảng tin.");
-      }
+      newsService.deletePost(id);
+      window.location.reload();
     }
   };
-
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file); // ✅ tạo preview URL
+      setPreviewUrl(url);
     }
   };
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  };
 
+  useEffect(() => {
+    // console.log(selectedActivity)
+  }, [selectedActivity])
   const [open, setOpen] = useState(false);
+  const handleFocusUpdate = (post: any) => {
+    setTitle(post.title)
+    setExcerpt(post.excerpt)
+    setSelectedActivity(post?.categoryActivity?.id ?? undefined)
+    setSelectedCategory(post?.category?.id ?? undefined)
+    setSelectedRegion(post?.region?.id ?? undefined)
+    setIsFeatured(post?.featured)
+    // setSelectedFile(post?.image);
+  }
+  const handleSubmitUp = async (e: React.ChangeEvent<any>, id: string) => {
+
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("excerpt", excerpt);
+    formData.append("region", selectedRegion as string);
+    formData.append("category", selectedCategory as string);
+    formData.append("categoryActivity", selectedActivity as string);
+    formData.append("featured", isFeatured.toString());
+    if (selectedFile) {
+      formData.append("coverImage", selectedFile ?? undefined);
+    }
+
+    try {
+      const response = await apiClient.uploadPatch(`/news/${id}`, formData)
+
+      if (!response) {
+        throw new Error("Lỗi khi cập nhật dữ liệu.");
+      }
+
+      console.log("Đã cập nhật thành công!");
+      fetchDataNews()
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -155,35 +189,37 @@ export default function AdminPostsPage() {
               <DialogTitle>Thêm bảng tin mới</DialogTitle>
             </DialogHeader>
             <div className=" space-y-4 mt-4 ">
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                  <Input placeholder="Nhập tiêu đề bảng tin" />
+                  <Input placeholder="Nhập tiêu đề bảng tin"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)} />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
-                  <Input placeholder="Nhập tóm tắt bảng tin" />
-                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                   <textarea
                     className="mt-1 w-full border rounded-md p-2"
                     rows={10}
                     placeholder="Nhập nội dung bảng tin"
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="">Danh mục</label>
-                    <Select>
+                    <label htmlFor="">Hoạt động ngoài nước</label>
+                    <Select value={selectedRegion} onValueChange={setSelectedRegion}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn danh mục" />
+                        <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="tin-trong-nuoc">Tin trong nước </SelectItem>
-                        <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
-                        <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                        <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                        {Region?.map((region: any) => (
+                          <SelectItem key={region.id} value={region.id}>
+                            {region?.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -196,15 +232,31 @@ export default function AdminPostsPage() {
                         id="imageFile"
                         type="file"
                         accept="image/*"
-                        onChange={handleFileChange}
                         className="cursor-pointer"
+                        onChange={handleFileChange}
                       />
-                      {imagePreview && (
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="mt-2 w-32 h-32 object-cover rounded border"
-                        />
+
+                      {selectedFile && (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                          {previewUrl && (
+                            <img
+                              src={previewUrl}
+                              alt="Preview"
+                              className="w-24 h-24 object-cover rounded"
+                            />
+                          )}
+                          <div>
+                            <span className="text-sm text-green-700 block">
+                              ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                            </span>
+                            <button
+                              onClick={handleRemoveFile}
+                              className="text-red-500 text-sm hover:underline mt-1"
+                            >
+                              Xóa
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -213,30 +265,32 @@ export default function AdminPostsPage() {
                   <div>
                     <label htmlFor="">Hoạt động quân sự</label>
 
-                    <Select>
+                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="vu-khi-trang-bi">Vũ khí trang bị</SelectItem>
-                        <SelectItem value="chien-thuat">Chiến Thuật</SelectItem>
-                        <SelectItem value="cong-nghe-quan-su">Công nghệ quân sự</SelectItem>
-                        <SelectItem value="quoc-phong">Quốc Phòng</SelectItem>
+                        {categories.map((category: any) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category?.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <label htmlFor="">Hoạt động sư đoàn</label>
 
-                    <Select>
+                    <Select value={selectedActivity} onValueChange={setSelectedActivity}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn hoạt động" />
+                        <SelectValue placeholder="Chọn trạng thái" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
-                        <SelectItem value="thi-dua">Thi đua</SelectItem>
-                        <SelectItem value="hoi-nghi">Hội Nghị</SelectItem>
-                        <SelectItem value="sinh-hoat">Sinh Hoạt</SelectItem>
+                        {categoriesActivity.map((CategoryActivity: any) => (
+                          <SelectItem key={CategoryActivity?.id} value={CategoryActivity?.id}>
+                            {CategoryActivity?.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -249,26 +303,29 @@ export default function AdminPostsPage() {
                     type="checkbox"
                     id="featured"
                     className="rounded"
+                    checked={isFeatured}
+                    onChange={(e) => setIsFeatured(e.target.checked)}
                   />
                   <label htmlFor="featured" className="text-sm text-gray-700">
                     Gắn bảng tin nổi bật
                   </label>
                 </div>
+                <DialogFooter className="flex-shrink-0 mt-4">
+                  <DialogClose asChild>
+                    <Button type="button" className="mr-2">
+                      Hủy
+                    </Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+
+                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                      Lưu bảng tin
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
               </form>
             </div>
-            <DialogFooter className="flex-shrink-0 mt-4">
-              <DialogClose asChild>
-                <Button type="button" className="mr-2">
-                  Hủy
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
 
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Lưu bảng tin
-                </Button>
-              </DialogClose>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
 
@@ -299,8 +356,8 @@ export default function AdminPostsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
               <Input
                 placeholder="Tìm kiếm bảng tin..."
                 value={searchTerm}
@@ -308,67 +365,90 @@ export default function AdminPostsPage() {
                 className="w-full"
               />
             </div>
-            <div>
+
+            <div className="flex-1 min-w-[200px]">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn danh mục" />
+                  <SelectValue placeholder="HĐ Quân Sự" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
+                  {categories.map((category: any) => (
+                    <SelectItem key={category.id} value={category?.id}>
+                      {category?.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+
+            <div className="flex-1 min-w-[200px]">
+              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn trạng thái" />
+                  <SelectValue placeholder="HĐ Ngoài Nước" />
                 </SelectTrigger>
                 <SelectContent>
-                  {statuses.map((status) => (
-                    <SelectItem key={status.id} value={status.id}>
-                      {status.name}
+                  {Region.map((region: any) => (
+                    <SelectItem key={region?.id} value={region?.id}>
+                      {region?.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div>
+
+            <div className="flex-1 min-w-[200px]">
+              <Select value={selectedActivity} onValueChange={setSelectedActivity}>
+                <SelectTrigger>
+                  <SelectValue placeholder="HĐ Sư Đoàn" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoriesActivity.map((item: any) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item?.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex-1 min-w-[200px]">
               <Button variant="outline" className="w-full">
                 <Search className="h-4 w-4 mr-2" />
                 Tìm kiếm
               </Button>
             </div>
           </div>
+
         </CardContent>
       </Card>
 
       {/* Posts Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách bảng tin ({filteredPosts.length})</CardTitle>
+          <CardTitle>Danh sách bảng tin ({News.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredPosts.map((post) => (
-              <div key={post.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+            {News.map((post: any) => (
+              <div key={post?.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="font-semibold text-gray-800">{post.title}</h3>
+                    <h3 className="font-semibold text-gray-800">{post?.title}</h3>
                     {post.featured && <Badge variant="destructive">Nổi bật</Badge>}
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <Badge variant="outline">{post.categoryName}</Badge>
-                    <Badge
-                      variant={
-                        post.status === "published" ? "default" : post.status === "draft" ? "secondary" : "destructive"
-                      }
-                    >
-                      {post.statusName}
-                    </Badge>
+                    {post?.category?.name && (
+                      <Badge variant="outline">{post.category.name}</Badge>
+                    )}
+
+                    {post?.region?.name && (
+                      <Badge variant="destructive">{post.region.name}</Badge>
+                    )}
+
+                    {post?.categoryActivity?.name && (
+                      <Badge variant="default">{post.categoryActivity.name}</Badge>
+                    )}
+
                     <div className="flex items-center">
                       <User className="h-4 w-4 mr-1" />
                       {post.author}
@@ -402,35 +482,31 @@ export default function AdminPostsPage() {
                         <form className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                            <Input placeholder="Nhập tiêu đề bảng tin" disabled />
-                          </div>
+                            <Input placeholder="Nhập tiêu đề bảng tin" disabled
+                              value={post.title}
 
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
-                            <Input placeholder="Nhập tóm tắt bảng tin" disabled />
+                            />
                           </div>
-
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                             <textarea
                               className="mt-1 w-full border rounded-md p-2"
                               rows={10}
                               placeholder="Nhập nội dung bảng tin"
+                              value={post.excerpt}
                               disabled />
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <label>Danh mục</label>
-                              <Select disabled>
+                              <label>Hoạt động ngoài nước</label>
+                              <Select value={post?.region} disabled>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Chọn danh mục" />
+                                  <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="tin-trong-nuoc">Tin trong nước</SelectItem>
-                                  <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
-                                  <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                                  <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                                  <SelectItem value={post?.region}>{post?.region?.name}</SelectItem>
+
                                 </SelectContent>
                               </Select>
                             </div>
@@ -441,16 +517,35 @@ export default function AdminPostsPage() {
                                 <Input
                                   id="imageFile"
                                   type="file"
-                                  onChange={handleFileChange}
                                   accept="image/*"
                                   className="cursor-pointer"
-                                  disabled />
-                                {imagePreview && (
-                                  <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    className="mt-2 w-32 h-32 object-cover rounded border"
-                                  />
+                                  onChange={handleFileChange}
+                                  disabled
+                                />
+
+                                {post.image && (
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                    {post.image && (
+                                      <img
+                                        src={process.env.NEXT_PUBLIC_API_CLIENT + post.image}
+                                        alt="Preview"
+                                        className="w-24 h-24 object-cover rounded"
+                                      />
+                                    )}
+                                    <div>
+                                      <span className="text-sm text-green-700 block">
+                                        ✓ File đã được tải lên
+                                        Tên file: {post.image.split('/').pop()}
+                                      </span>
+                                      <button
+                                        disabled
+                                        onClick={handleRemoveFile}
+                                        className="text-red-500 text-sm hover:underline mt-1"
+                                      >
+                                        Xóa
+                                      </button>
+                                    </div>
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -459,37 +554,34 @@ export default function AdminPostsPage() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label>Hoạt động quân sự</label>
-                              <Select disabled>
+                              <Select value={post.category} disabled>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="vu-khi-trang-bi">Vũ khí trang bị</SelectItem>
-                                  <SelectItem value="chien-thuat">Chiến Thuật</SelectItem>
-                                  <SelectItem value="cong-nghe-quan-su">Công nghệ quân sự</SelectItem>
-                                  <SelectItem value="quoc-phong">Quốc Phòng</SelectItem>
+                                  <SelectItem value={post?.category}>{post?.category?.name}</SelectItem>
+
                                 </SelectContent>
                               </Select>
                             </div>
 
                             <div>
                               <label>Hoạt động sư đoàn</label>
-                              <Select disabled>
+                              <Select value={post.categoryActivity} disabled>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
-                                  <SelectItem value="thi-dua">Thi đua</SelectItem>
-                                  <SelectItem value="hoi-nghi">Hội Nghị</SelectItem>
-                                  <SelectItem value="sinh-hoat">Sinh Hoạt</SelectItem>
+                                  <SelectItem value={post?.categoryActivity}>{post?.categoryActivity?.name}</SelectItem>
+
                                 </SelectContent>
                               </Select>
                             </div>
                           </div>
 
                           <div className="flex items-center space-x-2">
-                            <input type="checkbox" id="featured" className="rounded" disabled />
+                            <input type="checkbox" id="featured" className="rounded" disabled
+                              checked={post.featured === true} />
                             <label htmlFor="featured" className="text-sm text-gray-700">
                               Gắn bảng tin nổi bật
                             </label>
@@ -510,28 +602,25 @@ export default function AdminPostsPage() {
                   </Dialog>
 
 
-                  <Dialog >
+                  <Dialog onOpenChange={(open) => {
+                    if (open) handleFocusUpdate(post);
+                  }}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" >
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
-
                     <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-                      <DialogHeader>
+                      <DialogHeader >
                         <DialogTitle>Cập nhật bảng tin</DialogTitle>
                       </DialogHeader>
-
-                      <div className="space-y-4 mt-4">
-                        <form className="space-y-4">
+                      <div className=" space-y-4 mt-4 ">
+                        <form className="space-y-4" onSubmit={(e) => handleSubmitUp(e, post.id)}>
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                            <Input placeholder="Nhập tiêu đề bảng tin" />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700">Tóm Tắt (*)</label>
-                            <Input placeholder="Nhập tóm tắt bảng tin" />
+                            <Input placeholder="Nhập tiêu đề bảng tin"
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)} />
                           </div>
 
                           <div>
@@ -540,21 +629,23 @@ export default function AdminPostsPage() {
                               className="mt-1 w-full border rounded-md p-2"
                               rows={10}
                               placeholder="Nhập nội dung bảng tin"
+                              value={excerpt}
+                              onChange={(e) => setExcerpt(e.target.value)}
                             />
                           </div>
-
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <label>Danh mục</label>
-                              <Select>
+                              <label htmlFor="">Hoạt động ngoài nước</label>
+                              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Chọn danh mục" />
+                                  <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="tin-trong-nuoc">Tin trong nước</SelectItem>
-                                  <SelectItem value="tin-quoc-te">Quốc tế</SelectItem>
-                                  <SelectItem value="tin-tuc-quan-su">Tin tức quân sự</SelectItem>
-                                  <SelectItem value="tin-hoat-dong-su-doan">Tin hoạt động của sư đoàn</SelectItem>
+                                  {Region?.map((region: any) => (
+                                    <SelectItem key={region.id} value={region.id}>
+                                      {region?.name}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </div>
@@ -565,78 +656,106 @@ export default function AdminPostsPage() {
                                 <Input
                                   id="imageFile"
                                   type="file"
-                                  onChange={handleFileChange}
                                   accept="image/*"
                                   className="cursor-pointer"
+                                  onChange={handleFileChange}
+
                                 />
-                                {imagePreview && (
-                                  <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    className="mt-2 w-32 h-32 object-cover rounded border"
-                                  />
+
+                                {post.image && (
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                    {post.image && (
+                                      <img
+                                        src={post.image}
+                                        alt="Preview"
+                                        className="w-24 h-24 object-cover rounded"
+                                      />
+                                    )}
+                                    <div>
+                                      <span className="text-sm text-green-700 block">
+                                        ✓ File đã được tải lên
+                                        Tên file: {post.image.split('/').pop()}
+
+                                      </span>
+                                      <button
+
+                                        onClick={handleRemoveFile}
+                                        className="text-red-500 text-sm hover:underline mt-1"
+                                      >
+                                        Xóa
+                                      </button>
+                                    </div>
+                                  </div>
                                 )}
                               </div>
                             </div>
                           </div>
-
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <label>Hoạt động quân sự</label>
-                              <Select>
+                              <label htmlFor="">Hoạt động quân sự</label>
+
+                              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="vu-khi-trang-bi">Vũ khí trang bị</SelectItem>
-                                  <SelectItem value="chien-thuat">Chiến Thuật</SelectItem>
-                                  <SelectItem value="cong-nghe-quan-su">Công nghệ quân sự</SelectItem>
-                                  <SelectItem value="quoc-phong">Quốc Phòng</SelectItem>
+                                  {categories.map((category: any) => (
+                                    <SelectItem key={category.id} value={category.id}>
+                                      {category?.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <label htmlFor="">Hoạt động sư đoàn</label>
+
+                              <Select value={selectedActivity} onValueChange={setSelectedActivity}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn trạng thái" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {categoriesActivity.map((CategoryActivity: any) => (
+                                    <SelectItem key={CategoryActivity?.id} value={CategoryActivity?.id}>
+                                      {CategoryActivity?.name}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </div>
 
-                            <div>
-                              <label>Hoạt động sư đoàn</label>
-                              <Select>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn hoạt động" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
-                                  <SelectItem value="thi-dua">Thi đua</SelectItem>
-                                  <SelectItem value="hoi-nghi">Hội Nghị</SelectItem>
-                                  <SelectItem value="sinh-hoat">Sinh Hoạt</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
+
                           </div>
 
                           <div className="flex items-center space-x-2">
-                            <input type="checkbox" id="featured" className="rounded" />
+                            <input
+                              type="checkbox"
+                              id="featured"
+                              className="rounded"
+                              checked={isFeatured}
+                              onChange={(e) => setIsFeatured(e.target.checked)}
+                            />
                             <label htmlFor="featured" className="text-sm text-gray-700">
                               Gắn bảng tin nổi bật
                             </label>
                           </div>
-
-                          <DialogFooter>
+                          <DialogFooter className="flex-shrink-0 mt-4">
                             <DialogClose asChild>
-
-                              <Button type="submit">Hủy</Button>
+                              <Button type="button" className="mr-2">
+                                Hủy
+                              </Button>
                             </DialogClose>
                             <DialogClose asChild>
 
-                              <Button
-                                type="submit"
-
-                                className="bg-blue-600 hover:bg-blue-700"
-                              >
-                                Lưu
+                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                Lưu bảng tin
                               </Button>
                             </DialogClose>
                           </DialogFooter>
                         </form>
+
                       </div>
+
                     </DialogContent>
                   </Dialog>
 
@@ -644,7 +763,8 @@ export default function AdminPostsPage() {
                     variant="outline"
                     size="sm"
                     className="text-red-600 hover:text-red-700"
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(post.id)}
+
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
