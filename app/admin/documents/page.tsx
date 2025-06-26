@@ -185,6 +185,36 @@ export default function AdminDocumentsPage() {
   };
   const [open, setOpen] = useState(false);
 
+  //  const handleSubmit = async (e: React.ChangeEvent<any>) => {
+  //     // e.preventDefault();
+
+  //     // Tạo đối tượng FormData để dễ dàng truyền file cùng các trường text
+  //     const formData = new FormData();
+  //     formData.append("title", title);
+  //     formData.append("excerpt", excerpt);
+  //     formData.append("region", selectedRegion ?? "");
+  //     formData.append("category", selectedCategory ?? "");
+  //     formData.append("categoryActivity", selectedActivity ?? "");
+  //     formData.append("featured", isFeatured.toString()); // Nếu dùng checkbox
+  //     if (selectedFile) {
+  //       formData.append("coverImage", selectedFile);
+  //     }
+
+  //     try {
+  //       // Gửi dữ liệu đến API backend
+  //       const response = await apiClient.upload('/news', formData)
+
+  //       if (!response) {
+  //         throw new Error("Lỗi khi lưu dữ liệu.");
+  //       }
+  //       fetchDataNews()
+
+  //       // Xử lý sau khi lưu thành công: reset form hoặc thông báo cho người dùng
+  //       console.log("Đã lưu thành công!");
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
 
   return (
@@ -206,84 +236,107 @@ export default function AdminDocumentsPage() {
               <DialogTitle>Tạo văn bản mới</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div>
-                <label>Tiêu đề *</label>
-                <Input placeholder="Nhập tiêu đề văn bản" />
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label>Loại văn bản *</label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn loại văn bản" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="chi-thi">Chỉ thị</SelectItem>
-                      <SelectItem value="thong-bao">THông báo</SelectItem>
-                      <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
-                      <SelectItem value="quy-dinh">Quy định</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex-1">
-                  <label>Đơn vị đăng tải *</label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn loại văn bản" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
-                      <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
-                      <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
-                      <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div>
-                <label>Người đăng tải(kèm cấp bậc) *</label>
-                <Input placeholder="Nhập người đăng tải" />
-              </div>
-
-              <div>
-                <label htmlFor="">Tải file lên</label>
-                <div className="space-y-2 mt-2">
-                  <Input
-                    id="fileUrl"
-                    type="file"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                    onChange={handleFileChange}
+              <form className="space-y-4" >
+                <div>
+                  <label>Tiêu đề *</label>
+                  <Input placeholder="Nhập tiêu đề văn bản"
+                  // value={title}
+                  //     onChange={(e) => setTitle(e.target.value)} 
                   />
-
-                  {selectedFile && (
-                    <div className="flex items-center gap-2 p-2 bg-green-50 rounded border border-green-300">
-                      <span className="text-sm text-green-700">
-                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                      </span>
-                      <button
-                        onClick={handleRemoveFile}
-                        className="text-red-500 text-sm hover:underline"
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  )}
                 </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label>Loại văn bản *</label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại văn bản" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="chi-thi">Chỉ thị</SelectItem>
+                        <SelectItem value="thong-bao">THông báo</SelectItem>
+                        <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
+                        <SelectItem value="quy-dinh">Quy định</SelectItem>
+                        <SelectItem value="bao-cao">Báo cáo</SelectItem>
 
-                  <Button type="button"  >
-                    Hủy
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1">
+                    <label>Đơn vị đăng tải *</label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại văn bản" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                        <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                        <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <label>Người đăng tải(kèm cấp bậc) *</label>
+                  <Input placeholder="Nhập người đăng tải"
+                  //  value={title}
+                  //  onChange={(e) => setTitle(e.target.value)} 
+                  />
+                </div>
 
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                    Lưu
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
+                <div>
+                  <label htmlFor="">Tải file </label>
+
+                  <div className="space-y-2">
+                    <Input
+                      id="imageFile"
+                      type="file"
+                      accept="image/*"
+                      className="cursor-pointer"
+                      onChange={handleFileChange}
+                    />
+
+                    {/* {selectedFile && (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                          {previewUrl && (
+                            <img
+                              src={previewUrl}
+                              alt="Preview"
+                              className="w-24 h-24 object-cover rounded"
+                            />
+                          )}
+                          <div>
+                            <span className="text-sm text-green-700 block">
+                              ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                            </span>
+                            <button
+                              onClick={handleRemoveFile}
+                              className="text-red-500 text-sm hover:underline mt-1"
+                            >
+                              Xóa
+                            </button>
+                          </div>
+                        </div>
+                      )} */}
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+
+                    <Button type="button"  >
+                      Hủy
+                    </Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+
+                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                      Lưu
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </form>
+
+
 
 
             </div>
@@ -433,6 +486,7 @@ export default function AdminDocumentsPage() {
                                 <SelectItem value="thong-bao">THông báo</SelectItem>
                                 <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
                                 <SelectItem value="quy-dinh">Quy định</SelectItem>
+                                <SelectItem value="bao-cao">Báo cáo</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>

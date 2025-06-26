@@ -32,6 +32,7 @@ export default function AdminPostsPage() {
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
+
   const fileName = News.image?.split('/').pop();
 
 
@@ -43,10 +44,10 @@ export default function AdminPostsPage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("excerpt", excerpt);
-    formData.append("region", selectedRegion as string);
-    formData.append("category", selectedCategory as string);
-    formData.append("categoryActivity", selectedActivity as string);
-    formData.append("featured", e.target.featured.checked); // Nếu dùng checkbox
+    formData.append("region", selectedRegion ?? "");
+    formData.append("category", selectedCategory ?? "");
+    formData.append("categoryActivity", selectedActivity ?? "");
+    formData.append("featured", isFeatured.toString()); // Nếu dùng checkbox
     if (selectedFile) {
       formData.append("coverImage", selectedFile);
     }
@@ -58,6 +59,7 @@ export default function AdminPostsPage() {
       if (!response) {
         throw new Error("Lỗi khi lưu dữ liệu.");
       }
+      fetchDataNews()
 
       // Xử lý sau khi lưu thành công: reset form hoặc thông báo cho người dùng
       console.log("Đã lưu thành công!");
@@ -101,20 +103,27 @@ export default function AdminPostsPage() {
   }
 
 
+  const totalNews = News.length;
+
 
   const stats = [
     { label: "Tổng bảng tin", value: "156", color: "text-blue-600" },
-    { label: "Đã xuất bản", value: "142", color: "text-green-600" },
-    { label: "Bản nháp", value: "8", color: "text-yellow-600" },
-    { label: "Chờ duyệt", value: "6", color: "text-red-600" },
+    { label: "HĐ quân sự", value: "142", color: "text-green-600" },
+    { label: "HĐ ngoài nước", value: "8", color: "text-yellow-600" },
+    { label: "HĐ sư đoàn", value: "6", color: "text-red-600" },
   ]
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa dòng này?");
     if (confirmDelete) {
-      newsService.deletePost(id);
-      window.location.reload();
+      try {
+        await newsService.deletePost(id);
+        await fetchDataNews();
+      } catch (error) {
+        console.error("Lỗi khi xóa:", error);
+      }
     }
   };
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -147,7 +156,6 @@ export default function AdminPostsPage() {
   const handleSubmitUp = async (e: React.ChangeEvent<any>, id: string) => {
 
     e.preventDefault();
-
     const formData = new FormData();
     formData.append("title", title);
     formData.append("excerpt", excerpt);
@@ -172,6 +180,18 @@ export default function AdminPostsPage() {
       console.error(error);
     }
   };
+  const resetForm = () => {
+    setTitle('');
+    setExcerpt('');
+    setSelectedRegion(undefined);
+    setSelectedCategory(undefined);
+    setSelectedActivity(undefined);
+    setIsFeatured(false);
+    setSelectedFile(null);
+  };
+  const filteredNews = selectedCategory
+    ? News.filter((post: any) => post?.category?.id === selectedCategory)
+    : News;
 
   return (
     <div className="p-6 space-y-6">
@@ -179,7 +199,7 @@ export default function AdminPostsPage() {
         <h1 className="text-3xl font-bold text-gray-800">Quản lý bảng tin</h1>
         <Dialog >
           <DialogTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700">
+            <Button className="bg-red-600 hover:bg-red-700" onClick={resetForm}>
               <Plus className="h-4 w-4 mr-2" />
               Thêm bảng tin mới
             </Button>
@@ -210,15 +230,23 @@ export default function AdminPostsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="">Hoạt động ngoài nước</label>
-                    <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                    <Select
+                      value={selectedRegion}
+                      onValueChange={(value) => {
+                        setSelectedRegion(value === "undefined" ? undefined : value);
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
+
                         {Region?.map((region: any) => (
                           <SelectItem key={region.id} value={region.id}>
                             {region?.name}
                           </SelectItem>
+
                         ))}
                       </SelectContent>
                     </Select>
@@ -265,12 +293,20 @@ export default function AdminPostsPage() {
                   <div>
                     <label htmlFor="">Hoạt động quân sự</label>
 
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={(value) => {
+                        setSelectedCategory(value === "undefined" ? undefined : value);
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
+
                         {categories.map((category: any) => (
+
                           <SelectItem key={category.id} value={category.id}>
                             {category?.name}
                           </SelectItem>
@@ -281,12 +317,20 @@ export default function AdminPostsPage() {
                   <div>
                     <label htmlFor="">Hoạt động sư đoàn</label>
 
-                    <Select value={selectedActivity} onValueChange={setSelectedActivity}>
+                    <Select
+                      value={selectedActivity}
+                      onValueChange={(value) => {
+                        setSelectedActivity(value === "undefined" ? undefined : value);
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn trạng thái" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
+
                         {categoriesActivity.map((CategoryActivity: any) => (
+
                           <SelectItem key={CategoryActivity?.id} value={CategoryActivity?.id}>
                             {CategoryActivity?.name}
                           </SelectItem>
@@ -500,19 +544,23 @@ export default function AdminPostsPage() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label>Hoạt động ngoài nước</label>
-                              <Select value={post?.region} disabled>
+                              <Select value={post?.region ? post.region.id : "undefined"} disabled>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value={post?.region}>{post?.region?.name}</SelectItem>
+                                  <SelectItem value="undefined">Không</SelectItem>
+                                  {post?.region && (
+                                    <SelectItem value={post.region.id}>{post.region.name}</SelectItem>
+                                  )}
 
                                 </SelectContent>
                               </Select>
                             </div>
 
                             <div>
-                              <label>Hình ảnh</label>
+                              <label htmlFor="">Hình ảnh</label>
+
                               <div className="space-y-2">
                                 <Input
                                   id="imageFile"
@@ -523,19 +571,18 @@ export default function AdminPostsPage() {
                                   disabled
                                 />
 
-                                {post.image && (
+                                {selectedFile && (
                                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
-                                    {post.image && (
+                                    {previewUrl && (
                                       <img
-                                        src={process.env.NEXT_PUBLIC_API_CLIENT + post.image}
+                                        src={previewUrl}
                                         alt="Preview"
                                         className="w-24 h-24 object-cover rounded"
                                       />
                                     )}
                                     <div>
                                       <span className="text-sm text-green-700 block">
-                                        ✓ File đã được tải lên
-                                        Tên file: {post.image.split('/').pop()}
+                                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
                                       </span>
                                       <button
                                         disabled
@@ -554,12 +601,16 @@ export default function AdminPostsPage() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label>Hoạt động quân sự</label>
-                              <Select value={post.category} disabled>
+                              <Select value={post?.category ? post.category.id : "undefined"} disabled>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value={post?.category}>{post?.category?.name}</SelectItem>
+                                  <SelectItem value="undefined">Không</SelectItem>
+
+                                  {post?.category && (
+                                    <SelectItem value={post.category.id}>{post.category.name}</SelectItem>
+                                  )}
 
                                 </SelectContent>
                               </Select>
@@ -567,12 +618,16 @@ export default function AdminPostsPage() {
 
                             <div>
                               <label>Hoạt động sư đoàn</label>
-                              <Select value={post.categoryActivity} disabled>
+                              <Select value={post?.categoryActivity ? post.categoryActivity.id : "undefined"} disabled>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value={post?.categoryActivity}>{post?.categoryActivity?.name}</SelectItem>
+                                  <SelectItem value="undefined">Không</SelectItem>
+
+                                  {post?.categoryActivity && (
+                                    <SelectItem value={post.categoryActivity.id}>{post.categoryActivity.name}</SelectItem>
+                                  )}
 
                                 </SelectContent>
                               </Select>
@@ -581,7 +636,7 @@ export default function AdminPostsPage() {
 
                           <div className="flex items-center space-x-2">
                             <input type="checkbox" id="featured" className="rounded" disabled
-                              checked={post.featured === true} />
+                              checked={post.featured} />
                             <label htmlFor="featured" className="text-sm text-gray-700">
                               Gắn bảng tin nổi bật
                             </label>
@@ -636,13 +691,21 @@ export default function AdminPostsPage() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label htmlFor="">Hoạt động ngoài nước</label>
-                              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                              <Select
+                                value={selectedRegion === undefined ? "undefined" : selectedRegion}
+                                onValueChange={(value) => {
+                                  setSelectedRegion(value === "undefined" ? undefined : value);
+                                  
+                                }}
+                              >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                  <SelectItem value="undefined">Không</SelectItem>
+
                                   {Region?.map((region: any) => (
-                                    <SelectItem key={region.id} value={region.id}>
+                                    <SelectItem key={region?.id} value={region?.id}>
                                       {region?.name}
                                     </SelectItem>
                                   ))}
@@ -651,7 +714,8 @@ export default function AdminPostsPage() {
                             </div>
 
                             <div>
-                              <label>Hình ảnh</label>
+                              <label htmlFor="">Hình ảnh</label>
+
                               <div className="space-y-2">
                                 <Input
                                   id="imageFile"
@@ -659,26 +723,22 @@ export default function AdminPostsPage() {
                                   accept="image/*"
                                   className="cursor-pointer"
                                   onChange={handleFileChange}
-
                                 />
 
-                                {post.image && (
+                                {selectedFile && (
                                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
-                                    {post.image && (
+                                    {previewUrl && (
                                       <img
-                                        src={post.image}
+                                        src={previewUrl}
                                         alt="Preview"
                                         className="w-24 h-24 object-cover rounded"
                                       />
                                     )}
                                     <div>
                                       <span className="text-sm text-green-700 block">
-                                        ✓ File đã được tải lên
-                                        Tên file: {post.image.split('/').pop()}
-
+                                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
                                       </span>
                                       <button
-
                                         onClick={handleRemoveFile}
                                         className="text-red-500 text-sm hover:underline mt-1"
                                       >
@@ -694,13 +754,20 @@ export default function AdminPostsPage() {
                             <div>
                               <label htmlFor="">Hoạt động quân sự</label>
 
-                              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                              <Select
+                                value={selectedCategory === undefined ? "undefined" : selectedCategory}
+                                onValueChange={(value) => {
+                                  setSelectedCategory(value === "undefined" ? undefined : value);
+                                }}
+                              >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                  <SelectItem value="undefined">Không</SelectItem>
+
                                   {categories.map((category: any) => (
-                                    <SelectItem key={category.id} value={category.id}>
+                                    <SelectItem key={category?.id} value={category?.id}>
                                       {category?.name}
                                     </SelectItem>
                                   ))}
@@ -710,11 +777,18 @@ export default function AdminPostsPage() {
                             <div>
                               <label htmlFor="">Hoạt động sư đoàn</label>
 
-                              <Select value={selectedActivity} onValueChange={setSelectedActivity}>
+                              <Select
+                                value={selectedActivity === undefined ? "undefined" : selectedActivity}
+                                onValueChange={(value) => {
+                                  setSelectedActivity(value === "undefined" ? undefined : value);
+                                }}
+                              >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Chọn trạng thái" />
                                 </SelectTrigger>
+
                                 <SelectContent>
+                                  <SelectItem value="undefined">Không</SelectItem>
                                   {categoriesActivity.map((CategoryActivity: any) => (
                                     <SelectItem key={CategoryActivity?.id} value={CategoryActivity?.id}>
                                       {CategoryActivity?.name}
@@ -722,6 +796,7 @@ export default function AdminPostsPage() {
                                   ))}
                                 </SelectContent>
                               </Select>
+
                             </div>
 
 

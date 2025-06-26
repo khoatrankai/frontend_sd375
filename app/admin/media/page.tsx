@@ -8,12 +8,22 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Upload, Search, Trash2, Download, Eye, Calendar, Grid3X3, List } from "lucide-react"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, } from "@/components/ui/dialog";
+import { newsService } from "@/services/news.service"
+import { imagesService } from "@/services/images.service"
+import { apiClient } from "@/lib/api"
+
 
 
 export default function AdminMediaPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [viewMode, setViewMode] = useState("grid")
+  const [selectedDocType, setSelectedDocType] = useState<string>("image");
+  const [Image, setImage] = useState<any>([])
+
+  // const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
+  const [category, setCategory] = useState<any>([])
+
 
   const mediaTypes = [
     { id: "all", name: "Tất cả" },
@@ -103,6 +113,12 @@ export default function AdminMediaPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
+  const [title, setTitle] = useState("");
+  const [selectedthumbnail, setThumbnail] = useState<File | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+
+
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -112,18 +128,7 @@ export default function AdminMediaPage() {
     setPreviewUrl(url);
   };
 
-  const handleSave = () => {
-    if (selectedFile) {
-      // TODO: Gửi file lên server hoặc xử lý file tại đây
-      console.log("Saving file:", selectedFile);
-    }
-    setOpen(false); // Đóng dialog sau khi lưu
-  };
 
-  const handleCancel = () => {
-    setSelectedFile(null);
-    setOpen(false); // Đóng dialog khi hủy
-  };
   useEffect(() => {
     return () => {
       if (previewUrl) {
@@ -162,7 +167,48 @@ export default function AdminMediaPage() {
   const handleRemoveFile = () => {
     setSelectedFile(null);
   };
+  useEffect(() => {
+    fetchDataNews()
+    fetchData()
 
+  }, [])
+  const fetchData = async () => {
+    const res = await imagesService.getCategories()
+    if (res.statusCode === 200) {
+      setCategory(res.data)
+    }
+  }
+  const fetchDataNews = async () => {
+    const res = await imagesService.getImages()
+    if (res.statusCode === 200) {
+      setImage(res.data)
+    }
+  };
+  const handleSubmit = async (e: React.ChangeEvent<any>) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("category", selectedCategory ?? "");
+    if (selectedthumbnail) {
+      formData.append("coverImage", selectedthumbnail);
+    }
+
+    try {
+      // Gửi dữ liệu đến API backend
+      const response = await apiClient.upload('/images', formData)
+
+      if (!response) {
+        throw new Error("Lỗi khi lưu dữ liệu.");
+      }
+      fetchDataNews()
+
+      // Xử lý sau khi lưu thành công: reset form hoặc thông báo cho người dùng
+      console.log("Đã lưu thành công!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -181,13 +227,13 @@ export default function AdminMediaPage() {
               <DialogTitle>Tải lên file</DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-4">
+            <form className="space-y-4">
               {/* Select file type */}
               <div>
                 <label className="block text-sm font-medium mb-1">Loại thư viện</label>
-                <Select onValueChange={setFileType} defaultValue="image">
+                <Select onValueChange={setSelectedDocType} defaultValue="image">
                   <SelectTrigger>
-                    <SelectValue placeholder="Chọn loại file" />
+                    <SelectValue placeholder="Chọn hoạt động" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="image">Ảnh</SelectItem>
@@ -196,6 +242,87 @@ export default function AdminMediaPage() {
                     <SelectItem value="document">Phần mềm</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <label className="block text-sm font-medium mb-1">Tiêu đề</label>
+
+              <Input placeholder="Nhập tiêu đề bảng tin"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)} />
+              <div>
+                {selectedDocType === "image" && (
+
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                    <Select onValueChange={setSelectedDocType} >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* <SelectItem value="undefined">Không</SelectItem> */}
+
+                        {category?.map((category: any) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category?.name}
+                          </SelectItem>
+
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                {selectedDocType === "video" && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                    <Select onValueChange={setSelectedDocType} >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                        <SelectItem value="le-ki-niem">Lễ kỷ niệm</SelectItem>
+                        <SelectItem value="dien-tap">Diễn tập</SelectItem>
+                        <SelectItem value="phong-su">Phóng sự</SelectItem>
+                        <SelectItem value="tin-tuc">Tin tức</SelectItem>
+
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                {selectedDocType === "audio" && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                    <Select onValueChange={setSelectedDocType} >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="quoc-ca">Quốc ca</SelectItem>
+                        <SelectItem value="cach-mang">Ca khúc cách mạng</SelectItem>
+                        <SelectItem value="quan-doi">Hành khúc quân đội</SelectItem>
+                        <SelectItem value="dan-ca">Dân ca</SelectItem>
+
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                {selectedDocType === "document" && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                    <Select onValueChange={setSelectedDocType} >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="quan-li">Quản lý</SelectItem>
+                        <SelectItem value="bao-mat">Bảo mật</SelectItem>
+                        <SelectItem value="tien-ich">Tiện ích</SelectItem>
+                        <SelectItem value="csdl">Cơ sở dữ liệu</SelectItem>
+
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
 
               {/* Upload input */}
@@ -248,7 +375,7 @@ export default function AdminMediaPage() {
                   )}
                 </div>
               )}
-            </div>
+            </form>
 
             <div className="text-end">
               <DialogClose asChild>
@@ -298,7 +425,7 @@ export default function AdminMediaPage() {
               />
               <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Chọn loại file" />
+                  <SelectValue placeholder="Chọn hoạt động" />
                 </SelectTrigger>
                 <SelectContent>
                   {mediaTypes.map((type) => (
@@ -336,12 +463,12 @@ export default function AdminMediaPage() {
       {/* Media Grid/List */}
       <Card>
         <CardHeader>
-          <CardTitle>Thư viện media ({filteredMedia.length} file)</CardTitle>
+          <CardTitle>Thư viện media ({Image.length} file)</CardTitle>
         </CardHeader>
         <CardContent>
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredMedia.map((file) => (
+              {Image.map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
@@ -349,10 +476,12 @@ export default function AdminMediaPage() {
                       alt={file.name}
                       className="w-full h-32 object-cover"
                     />
-                    <Badge className="absolute top-2 right-2">{file.typeName}</Badge>
+                    {file?.category?.name && (
+                      <Badge className="absolute top-2 right-2" variant="default">{file.category.name}</Badge>
+                    )}
                   </div>
                   <div className="p-4">
-                    <h4 className="font-medium text-sm line-clamp-2 mb-2">{file.name}</h4>
+                    <h4 className="font-medium text-sm line-clamp-2 mb-2">{file.title}</h4>
                     <div className="text-xs text-gray-500 space-y-1">
                       <div className="flex justify-between">
                         <span>Kích thước:</span>
@@ -385,9 +514,9 @@ export default function AdminMediaPage() {
                             {/* Select file type */}
                             <div>
                               <label className="block text-sm font-medium mb-1">Loại thư viện</label>
-                              <Select onValueChange={setFileType} defaultValue="image" disabled >
+                              <Select onValueChange={setSelectedDocType} defaultValue="image" disabled >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Chọn loại file" />
+                                  <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="image">Ảnh</SelectItem>
@@ -397,7 +526,78 @@ export default function AdminMediaPage() {
                                 </SelectContent>
                               </Select>
                             </div>
+                            <div>
+                              {selectedDocType === "image" && (
+                                <div>
+                                  <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                  <Select onValueChange={setSelectedDocType} disabled>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Chọn hoạt động" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                                      <SelectItem value="le-ki-niem">Lễ kỷ niệm</SelectItem>
+                                      <SelectItem value="dien-tap">Diễn tập</SelectItem>
+                                      <SelectItem value="sinh-hoat">Sinh hoạt</SelectItem>
+                                      <SelectItem value="xay-dung">Xây dựng</SelectItem>
 
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                              {selectedDocType === "video" && (
+                                <div>
+                                  <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                  <Select onValueChange={setSelectedDocType} disabled>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Chọn hoạt động" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                                      <SelectItem value="le-ki-niem">Lễ kỷ niệm</SelectItem>
+                                      <SelectItem value="dien-tap">Diễn tập</SelectItem>
+                                      <SelectItem value="phong-su">Phóng sự</SelectItem>
+                                      <SelectItem value="tin-tuc">Tin tức</SelectItem>
+
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                              {selectedDocType === "audio" && (
+                                <div>
+                                  <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                  <Select onValueChange={setSelectedDocType} disabled>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Chọn hoạt động" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="quoc-ca">Quốc ca</SelectItem>
+                                      <SelectItem value="cach-mang">Ca khúc cách mạng</SelectItem>
+                                      <SelectItem value="quan-doi">Hành khúc quân đội</SelectItem>
+                                      <SelectItem value="dan-ca">Dân ca</SelectItem>
+
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                              {selectedDocType === "document" && (
+                                <div>
+                                  <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                  <Select onValueChange={setSelectedDocType} disabled>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Chọn hoạt động" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="quan-li">Quản lý</SelectItem>
+                                      <SelectItem value="bao-mat">Bảo mật</SelectItem>
+                                      <SelectItem value="tien-ich">Tiện ích</SelectItem>
+                                      <SelectItem value="csdl">Cơ sở dữ liệu</SelectItem>
+
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                            </div>
                             {/* Upload input */}
                             <div>
                               <label className="block text-sm font-medium mb-1">Chọn file</label>
@@ -506,9 +706,9 @@ export default function AdminMediaPage() {
                           {/* Select file type */}
                           <div>
                             <label className="block text-sm font-medium mb-1">Loại thư viện</label>
-                            <Select onValueChange={setFileType} defaultValue="image" disabled >
+                            <Select onValueChange={setSelectedDocType} defaultValue="image" disabled >
                               <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại file" />
+                                <SelectValue placeholder="Chọn hoạt động" />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="image">Ảnh</SelectItem>
@@ -518,7 +718,78 @@ export default function AdminMediaPage() {
                               </SelectContent>
                             </Select>
                           </div>
+                          <div>
+                            {selectedDocType === "image" && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                <Select onValueChange={setSelectedDocType} disabled>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Chọn hoạt động" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                                    <SelectItem value="le-ki-niem">Lễ kỷ niệm</SelectItem>
+                                    <SelectItem value="dien-tap">Diễn tập</SelectItem>
+                                    <SelectItem value="sinh-hoat">Sinh hoạt</SelectItem>
+                                    <SelectItem value="xay-dung">Xây dựng</SelectItem>
 
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                            {selectedDocType === "video" && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                <Select onValueChange={setSelectedDocType} disabled>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Chọn hoạt động" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="huan-luyen">Huấn luyện</SelectItem>
+                                    <SelectItem value="le-ki-niem">Lễ kỷ niệm</SelectItem>
+                                    <SelectItem value="dien-tap">Diễn tập</SelectItem>
+                                    <SelectItem value="phong-su">Phóng sự</SelectItem>
+                                    <SelectItem value="tin-tuc">Tin tức</SelectItem>
+
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                            {selectedDocType === "audio" && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                <Select onValueChange={setSelectedDocType} disabled>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Chọn hoạt động" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="quoc-ca">Quốc ca</SelectItem>
+                                    <SelectItem value="cach-mang">Ca khúc cách mạng</SelectItem>
+                                    <SelectItem value="quan-doi">Hành khúc quân đội</SelectItem>
+                                    <SelectItem value="dan-ca">Dân ca</SelectItem>
+
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                            {selectedDocType === "document" && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                                <Select onValueChange={setSelectedDocType} disabled>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Chọn hoạt động" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="quan-li">Quản lý</SelectItem>
+                                    <SelectItem value="bao-mat">Bảo mật</SelectItem>
+                                    <SelectItem value="tien-ich">Tiện ích</SelectItem>
+                                    <SelectItem value="csdl">Cơ sở dữ liệu</SelectItem>
+
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                          </div>
                           {/* Upload input */}
                           <div>
                             <label className="block text-sm font-medium mb-1">Chọn file</label>
@@ -591,3 +862,4 @@ export default function AdminMediaPage() {
     </div>
   )
 }
+

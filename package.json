@@ -53,7 +53,7 @@
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
     "@sap/hana-client": "latest",
-    "antd": "^5.26.1",
+    "antd": "^5.26.2",
     "axios": "^1.10.0",
     "bcryptjs": "latest",
     "better-sqlite3": "latest",
