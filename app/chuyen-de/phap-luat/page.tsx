@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Scale, Clock, Eye, User, ChevronRight, FileText, Shield, Gavel } from "lucide-react"
+import { articlesService } from "@/services/articles.service"
 
 export default function LawPage() {
   const [selectedFilter, setSelectedFilter] = useState("all")
@@ -16,84 +17,16 @@ export default function LawPage() {
     { id: "regulations", name: "Quy định", count: 3 },
   ]
 
-  const articles = [
-    {
-      id: 1,
-      title: "Luật Quốc phòng 2018 - Những điểm mới và ý nghĩa",
-      excerpt:
-        "Phân tích những điểm mới trong Luật Quốc phòng 2018, tác động và ý nghĩa đối với hoạt động của lực lượng vũ trang. Những thay đổi quan trọng trong tổ chức và hoạt động...",
-      author: "Thiếu tá Lê Văn C",
-      date: "10/12/2024",
-      views: 756,
-      readTime: "10 phút",
-      category: "defense-law",
-      categoryName: "Luật Quốc phòng",
-      featured: true,
-      tags: ["Luật Quốc phòng", "Pháp luật", "Quy định", "2018"],
-    },
-    {
-      id: 2,
-      title: "Quy định về kỷ luật trong quân đội - Cập nhật mới nhất",
-      excerpt:
-        "Tổng hợp các quy định mới nhất về kỷ luật trong quân đội, hướng dẫn thực hiện và những lưu ý quan trọng trong việc áp dụng các biện pháp kỷ luật...",
-      author: "Trung tá Nguyễn Văn D",
-      date: "08/12/2024",
-      views: 642,
-      readTime: "8 phút",
-      category: "regulations",
-      categoryName: "Quy định",
-      featured: true,
-      tags: ["Kỷ luật", "Quy định", "Quân đội", "Hướng dẫn"],
-    },
-    {
-      id: 3,
-      title: "Luật Dân quân tự vệ và tác động đến quốc phòng toàn dân",
-      excerpt:
-        "Nghiên cứu về Luật Dân quân tự vệ, vai trò của lực lượng dân quân tự vệ trong hệ thống quốc phòng toàn dân và an ninh nhân dân...",
-      author: "Đại úy Phạm Thị E",
-      date: "05/12/2024",
-      views: 523,
-      readTime: "12 phút",
-      category: "defense-law",
-      categoryName: "Luật Quốc phòng",
-      featured: false,
-      tags: ["Dân quân tự vệ", "Quốc phòng", "Toàn dân", "An ninh"],
-    },
-    {
-      id: 4,
-      title: "Pháp luật quân sự trong thời kỳ hội nhập",
-      excerpt:
-        "Phân tích sự phát triển của pháp luật quân sự Việt Nam trong bối cảnh hội nhập quốc tế, những thách thức và cơ hội trong việc hoàn thiện hệ thống pháp luật...",
-      author: "Thiếu tá Hoàng Văn F",
-      date: "03/12/2024",
-      views: 445,
-      readTime: "15 phút",
-      category: "military-law",
-      categoryName: "Luật Quân sự",
-      featured: false,
-      tags: ["Pháp luật quân sự", "Hội nhập", "Quốc tế", "Phát triển"],
-    },
-    {
-      id: 5,
-      title: "Quy chế công tác cán bộ trong quân đội",
-      excerpt:
-        "Hướng dẫn chi tiết về quy chế công tác cán bộ, từ tuyển dụng, đào tạo, bổ nhiệm đến đánh giá và luân chuyển cán bộ trong các đơn vị quân đội...",
-      author: "Trung tá Vũ Văn G",
-      date: "01/12/2024",
-      views: 367,
-      readTime: "11 phút",
-      category: "regulations",
-      categoryName: "Quy định",
-      featured: false,
-      tags: ["Cán bộ", "Quy chế", "Tuyển dụng", "Đánh giá"],
-    },
-  ]
+  const [articles,setArticles] = useState<any>([
+  ])
 
-  const filteredArticles =
-    selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
+  const [filteredArticles,setFilteredArticales] = useState<any>([])
+    // selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
 
-  const featuredArticles = filteredArticles.filter((article) => article.featured)
-  const regularArticles = filteredArticles.filter((article) => !article.featured)
+  const [featuredArticles,setFeaturedArticles] = useState<any>([])
+  // filteredArticles.filter((article) => article.featured)
+  const [regularArticles,setRegularArticles] = useState<any>([]) 
+  // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
     { label: "Văn bản pháp luật", value: "8", icon: FileText, color: "text-blue-600" },
@@ -101,6 +34,26 @@ export default function LawPage() {
     { label: "Chuyên gia pháp lý", value: "5", icon: User, color: "text-purple-600" },
     { label: "Cập nhật", value: "Hàng tháng", icon: Shield, color: "text-orange-600" },
   ]
+
+  const fetchData = async()=>{
+        const res = await articlesService.getArticles({type:'ttpl'})
+        if(res.statusCode === 200){
+          setArticles(res.data)
+        }
+      }
+    
+      useEffect(()=>{
+        fetchData()
+      },[])
+    
+      useEffect(()=>{
+        setFilteredArticales( selectedFilter === "all" ? articles : articles.filter((article:any) => article?.category?.nametag === selectedFilter))
+      },[articles,selectedFilter])
+    
+      useEffect(()=>{
+        setFeaturedArticles( filteredArticles.filter((article:any) => article?.featured))
+        setRegularArticles( filteredArticles.filter((article:any) => !article?.featured))
+      },[filteredArticles])
 
   return (
     <div className="space-y-8">
@@ -140,7 +93,9 @@ export default function LawPage() {
             <Scale className="h-4 w-4" />
             <span>{filter.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {filter.count}
+              {
+                filter.id === "all" ? articles.length : articles.filter((i:any)=>i?.category?.nametag === filter.id).length
+              }
             </Badge>
           </Button>
         ))}
@@ -151,11 +106,11 @@ export default function LawPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Bài viết nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredArticles.map((article) => (
+            {featuredArticles.map((article:any) => (
               <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge className="bg-red-600">{article.categoryName}</Badge>
+                    <Badge className="bg-red-600">{article?.category?.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {article.readTime}
@@ -166,7 +121,7 @@ export default function LawPage() {
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {article.tags.map((tag, index) => (
+                    {article.tags.map((tag:any, index:number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
@@ -201,13 +156,13 @@ export default function LawPage() {
           {selectedFilter === "all" ? "Tất cả bài viết" : filters.find((f) => f.id === selectedFilter)?.name}
         </h2>
         <div className="space-y-6">
-          {regularArticles.map((article) => (
+          {(selectedFilter === "all" ?regularArticles:filteredArticles).map((article:any) => (
             <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="outline">{article.categoryName}</Badge>
+                      <Badge variant="outline">{article?.category?.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
                         {article.readTime}
@@ -218,7 +173,7 @@ export default function LawPage() {
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {article.tags.map((tag, index) => (
+                      {article.tags.map((tag:any, index:number) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           {tag}
                         </Badge>

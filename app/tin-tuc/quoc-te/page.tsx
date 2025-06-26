@@ -1,15 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight, Globe } from "lucide-react"
+import { newsService } from "@/services/news.service"
 
 export default function InternationalNewsPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
-  const news = [
+  const [news,setNews] = useState([
     {
       id: 1,
       title: "NATO tăng cường hợp tác quốc phòng với các đối tác châu Á-Thái Bình Dương",
@@ -59,16 +60,30 @@ export default function InternationalNewsPage() {
       category: "Quốc phòng",
       region: "Châu Âu",
     },
-  ]
+  ])
 
   const regions = [
     { id: "all", name: "Tất cả", count: 45 },
-    { id: "asia", name: "Châu Á", count: 18 },
-    { id: "europe", name: "Châu Âu", count: 12 },
-    { id: "america", name: "Châu Mỹ", count: 8 },
-    { id: "africa", name: "Châu Phi", count: 4 },
-    { id: "oceania", name: "Châu Đại Dương", count: 3 },
+    { id: "chau_a", name: "Châu Á", count: 18 },
+    { id: "chau_au", name: "Châu Âu", count: 12 },
+    { id: "chau_my", name: "Châu Mỹ", count: 8 },
+    { id: "chau_phi", name: "Châu Phi", count: 4 },
+    { id: "chau_dai_duong", name: "Châu Đại Dương", count: 3 },
   ]
+
+  useEffect(()=>{
+      fetchData()
+    },[])
+  
+    const fetchData = async()=>{
+      const res = await newsService.getPosts({type:"quoc_te",page:currentPage,limit:10})
+      if(res.statusCode === 200){
+        setNews(res.data)
+        setCurrentPage(currentPage+1)
+      }else{
+        console.log(res)
+      }
+    }
 
   const [selectedRegion, setSelectedRegion] = useState("all")
 
@@ -91,7 +106,9 @@ export default function InternationalNewsPage() {
             <Globe className="h-4 w-4" />
             <span>{region.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {region.count}
+              {
+                region.id === "all" ? news.length : news.filter((i:any)=>i.region.nametag === region.id).length
+              }
             </Badge>
           </Button>
         ))}
@@ -99,7 +116,12 @@ export default function InternationalNewsPage() {
 
       {/* News List */}
       <div className="space-y-6">
-        {news.map((item) => (
+        {news.filter((dt:any)=>{
+          if(selectedRegion === "all" || dt.region.nametag === selectedRegion){
+            return true
+          }
+          return false
+        }).map((item:any) => (
           <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row">
@@ -112,8 +134,8 @@ export default function InternationalNewsPage() {
                 </div>
                 <div className="md:w-2/3 p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge variant="outline">{item.category}</Badge>
-                    <Badge variant="secondary">{item.region}</Badge>
+                    <Badge variant="outline">{item.category.name}</Badge>
+                    <Badge variant="secondary">{item.region.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {item.time}

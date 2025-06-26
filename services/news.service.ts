@@ -4,7 +4,27 @@ import type { Post, PostsResponse, PaginationParams, ApiResponse } from "@/lib/t
 export class NewsService {
   async getPosts(params?: PaginationParams) {
     try {
-      const response = await apiClient.get<ApiResponse<PostsResponse>>("/news", params)
+      const response = await apiClient.get<any>("/news", params)
+      return response || { posts: [], total: 0, page: 1, limit: 10 }
+    } catch (error) {
+      console.error("Get posts error:", error)
+      return { posts: [], total: 0, page: 1, limit: 10 }
+    }
+  }
+
+  async getCategoriesNew(params?: PaginationParams) {
+    try {
+      const response = await apiClient.get<any>("/news/categories", params)
+      return response || { posts: [], total: 0, page: 1, limit: 10 }
+    } catch (error) {
+      console.error("Get posts error:", error)
+      return { posts: [], total: 0, page: 1, limit: 10 }
+    }
+  }
+
+  async getCategoryActivity(params?: PaginationParams) {
+    try {
+      const response = await apiClient.get<any>("/news/category-activity", params)
       return response || { posts: [], total: 0, page: 1, limit: 10 }
     } catch (error) {
       console.error("Get posts error:", error)
@@ -51,7 +71,7 @@ export class NewsService {
 
   async createPost(post: Omit<Post, "id" | "publishedAt" | "updatedAt" | "views">) {
     try {
-      const response = await apiClient.post<ApiResponse<Post>>("/news", post)
+      const response = await apiClient.post<any>("/news", post)
       return response || null
     } catch (error) {
       console.error("Create post error:", error)
@@ -61,7 +81,7 @@ export class NewsService {
 
   async updatePost(id: string, post:any){
     try {
-      const response = await apiClient.put<ApiResponse<Post>>(`/news/${id}`, post)
+      const response = await apiClient.put<any>(`/news/${id}`, post)
       return response || null
     } catch (error) {
       console.error("Update post error:", error)

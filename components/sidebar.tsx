@@ -8,9 +8,10 @@ import TimeAgo from "./time-ago"
 import { imagesService } from "@/services/images.service"
 import { videosService } from "@/services/videos.service"
 import { tracksService } from "@/services/tracks.service"
-import ReactPlayer from 'react-player'
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false })
 import { Image } from "antd"
 import AudioPlayer from "./audio-player"
+import dynamic from "next/dynamic"
 
 export default function Sidebar() {
   const quickLinks = ["Bộ Quốc phòng", "Quân khu 7", "Báo Quân đội nhân dân", "VOV Giao thông", "Thời tiết"]
@@ -47,7 +48,7 @@ export default function Sidebar() {
   }
 
   useEffect(()=>{
-    setNewsFilter(newsItems.filter((i:any)=> !i.featured).filter((i:any,index:number)=> index > 3))
+    setNewsFilter(newsItems.filter((i:any)=> !i.featured).filter((i:any,index:number)=> index < 3))
   },[newsItems])
 useEffect(()=>{
   fetchData()
@@ -175,7 +176,7 @@ useEffect(()=>{
           <div className="space-y-3">
             {
               tracks?.map((dt:any)=>{
-                return <>
+                return <div key={dt.id}>
               {/* <div className="flex items-center space-x-3 p-2 bg-white rounded border">
               <Button size="icon" variant="outline" className="h-8 w-8">
                 <Volume2 className="h-4 w-4" />
@@ -185,8 +186,8 @@ useEffect(()=>{
                 <p className="text-xs text-gray-500">{dt?.duration || "00:00"}</p>
               </div>
             </div> */}
-            <AudioPlayer src={dt?.link || "/public/placeholder.svg?height=200&width=300"} />
-                </>
+            <AudioPlayer  src={dt?.link || "/public/placeholder.svg?height=200&width=300"} data={dt}/>
+                </div>
               })
             }
             

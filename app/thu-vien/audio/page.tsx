@@ -1,25 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Play, Pause, Volume2, SkipForward, SkipBack, Download, Clock, Music, Heart, Share2 } from "lucide-react"
+import { tracksService } from "@/services/tracks.service"
+import AudioPlayerProUI from "@/components/audio-player-pro.ui"
 
 export default function AudioPage() {
+  const refBtnReset = useRef<any>(undefined)
   const [currentTrack, setCurrentTrack] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
+  // const [isPlaying, setIsPlaying] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
 
-  const categories = [
-    { id: "all", name: "Tất cả", count: 15 },
-    { id: "national", name: "Quốc ca", count: 3 },
-    { id: "revolutionary", name: "Ca khúc cách mạng", count: 6 },
-    { id: "military", name: "Hành khúc quân đội", count: 4 },
-    { id: "folk", name: "Dân ca", count: 2 },
-  ]
+  const [categories,setCategories] = useState<any>([
+  ])
 
-  const tracks = [
+  const [tracks,setTracks] = useState<any>([
     {
       id: 1,
       title: "Quốc ca Việt Nam",
@@ -116,16 +114,53 @@ export default function AudioPage() {
       releaseDate: "1968",
       featured: false,
     },
-  ]
+  ])
 
-  const filteredTracks =
-    selectedCategory === "all" ? tracks : tracks.filter((track) => track.category === selectedCategory)
-  const featuredTracks = filteredTracks.filter((track) => track.featured)
-  const regularTracks = filteredTracks.filter((track) => !track.featured)
+  const [filteredTracks,setFilteredTracks] = useState<any>([])
+    // selectedCategory === "all" ? tracks : tracks.filter((track) => track.category === selectedCategory)
+  const [featuredTracks,setFeaturedTracks] = useState<any>([])
+  // filteredTracks.filter((track) => track.featured)
+  const [regularTracks,setRegularTracks] = useState<any>([])
+  // filteredTracks.filter((track) => !track.featured)
 
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying)
+  const handleReset = () => {
+    refBtnReset.current?.reset()
+    setCurrentTrack(0)
   }
+
+  useEffect(()=>{
+    console.log(filteredTracks)
+    setFeaturedTracks(filteredTracks.filter((track:any) => track.featured))
+    setRegularTracks(filteredTracks.filter((track:any) => !track.featured))
+  },[filteredTracks])
+
+  
+
+  useEffect(()=>{
+    console.log(tracks,selectedCategory)
+    setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track:any) => track.category.nametag === selectedCategory))
+  },[selectedCategory,tracks])
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  const fetchData = async ()=>{
+    const res = await tracksService.getTracks()
+    const res2 = await tracksService.getCategories()
+    if(res.statusCode === 200){
+      setTracks(res.data)
+    }
+
+    if(res2.statusCode === 200){
+      setCategories(res2.data)
+    }
+  }
+
+
+  // const togglePlay = () => {
+  //   setIsPlaying(!isPlaying)
+  // }
 
   const nextTrack = () => {
     setCurrentTrack((prev) => (prev + 1) % filteredTracks.length)
@@ -136,8 +171,10 @@ export default function AudioPage() {
   }
 
   const selectTrack = (index: number) => {
+    // refBtn.current.click()
     setCurrentTrack(index)
-    setIsPlaying(true)
+    handleReset()
+    // setIsPlaying(true)
   }
 
   return (
@@ -151,17 +188,25 @@ export default function AudioPage() {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category) => (
+        {categories.map((category:any) => (
           <Button
             key={category.id}
-            variant={selectedCategory === category.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.id)}
+            variant={selectedCategory === category.nametag ? "default" : "outline"}
+            onClick={() => {
+              setSelectedCategory(category.nametag)
+              // refBtn.current.click()
+              handleReset()
+            } 
+              
+          }
             className="flex items-center space-x-2"
           >
             <Music className="h-4 w-4" />
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {category.count}
+              {
+                category.nametag === "all" ? tracks.length : tracks.filter((i:any)=>i.category.nametag === category.nametag).length
+              }
             </Badge>
           </Button>
         ))}
@@ -170,7 +215,7 @@ export default function AudioPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Audio Player */}
         <div className="lg:col-span-1">
-          <Card className="bg-gradient-to-br from-red-50 to-red-100 sticky top-4">
+          {/* <Card className="bg-gradient-to-br from-red-50 to-red-100 sticky top-4">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Volume2 className="h-5 w-5 mr-2 text-red-600" />
@@ -229,7 +274,8 @@ export default function AudioPage() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
+          <AudioPlayerProUI refBtnReset={refBtnReset} onNext={nextTrack} onPrev={prevTrack} duration={filteredTracks?.[currentTrack]?.duration} category={filteredTracks?.[currentTrack]?.category?.name} artist={filteredTracks?.[currentTrack]?.artist} title={filteredTracks?.[currentTrack]?.title} src={filteredTracks?.[currentTrack]?.link} />
         </div>
 
         {/* Playlist */}
@@ -239,7 +285,7 @@ export default function AudioPage() {
             <section>
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Bài hát nổi bật</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {featuredTracks.map((track, index) => (
+                {featuredTracks.map((track:any, index:number) => (
                   <Card
                     key={track.id}
                     className={`cursor-pointer transition-all hover:shadow-lg ${
@@ -251,21 +297,22 @@ export default function AudioPage() {
                       <div className="flex items-center space-x-4">
                         <div
                           className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            currentTrack === index && isPlaying ? "bg-red-600 text-white" : "bg-gray-200"
+                            currentTrack === index ? "bg-red-600 text-white" : "bg-gray-200"
                           }`}
                         >
-                          {currentTrack === index && isPlaying ? (
+                          {/* {currentTrack === index && isPlaying ? (
                             <Pause className="h-5 w-5" />
                           ) : (
                             <Play className="h-5 w-5" />
-                          )}
+                          )} */}
+                          <Play className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-gray-800 truncate">{track.title}</h4>
                           <p className="text-sm text-gray-600">{track.artist}</p>
                           <div className="flex items-center space-x-2 mt-1">
                             <Badge variant="outline" className="text-xs">
-                              {track.categoryName}
+                              {track.category.name}
                             </Badge>
                             <span className="text-xs text-gray-500">{track.duration}</span>
                           </div>
@@ -287,7 +334,7 @@ export default function AudioPage() {
             <Card>
               <CardContent className="p-0">
                 <div className="space-y-1">
-                  {regularTracks.map((track, index) => {
+                  {regularTracks.map((track:any, index:number) => {
                     const actualIndex = featuredTracks.length + index
                     return (
                       <div
@@ -300,14 +347,15 @@ export default function AudioPage() {
                         <div className="flex items-center space-x-4">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                              currentTrack === actualIndex && isPlaying ? "bg-red-600 text-white" : "bg-gray-200"
+                              currentTrack === actualIndex ? "bg-red-600 text-white" : "bg-gray-200"
                             }`}
                           >
-                            {currentTrack === actualIndex && isPlaying ? (
+                            {/* {currentTrack === actualIndex && isPlaying ? (
                               <Pause className="h-4 w-4" />
                             ) : (
                               <Play className="h-4 w-4" />
-                            )}
+                            )} */}
+                            <Play className="h-4 w-4" />
                           </div>
                           <div>
                             <h4 className="font-medium text-gray-800">{track.title}</h4>
@@ -316,7 +364,7 @@ export default function AudioPage() {
                         </div>
                         <div className="flex items-center space-x-4">
                           <Badge variant="outline" className="text-xs">
-                            {track.categoryName}
+                            {track.category.name}
                           </Badge>
                           <span className="text-sm text-gray-500">{track.duration}</span>
                           <div className="flex items-center text-sm text-gray-500">
@@ -343,7 +391,7 @@ export default function AudioPage() {
               <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Music className="h-8 w-8 text-white" />
               </div>
-              <div className="text-3xl font-bold text-gray-800">15</div>
+              <div className="text-3xl font-bold text-gray-800">{tracks.length}</div>
               <div className="text-sm text-gray-600">Tổng số bài hát</div>
             </div>
             <div className="text-center">

@@ -1,111 +1,57 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight, Users, Award, Calendar, Activity } from "lucide-react"
+import { newsService } from "@/services/news.service"
 
 export default function DivisionNewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
 
-  const categories = [
-    { id: "all", name: "Tất cả", count: 28, icon: Activity },
-    { id: "training", name: "Huấn luyện", count: 10, icon: Users },
-    { id: "competition", name: "Thi đua", count: 8, icon: Award },
-    { id: "meeting", name: "Hội nghị", count: 6, icon: Calendar },
-    { id: "daily", name: "Sinh hoạt", count: 4, icon: Users },
+  const categories= [
+    { id: "all", name: "Tất cả", icon: Activity },
+    { id: "huan_luyen", name: "Huấn luyện", icon: Users },
+    { id: "thi_dua", name: "Thi đua", icon: Award },
+    { id: "hoi_nghi", name: "Hội nghị", icon: Calendar },
+    { id: "sinh_hoat", name: "Sinh hoạt", icon: Users },
   ]
 
-  const news = [
-    {
-      id: 1,
-      title: "Hội nghị tổng kết công tác năm 2024 và triển khai nhiệm vụ năm 2025",
-      excerpt:
-        "Sáng ngày 15/12/2024, Sư đoàn phòng không 375 đã tổ chức hội nghị tổng kết toàn diện các mặt công tác trong năm 2024...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Ban biên tập",
-      date: "15/12/2024",
-      time: "2 giờ trước",
-      views: 1890,
-      category: "meeting",
-      categoryName: "Hội nghị",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Diễn tập phòng thủ khu vực quy mô lớn năm 2024",
-      excerpt: "Cuộc diễn tập nhằm nâng cao khả năng phối hợp tác chiến giữa các lực lượng trong khu vực phòng thủ...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Phòng Tham mưu",
-      date: "12/12/2024",
-      time: "4 giờ trước",
-      views: 2340,
-      category: "training",
-      categoryName: "Huấn luyện",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "Hội thi 'Bàn tay vàng' năm 2024 - Tôn vinh tài năng kỹ thuật",
-      excerpt:
-        "Hội thi nhằm tôn vinh những cá nhân có thành tích xuất sắc trong công tác kỹ thuật, bảo dưỡng vũ khí trang bị...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Phòng HC-KT",
-      date: "08/12/2024",
-      time: "1 tuần trước",
-      views: 1567,
-      category: "competition",
-      categoryName: "Thi đua",
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "Thi đua quyết thắng quý IV/2024 - Kết quả ấn tượng",
-      excerpt:
-        "Phong trào thi đua quyết thắng quý IV/2024 đã thu được nhiều kết quả tích cực, góp phần nâng cao chất lượng...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Phòng Chính trị",
-      date: "05/12/2024",
-      time: "10 ngày trước",
-      views: 1234,
-      category: "competition",
-      categoryName: "Thi đua",
-      featured: false,
-    },
-    {
-      id: 5,
-      title: "Kiểm tra công tác sẵn sàng chiến đấu các đơn vị trực thuộc",
-      excerpt:
-        "Ban chỉ huy Sư đoàn tiến hành kiểm tra đột xuất công tác sẵn sàng chiến đấu tại các đơn vị trực thuộc...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Phòng Tham mưu",
-      date: "03/12/2024",
-      time: "2 tuần trước",
-      views: 987,
-      category: "training",
-      categoryName: "Huấn luyện",
-      featured: false,
-    },
-    {
-      id: 6,
-      title: "Sinh hoạt văn hóa chào mừng kỷ niệm 79 năm QĐND Việt Nam",
-      excerpt:
-        "Chương trình văn nghệ chào mừng kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam với nhiều tiết mục ý nghĩa...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Đoàn thanh niên",
-      date: "20/12/2024",
-      time: "2 ngày trước",
-      views: 756,
-      category: "daily",
-      categoryName: "Sinh hoạt",
-      featured: false,
-    },
-  ]
-
-  const filteredNews = selectedCategory === "all" ? news : news.filter((item) => item.category === selectedCategory)
-  const featuredNews = filteredNews.filter((item) => item.featured)
-  const regularNews = filteredNews.filter((item) => !item.featured)
+  const [news,setNews] = useState<any>([
+      ])
+    
+      const [filteredNews,setFilteredNews] = useState([])
+      // activeCategory === "all" ? news : news.filter((item) => item.category === activeCategory)
+    
+      const [featuredNews,setFeaturedNews] = useState([])
+      // news.filter((item) => item.featured)
+      const [regularNews,setRegularNews] = useState([]) 
+      // filteredNews.filter((item) => !item.featured)
+      const fetchData = async()=>{
+        const res = await newsService.getPosts({type:"hoat_dong_su_doan"}) as any
+        if(res.statusCode === 200){
+          setNews(res.data)
+        }
+  
+      
+      }
+    
+      useEffect(()=>{
+        setRegularNews(filteredNews.filter((item:any) => !item.featured))
+      },[filteredNews])
+    
+      useEffect(()=>{
+        setFilteredNews((selectedCategory === "all" ? news : news.filter((item:any) => item.categoryActivity.nametag === selectedCategory)) as any)
+      },[news,selectedCategory])
+    
+      useEffect(()=>{
+        setFeaturedNews(news.filter((i:any)=> i.featured) as any)
+      },[news])
+      useEffect(()=>{
+        fetchData()
+      },[])
+  
 
   const achievements = [
     { label: "Đơn vị hoàn thành xuất sắc nhiệm vụ", value: "15/15", color: "text-green-600" },
@@ -137,7 +83,7 @@ export default function DivisionNewsPage() {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category) => (
+        {categories.map((category:any) => (
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
@@ -147,22 +93,24 @@ export default function DivisionNewsPage() {
             <category.icon className="h-4 w-4" />
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {category.count}
+              {
+                category.id === "all" ? news.length : news.filter((i:any)=>i.categoryActivity.nametag === category.id).length
+              }
             </Badge>
           </Button>
         ))}
       </div>
 
       {/* Featured News */}
-      {featuredNews.length > 0 && (
+      {selectedCategory === "all" && featuredNews.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Hoạt động nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredNews.map((item) => (
+            {featuredNews.map((item:any) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative">
                   <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
-                  <Badge className="absolute top-4 left-4 bg-red-600">{item.categoryName}</Badge>
+                  <Badge className="absolute top-4 left-4 bg-red-600">{item.categoryActivity.name}</Badge>
                   <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center">
                     <Eye className="h-3 w-3 mr-1" />
                     {item.views}
@@ -198,7 +146,7 @@ export default function DivisionNewsPage() {
           {selectedCategory === "all" ? "Hoạt động khác" : categories.find((c) => c.id === selectedCategory)?.name}
         </h2>
         <div className="space-y-6">
-          {regularNews.map((item) => (
+          {(selectedCategory === "all"? regularNews : filteredNews).map((item:any) => (
             <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">
@@ -211,7 +159,7 @@ export default function DivisionNewsPage() {
                   </div>
                   <div className="md:w-2/3 p-6">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="outline">{item.categoryName}</Badge>
+                      <Badge variant="outline">{item.categoryActivity.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
                         {item.time}

@@ -1,15 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { use, useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Settings, Megaphone, Scale, Microscope, Clock, User, Eye, ChevronRight, FileText } from "lucide-react"
+import { articlesService } from "@/services/articles.service"
 
-export default function SpecialTopicsPage() {
+export default function SpecialarticlesPage() {
   const [activeCategory, setActiveCategory] = useState("all")
 
-  const categories = [
+  const [categories,setCategories] = useState([
     {
       id: "all",
       name: "Tất cả",
@@ -25,120 +26,63 @@ export default function SpecialTopicsPage() {
       description: "Cải cách hành chính và chuyển đổi số",
     },
     {
-      id: "propaganda",
+      id: "tttt",
       name: "Thông tin tuyên truyền",
       icon: Megaphone,
       count: 7,
       description: "Công tác thông tin tuyên truyền",
     },
     {
-      id: "law",
+      id: "ttpl",
       name: "Thông tin Pháp luật",
       icon: Scale,
       count: 6,
       description: "Thông tin pháp luật và quy định",
     },
     {
-      id: "science",
+      id: "khqs",
       name: "Thông tin KHQS",
       icon: Microscope,
       count: 7,
       description: "Khoa học quân sự",
     },
-  ]
+  ])
 
-  const topics = [
-    {
-      id: 1,
-      title: "Chuyển đổi số trong quản lý quân sự - Xu hướng và thực tiễn",
-      excerpt:
-        "Phân tích xu hướng chuyển đổi số trong lĩnh vực quân sự, những thành tựu đạt được và định hướng phát triển trong thời gian tới...",
-      category: "cchc",
-      categoryName: "CCHC & Chuyển đổi số",
-      author: "Thiếu tá Nguyễn Văn A",
-      date: "15/12/2024",
-      views: 1250,
-      readTime: "8 phút",
-      featured: true,
-      tags: ["Chuyển đổi số", "Quản lý", "Công nghệ"],
-    },
-    {
-      id: 2,
-      title: "Nâng cao hiệu quả công tác tuyên truyền trong đơn vị quân đội",
-      excerpt:
-        "Những phương pháp và kinh nghiệm trong việc triển khai công tác tuyên truyền, giáo dục chính trị tư tưởng cho cán bộ, chiến sĩ...",
-      category: "propaganda",
-      categoryName: "Thông tin tuyên truyền",
-      author: "Đại úy Trần Thị B",
-      date: "12/12/2024",
-      views: 980,
-      readTime: "6 phút",
-      featured: true,
-      tags: ["Tuyên truyền", "Giáo dục", "Chính trị"],
-    },
-    {
-      id: 3,
-      title: "Luật Quốc phòng 2018 - Những điểm mới và ý nghĩa",
-      excerpt:
-        "Phân tích những điểm mới trong Luật Quốc phòng 2018, tác động và ý nghĩa đối với hoạt động của lực lượng vũ trang...",
-      category: "law",
-      categoryName: "Thông tin Pháp luật",
-      author: "Thiếu tá Lê Văn C",
-      date: "10/12/2024",
-      views: 756,
-      readTime: "10 phút",
-      featured: false,
-      tags: ["Luật Quốc phòng", "Pháp luật", "Quy định"],
-    },
-    {
-      id: 4,
-      title: "Ứng dụng trí tuệ nhân tạo trong tác chiến phòng không",
-      excerpt:
-        "Nghiên cứu về việc ứng dụng công nghệ AI trong hệ thống phòng không hiện đại, những ưu điểm và thách thức...",
-      category: "science",
-      categoryName: "Thông tin KHQS",
-      author: "Trung tá Phạm Văn D",
-      date: "08/12/2024",
-      views: 642,
-      readTime: "12 phút",
-      featured: false,
-      tags: ["AI", "Phòng không", "Công nghệ"],
-    },
-    {
-      id: 5,
-      title: "Cải cách thủ tục hành chính trong lĩnh vực quốc phòng",
-      excerpt:
-        "Đánh giá kết quả cải cách thủ tục hành chính, những khó khăn và giải pháp nâng cao chất lượng phục vụ...",
-      category: "cchc",
-      categoryName: "CCHC & Chuyển đổi số",
-      author: "Đại úy Hoàng Thị E",
-      date: "05/12/2024",
-      views: 445,
-      readTime: "7 phút",
-      featured: false,
-      tags: ["CCHC", "Thủ tục", "Cải cách"],
-    },
-    {
-      id: 6,
-      title: "Vai trò của truyền thông trong xây dựng hình ảnh quân đội",
-      excerpt:
-        "Phân tích vai trò quan trọng của hoạt động truyền thông trong việc xây dựng và quảng bá hình ảnh Quân đội nhân dân...",
-      category: "propaganda",
-      categoryName: "Thông tin tuyên truyền",
-      author: "Thiếu tá Vũ Văn F",
-      date: "03/12/2024",
-      views: 523,
-      readTime: "9 phút",
-      featured: false,
-      tags: ["Truyền thông", "Hình ảnh", "Quân đội"],
-    },
-  ]
+  
 
-  const filteredTopics = activeCategory === "all" ? topics : topics.filter((topic) => topic.category === activeCategory)
 
-  const featuredTopics = filteredTopics.filter((topic) => topic.featured)
-  const regularTopics = filteredTopics.filter((topic) => !topic.featured)
+  const [articles, setArticles] = useState<any>([
+  ])
 
+  const [filteredArticles,setFilteredArticales] = useState<any>([])
+  // activeCategory === "all" ? articles : articles.filter((topic) => topic.category === activeCategory)
+
+  const [featuredArticles,setFeaturedArticles] = useState<any>([]) 
+  // filteredarticles.filter((topic) => topic.featured)
+  const [regularArticles,setRegularArticles] = useState<any>([]) 
+  // filteredarticles.filter((topic) => !topic.featured)
+
+  const fetchData = async()=>{
+    const res = await articlesService.getArticles()
+    console.log(res)
+    if(res.statusCode === 200){
+      console.log(res.data)
+      setArticles(res.data)
+      
+    }
+  }
+  useEffect(()=> {
+    fetchData()
+  },[])
+
+   useEffect(()=> {
+    setFilteredArticales(activeCategory === "all" ? articles : articles.filter((topic:any) => topic?.type === activeCategory))
+  },[articles,activeCategory])
+
+  useEffect(()=> {
+    setFeaturedArticles(filteredArticles.filter((topic:any) => topic.featured))
+    setRegularArticles(filteredArticles.filter((topic:any) => !topic.featured))
+  },[filteredArticles])
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -169,7 +113,9 @@ export default function SpecialTopicsPage() {
               <h3 className="font-bold text-lg mb-2">{category.name}</h3>
               <p className="text-sm text-gray-600 mb-3">{category.description}</p>
               <Badge variant={activeCategory === category.id ? "default" : "secondary"}>
-                {category.count} bài viết
+                {
+                category.id === "all" ? articles.length : articles.filter((i:any)=>i.type === category.id).length
+              } bài viết
               </Badge>
             </CardContent>
           </Card>
@@ -188,22 +134,24 @@ export default function SpecialTopicsPage() {
             <category.icon className="h-4 w-4" />
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {category.count}
+              {
+                category.id === "all" ? articles.length : articles.filter((i:any)=>i.type === category.id).length
+              }
             </Badge>
           </Button>
         ))}
       </div>
 
-      {/* Featured Topics */}
-      {featuredTopics.length > 0 && (
+      {/* Featured articles */}
+      {featuredArticles.length > 0 && activeCategory === "all" && (
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Chuyên đề nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredTopics.map((topic) => (
+            {featuredArticles.map((topic:any) => (
               <Card key={topic.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge className="bg-red-600">{topic.categoryName}</Badge>
+                    <Badge className="bg-red-600">{categories.find((c:any)=>c.id === topic.type)?.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {topic.readTime}
@@ -214,7 +162,7 @@ export default function SpecialTopicsPage() {
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{topic.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {topic.tags.map((tag, index) => (
+                    {topic.tags.map((tag:any, index:number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
@@ -243,19 +191,19 @@ export default function SpecialTopicsPage() {
         </section>
       )}
 
-      {/* Regular Topics */}
+      {/* Regular articles */}
       <section>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">
           {activeCategory === "all" ? "Tất cả chuyên đề" : categories.find((c) => c.id === activeCategory)?.name}
         </h2>
         <div className="space-y-6">
-          {regularTopics.map((topic) => (
+          {(activeCategory === "all"?regularArticles:filteredArticles).map((topic:any) => (
             <Card key={topic.id} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="outline">{topic.categoryName}</Badge>
+                      <Badge variant="outline">{categories.find((c:any)=>c.id === topic.type)?.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
                         {topic.readTime}
@@ -266,7 +214,7 @@ export default function SpecialTopicsPage() {
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-2">{topic.excerpt}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {topic.tags.map((tag, index) => (
+                      {topic?.tags.map((tag:any, index:number) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           {tag}
                         </Badge>
