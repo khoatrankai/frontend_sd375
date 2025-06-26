@@ -32,13 +32,40 @@ export class NewsService {
     }
   }
 
-  async getPost(id: number){
+  async getCategories() {
     try {
-      const response = await apiClient.get<any>(`/news/${id}`)
-      return response || null
+      const response = await apiClient.get<any>("/news/categories")
+      return response || { posts: [], total: 0, page: 1, limit: 10 }
     } catch (error) {
-      console.error("Get post error:", error)
-      return null
+      console.error("Get posts error:", error)
+      return { posts: [], total: 0, page: 1, limit: 10 }
+    }
+  }
+  async getRegion() {
+    try {
+      const response = await apiClient.get<any>("/news/region")
+      return response || { posts: [], total: 0, page: 1, limit: 10 }
+    } catch (error) {
+      console.error("Get posts error:", error)
+      return { posts: [], total: 0, page: 1, limit: 10 }
+    }
+  }
+  async getNews() {
+    try {
+      const response = await apiClient.get<any>("/news")
+      return response || { posts: [], total: 0, page: 1, limit: 10 }
+    } catch (error) {
+      console.error("Get posts error:", error)
+      return { posts: [], total: 0, page: 1, limit: 10 }
+    }
+  }
+  async getcategoriesActivity() {
+    try {
+      const response = await apiClient.get<any>("/news/category-activity")
+      return response || { posts: [], total: 0, page: 1, limit: 10 }
+    } catch (error) {
+      console.error("Get posts error:", error)
+      return { posts: [], total: 0, page: 1, limit: 10 }
     }
   }
 
@@ -52,7 +79,7 @@ export class NewsService {
     }
   }
 
-  async updatePost(id: number, post: Partial<Post>){
+  async updatePost(id: string, post:any){
     try {
       const response = await apiClient.put<any>(`/news/${id}`, post)
       return response || null
@@ -62,7 +89,7 @@ export class NewsService {
     }
   }
 
-  async deletePost(id: number) {
+  async deletePost(id: string) {
     try {
       const response = await apiClient.delete<ApiResponse>(`/news/${id}`)
       return response.success
