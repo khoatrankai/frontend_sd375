@@ -13,9 +13,10 @@ interface AudioPlayerProps {
   category?: string;
   onNext?: () => void;
   onPrev?: () => void;
+  refBtn?:any
 }
 
-const AudioPlayerUI: React.FC<AudioPlayerProps> = ({ src, title, artist, duration, category, onNext, onPrev }) => {
+const AudioPlayerUI: React.FC<AudioPlayerProps> = ({ src, title, artist, duration, category, onNext, onPrev,refBtn }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -95,7 +96,7 @@ const AudioPlayerUI: React.FC<AudioPlayerProps> = ({ src, title, artist, duratio
             <SkipBack className="h-4 w-4" />
           </Button>
 
-          <Button size="icon" className="h-12 w-12 bg-red-600 hover:bg-red-700" onClick={togglePlay}>
+          <Button size="icon" className="h-12 w-12 bg-red-600 hover:bg-red-700" onClick={togglePlay} ref={refBtn}>
             {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
           </Button>
 

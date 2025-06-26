@@ -48,7 +48,7 @@ export default function Navigation() {
       label: "Thư viện",
       icon: Library,
       submenu: [
-        { label: "Tất cả", href: "/thu-vien" },
+        // { label: "Tất cả", href: "/thu-vien" },
         { label: "Hình ảnh", href: "/thu-vien/hinh-anh" },
         { label: "Video", href: "/thu-vien/video" },
         { label: "Audio", href: "/thu-vien/audio" },

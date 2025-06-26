@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Megaphone, Clock, Eye, User, ChevronRight, Users, BookOpen, Radio } from "lucide-react"
+import { articlesService } from "@/services/articles.service"
 
 export default function PropagandaPage() {
   const [selectedFilter, setSelectedFilter] = useState("all")
@@ -16,84 +17,16 @@ export default function PropagandaPage() {
     { id: "culture", name: "Văn hóa", count: 3 },
   ]
 
-  const articles = [
-    {
-      id: 1,
-      title: "Nâng cao hiệu quả công tác tuyên truyền trong đơn vị quân đội",
-      excerpt:
-        "Những phương pháp và kinh nghiệm trong việc triển khai công tác tuyên truyền, giáo dục chính trị tư tưởng cho cán bộ, chiến sĩ. Xây dựng hệ thống tuyên truyền đa dạng và hiệu quả...",
-      author: "Đại úy Trần Thị B",
-      date: "12/12/2024",
-      views: 980,
-      readTime: "6 phút",
-      category: "education",
-      categoryName: "Giáo dục chính trị",
-      featured: true,
-      tags: ["Tuyên truyền", "Giáo dục", "Chính trị", "Đơn vị"],
-    },
-    {
-      id: 2,
-      title: "Vai trò của truyền thông trong xây dựng hình ảnh quân đội",
-      excerpt:
-        "Phân tích vai trò quan trọng của hoạt động truyền thông trong việc xây dựng và quảng bá hình ảnh Quân đội nhân dân Việt Nam trong thời kỳ mới...",
-      author: "Thiếu tá Vũ Văn F",
-      date: "03/12/2024",
-      views: 523,
-      readTime: "9 phút",
-      category: "media",
-      categoryName: "Truyền thông",
-      featured: true,
-      tags: ["Truyền thông", "Hình ảnh", "Quân đội", "Xã hội"],
-    },
-    {
-      id: 3,
-      title: "Xây dựng văn hóa đơn vị trong thời kỳ mới",
-      excerpt:
-        "Kinh nghiệm xây dựng và phát triển văn hóa đơn vị, tạo môi trường văn hóa tích cực, góp phần nâng cao tinh thần và ý chí chiến đấu...",
-      author: "Trung tá Nguyễn Văn G",
-      date: "28/11/2024",
-      views: 756,
-      readTime: "8 phút",
-      category: "culture",
-      categoryName: "Văn hóa",
-      featured: false,
-      tags: ["Văn hóa", "Đơn vị", "Tinh thần", "Xây dựng"],
-    },
-    {
-      id: 4,
-      title: "Ứng dụng công nghệ trong công tác tuyên truyền",
-      excerpt:
-        "Nghiên cứu về việc ứng dụng các công nghệ hiện đại như mạng xã hội, multimedia trong công tác tuyên truyền để nâng cao hiệu quả...",
-      author: "Đại úy Lê Thị H",
-      date: "25/11/2024",
-      views: 642,
-      readTime: "7 phút",
-      category: "media",
-      categoryName: "Truyền thông",
-      featured: false,
-      tags: ["Công nghệ", "Multimedia", "Hiệu quả", "Hiện đại"],
-    },
-    {
-      id: 5,
-      title: "Giáo dục truyền thống cách mạng cho thế hệ trẻ",
-      excerpt:
-        "Phương pháp giáo dục truyền thống cách mạng cho cán bộ, chiến sĩ trẻ, giúp họ hiểu rõ lịch sử và truyền thống vẻ vang của quân đội...",
-      author: "Thiếu tá Phạm Văn I",
-      date: "20/11/2024",
-      views: 445,
-      readTime: "10 phút",
-      category: "education",
-      categoryName: "Giáo dục chính trị",
-      featured: false,
-      tags: ["Truyền thống", "Giáo dục", "Thế hệ trẻ", "Lịch sử"],
-    },
-  ]
+   const [articles,setArticles] = useState<any>([
+  ])
 
-  const filteredArticles =
-    selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
+  const [filteredArticles,setFilteredArticales] = useState<any>([])
+    // selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
 
-  const featuredArticles = filteredArticles.filter((article) => article.featured)
-  const regularArticles = filteredArticles.filter((article) => !article.featured)
+  const [featuredArticles,setFeaturedArticles] = useState<any>([])
+  // filteredArticles.filter((article) => article.featured)
+  const [regularArticles,setRegularArticles] = useState<any>([]) 
+  // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
     { label: "Bài viết", value: "10", icon: BookOpen, color: "text-blue-600" },
@@ -101,6 +34,27 @@ export default function PropagandaPage() {
     { label: "Chuyên gia", value: "6", icon: Users, color: "text-purple-600" },
     { label: "Chủ đề", value: "3", icon: Megaphone, color: "text-orange-600" },
   ]
+
+  const fetchData = async()=>{
+          const res = await articlesService.getArticles({type:'ttpl'})
+          if(res.statusCode === 200){
+            setArticles(res.data)
+          }
+        }
+      
+        useEffect(()=>{
+          fetchData()
+        },[])
+      
+        useEffect(()=>{
+          setFilteredArticales( selectedFilter === "all" ? articles : articles.filter((article:any) => article?.category?.nametag === selectedFilter))
+        },[articles,selectedFilter])
+      
+        useEffect(()=>{
+          setFeaturedArticles( filteredArticles.filter((article:any) => article?.featured))
+          setRegularArticles( filteredArticles.filter((article:any) => !article?.featured))
+        },[filteredArticles])
+  
 
   return (
     <div className="space-y-8">
@@ -140,7 +94,9 @@ export default function PropagandaPage() {
             <Megaphone className="h-4 w-4" />
             <span>{filter.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {filter.count}
+              {
+                filter.id === "all" ? articles.length : articles.filter((i:any)=>i?.category?.nametag === filter.id).length
+              }
             </Badge>
           </Button>
         ))}
@@ -151,11 +107,11 @@ export default function PropagandaPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Bài viết nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredArticles.map((article) => (
+            {featuredArticles.map((article:any) => (
               <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge className="bg-red-600">{article.categoryName}</Badge>
+                    <Badge className="bg-red-600">{article?.category?.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {article.readTime}
@@ -166,7 +122,7 @@ export default function PropagandaPage() {
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {article.tags.map((tag, index) => (
+                    {article.tags.map((tag:any, index:number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
@@ -201,13 +157,13 @@ export default function PropagandaPage() {
           {selectedFilter === "all" ? "Tất cả bài viết" : filters.find((f) => f.id === selectedFilter)?.name}
         </h2>
         <div className="space-y-6">
-          {regularArticles.map((article) => (
+          {(selectedFilter === "all" ?regularArticles:filteredArticles).map((article:any) => (
             <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="outline">{article.categoryName}</Badge>
+                      <Badge variant="outline">{article?.category?.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
                         {article.readTime}
@@ -218,7 +174,7 @@ export default function PropagandaPage() {
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {article.tags.map((tag, index) => (
+                      {article.tags.map((tag:any, index:number) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           {tag}
                         </Badge>

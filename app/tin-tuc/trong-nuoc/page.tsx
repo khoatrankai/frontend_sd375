@@ -1,49 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
+import { newsService } from "@/services/news.service"
 
 export default function DomesticNewsPage() {
   const [currentPage, setCurrentPage] = useState(1)
+  const [news,setNews] = useState([
+  ])
 
-  const news = [
-    {
-      id: 1,
-      title: "Thủ tướng Chính phủ gặp mặt các đại biểu Quân đội tiêu biểu",
-      excerpt: "Thủ tướng Phạm Minh Chính đã có buổi gặp mặt, động viên các đại biểu Quân đội tiêu biểu toàn quốc...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "TTXVN",
-      date: "20/12/2024",
-      time: "2 giờ trước",
-      views: 2340,
-      category: "Chính trị",
-    },
-    {
-      id: 2,
-      title: "Kỷ niệm 79 năm Ngày thành lập Quân đội nhân dân Việt Nam",
-      excerpt: "Các địa phương trên cả nước tổ chức long trọng lễ kỷ niệm 79 năm Ngày thành lập QĐND Việt Nam...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "Báo Quân đội nhân dân",
-      date: "22/12/2024",
-      time: "1 ngày trước",
-      views: 1890,
-      category: "Quân sự",
-    },
-    {
-      id: 3,
-      title: "Hội nghị Trung ương 8 khóa XIII thảo luận về phát triển kinh tế",
-      excerpt: "Hội nghị Trung ương 8 tiếp tục thảo luận về phương hướng phát triển kinh tế-xã hội năm 2025...",
-      image: "/public/placeholder.svg?height=200&width=300",
-      author: "VGP",
-      date: "18/12/2024",
-      time: "3 ngày trước",
-      views: 1456,
-      category: "Kinh tế",
-    },
-  ]
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  const fetchData = async()=>{
+    const res = await newsService.getPosts({type:"trong_nuoc",page:currentPage,limit:10})
+    if(res.statusCode === 200){
+      setNews(res.data)
+      setCurrentPage(currentPage+1)
+    }else{
+      console.log(res)
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -56,7 +37,7 @@ export default function DomesticNewsPage() {
 
       {/* News List */}
       <div className="space-y-6">
-        {news.map((item) => (
+        {news.map((item:any) => (
           <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row">
@@ -69,7 +50,7 @@ export default function DomesticNewsPage() {
                 </div>
                 <div className="md:w-2/3 p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge variant="outline">{item.category}</Badge>
+                    <Badge variant="outline">{item.category.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {item.time}

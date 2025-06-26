@@ -84,7 +84,10 @@ export default function NewsPage() {
           >
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {news.filter((i)=>i.type === category.id).length}
+              {
+                category.id === "all" ? news.length : news.filter((i)=>i.type === category.id).length
+              }
+           
             </Badge>
           </Button>
         ))}
@@ -135,7 +138,13 @@ export default function NewsPage() {
           {activeType === "all" ? "Tin tức khác" : types.find((c) => c.id === activeType)?.name}
         </h2>
         <div className="space-y-6">
-          {regularNews.map((item:any) => (
+          {filteredNews.filter((dt:any)=>{
+            if(activeType === "all"){
+              return dt?.featured === false
+            }else{
+              return true
+            }
+          }).map((item:any) => (
             <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">

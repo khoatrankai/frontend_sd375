@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Microscope, Clock, Eye, User, ChevronRight, Zap, Target, Shield } from "lucide-react"
+import { articlesService } from "@/services/articles.service"
 
 export default function MilitarySciencePage() {
   const [selectedFilter, setSelectedFilter] = useState("all")
@@ -16,84 +17,16 @@ export default function MilitarySciencePage() {
     { id: "research", name: "Nghiên cứu", count: 2 },
   ]
 
-  const articles = [
-    {
-      id: 1,
-      title: "Ứng dụng trí tuệ nhân tạo trong tác chiến phòng không",
-      excerpt:
-        "Nghiên cứu về việc ứng dụng công nghệ AI trong hệ thống phòng không hiện đại, những ưu điểm và thách thức trong việc tích hợp AI vào các hệ thống vũ khí...",
-      author: "Trung tá Phạm Văn D",
-      date: "08/12/2024",
-      views: 642,
-      readTime: "12 phút",
-      category: "technology",
-      categoryName: "Công nghệ quân sự",
-      featured: true,
-      tags: ["AI", "Phòng không", "Công nghệ", "Tác chiến"],
-    },
-    {
-      id: 2,
-      title: "Chiến lược phòng thủ không phận trong thế kỷ 21",
-      excerpt:
-        "Phân tích xu hướng phát triển chiến lược phòng thủ không phận, những thách thức mới từ công nghệ hiện đại và định hướng phát triển trong tương lai...",
-      author: "Đại tá Nguyễn Văn H",
-      date: "05/12/2024",
-      views: 890,
-      readTime: "15 phút",
-      category: "strategy",
-      categoryName: "Chiến lược",
-      featured: true,
-      tags: ["Chiến lược", "Phòng thủ", "Không phận", "Thế kỷ 21"],
-    },
-    {
-      id: 3,
-      title: "Nghiên cứu vật liệu composite trong chế tạo vũ khí",
-      excerpt:
-        "Ứng dụng vật liệu composite tiên tiến trong sản xuất vũ khí và trang bị quân sự, những ưu điểm về trọng lượng, độ bền và khả năng chống ăn mòn...",
-      author: "Thiếu tá Lê Thị I",
-      date: "03/12/2024",
-      views: 567,
-      readTime: "10 phút",
-      category: "research",
-      categoryName: "Nghiên cứu",
-      featured: false,
-      tags: ["Vật liệu", "Composite", "Vũ khí", "Chế tạo"],
-    },
-    {
-      id: 4,
-      title: "Hệ thống radar thế hệ mới và khả năng phát hiện",
-      excerpt:
-        "Công nghệ radar hiện đại với khả năng phát hiện mục tiêu tàng hình, xử lý tín hiệu số và tích hợp với hệ thống chỉ huy tự động...",
-      author: "Trung tá Hoàng Văn J",
-      date: "01/12/2024",
-      views: 723,
-      readTime: "11 phút",
-      category: "technology",
-      categoryName: "Công nghệ quân sự",
-      featured: false,
-      tags: ["Radar", "Phát hiện", "Tàng hình", "Số hóa"],
-    },
-    {
-      id: 5,
-      title: "Chiến thuật tác chiến điện tử trong môi trường hiện đại",
-      excerpt:
-        "Phương pháp tác chiến điện tử, gây nhiễu và chống nhiễu trong điều kiện có sự hiện diện của nhiều hệ thống điện tử phức tạp...",
-      author: "Thiếu tá Vũ Văn K",
-      date: "28/11/2024",
-      views: 445,
-      readTime: "9 phút",
-      category: "strategy",
-      categoryName: "Chiến lược",
-      featured: false,
-      tags: ["Tác chiến điện tử", "Gây nhiễu", "Chống nhiễu", "Hiện đại"],
-    },
-  ]
+  const [articles,setArticles] = useState<any>([
+  ])
 
-  const filteredArticles =
-    selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
+  const [filteredArticles,setFilteredArticales] = useState<any>([])
+    // selectedFilter === "all" ? articles : articles.filter((article) => article.category === selectedFilter)
 
-  const featuredArticles = filteredArticles.filter((article) => article.featured)
-  const regularArticles = filteredArticles.filter((article) => !article.featured)
+  const [featuredArticles,setFeaturedArticles] = useState<any>([])
+  // filteredArticles.filter((article) => article.featured)
+  const [regularArticles,setRegularArticles] = useState<any>([]) 
+  // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
     { label: "Nghiên cứu", value: "9", icon: Microscope, color: "text-blue-600" },
@@ -101,6 +34,26 @@ export default function MilitarySciencePage() {
     { label: "Nhà khoa học", value: "7", icon: User, color: "text-purple-600" },
     { label: "Dự án", value: "5", icon: Target, color: "text-orange-600" },
   ]
+
+   const fetchData = async()=>{
+      const res = await articlesService.getArticles({type:'khqs'})
+      if(res.statusCode === 200){
+        setArticles(res.data)
+      }
+    }
+  
+    useEffect(()=>{
+      fetchData()
+    },[])
+  
+    useEffect(()=>{
+      setFilteredArticales( selectedFilter === "all" ? articles : articles.filter((article:any) => article?.category?.nametag === selectedFilter))
+    },[articles,selectedFilter])
+  
+    useEffect(()=>{
+      setFeaturedArticles( filteredArticles.filter((article:any) => article?.featured))
+      setRegularArticles( filteredArticles.filter((article:any) => !article?.featured))
+    },[filteredArticles])
 
   return (
     <div className="space-y-8">
@@ -140,7 +93,9 @@ export default function MilitarySciencePage() {
             <Microscope className="h-4 w-4" />
             <span>{filter.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {filter.count}
+               {
+                filter.id === "all" ? articles.length : articles.filter((i:any)=>i?.category?.nametag === filter.id).length
+              }
             </Badge>
           </Button>
         ))}
@@ -151,11 +106,11 @@ export default function MilitarySciencePage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Nghiên cứu nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredArticles.map((article) => (
+            {featuredArticles.map((article:any) => (
               <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge className="bg-red-600">{article.categoryName}</Badge>
+                    <Badge className="bg-red-600">{article?.category?.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {article.readTime}
@@ -166,7 +121,7 @@ export default function MilitarySciencePage() {
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {article.tags.map((tag, index) => (
+                    {article.tags.map((tag:any, index:number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
@@ -201,13 +156,13 @@ export default function MilitarySciencePage() {
           {selectedFilter === "all" ? "Tất cả nghiên cứu" : filters.find((f) => f.id === selectedFilter)?.name}
         </h2>
         <div className="space-y-6">
-          {regularArticles.map((article) => (
+          {(selectedFilter === "all" ?regularArticles:filteredArticles).map((article:any) => (
             <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="outline">{article.categoryName}</Badge>
+                      <Badge variant="outline">{article?.category?.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
                         {article.readTime}
@@ -218,7 +173,7 @@ export default function MilitarySciencePage() {
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {article.tags.map((tag, index) => (
+                      {article.tags.map((tag:any, index:number) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           {tag}
                         </Badge>

@@ -1,66 +1,56 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, FileText, Download, Calendar, Building } from "lucide-react"
+import { documentService } from "@/services/documents.service"
 
 export default function DocumentsPage() {
+  const types = [{name:"Tất cả",value:"all"},{name:"Chỉ thị",value:"chi_thi"},{name:"Thông báo",value:"thong_bao"},{name:"Kế hoạch",value:"ke_hoach"},{name:"Quy định",value:"quy_dinh"}]
+  const [categories,setCategories] = useState<any>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedUnit, setSelectedUnit] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedType, setSelectedType] = useState("")
   const [selectedOrgan, setSelectedOrgan] = useState("")
 
-  const documents = [
-      {
-        title: "Chỉ thị số 01/CT-F375 về công tác chuẩn bị năm 2025",
-        type: "Chỉ thị",
-        unit: "Chỉ huy sư đoàn",
-        organ: "Sư đoàn F375",
-        date: "15/12/2024",
-        downloads: 45,
-        size: "2.3 MB",
-      },
-    {
-      title: "Thông báo về việc tổ chức hội nghị tổng kết",
-      type: "Thông báo",
-      unit: "Phòng chính trị",
-      organ: "Phòng chính trị F375",
-      date: "12/12/2024",
-      downloads: 32,
-      size: "1.8 MB",
-    },
-    {
-      title: "Kế hoạch huấn luyện quý I/2025",
-      type: "Kế hoạch",
-      unit: "Phòng tham mưu",
-      organ: "Phòng tham mưu F375",
-      date: "10/12/2024",
-      downloads: 67,
-      size: "4.1 MB",
-    },
-    {
-      title: "Quy định về quản lý tài sản kỹ thuật",
-      type: "Quy định",
-      unit: "Phòng Hậu cần – kỹ thuật",
-      organ: "Phòng HC-KT F375",
-      date: "08/12/2024",
-      downloads: 28,
-      size: "3.2 MB",
-    },
-  ]
+  const [documents,setDocuments] = useState<any>([
+  ])
 
-  const filteredDocuments = documents.filter((doc) => {
+  const [filteredDocuments,setFilteredDocuments] = useState<any>([])
+  
+
+  const fetchData = async()=>{
+    const res = await documentService.getDocuments()
+    const res2 = await documentService.getCategories()
+    if(res.statusCode === 200){
+      setDocuments(res.data)
+    }
+
+    if(res2.statusCode === 200){
+      setCategories(res2.data)
+    }
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  useEffect(()=>{
+    setFilteredDocuments(
+      documents.filter((doc:any) => {
     return (
       doc.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedUnit === "" || doc.unit === selectedUnit) &&
-      (selectedType === "" || doc.type === selectedType) &&
+      (selectedCategory === "" || doc.category?.nametag === selectedCategory || selectedCategory === "all") &&
+      (selectedType === "" || doc.type === selectedType || selectedType === "all") &&
       (selectedOrgan === "" || doc.organ === selectedOrgan)
     )
   })
+    )
+  },[documents,searchTerm,selectedCategory,selectedType,selectedOrgan])
 
   return (
     <div className="space-y-6">
@@ -92,16 +82,23 @@ export default function DocumentsPage() {
 
             <div>
               <label className="text-sm font-medium mb-2 block">Đơn vị đăng tải</label>
-              <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn đơn vị" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="Chỉ huy sư đoàn">Chỉ huy sư đoàn</SelectItem>
-                  <SelectItem value="Phòng chính trị">Phòng chính trị</SelectItem>
-                  <SelectItem value="Phòng tham mưu">Phòng tham mưu</SelectItem>
-                  <SelectItem value="Phòng Hậu cần – kỹ thuật">Phòng Hậu cần – kỹ thuật</SelectItem>
+                  {
+                    categories.map((category:any) => (
+                      <SelectItem key={category.nametag} value={category.nametag}>
+                        {category.name}
+                      </SelectItem>
+                    ))
+                  }
+                  {/* <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="chi_huy_su_doan">Chỉ huy sư đoàn</SelectItem>
+                  <SelectItem value="phong_chinh_tri">Phòng chính trị</SelectItem>
+                  <SelectItem value="phong_tham_muu">Phòng tham mưu</SelectItem>
+                  <SelectItem value="hau_can_ky_thuat">Phòng Hậu cần – kỹ thuật</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -113,16 +110,23 @@ export default function DocumentsPage() {
                   <SelectValue placeholder="Chọn loại" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="Chỉ thị">Chỉ thị</SelectItem>
-                  <SelectItem value="Thông báo">Thông báo</SelectItem>
-                  <SelectItem value="Kế hoạch">Kế hoạch</SelectItem>
-                  <SelectItem value="Quy định">Quy định</SelectItem>
+                  {
+                    types.map((type:any) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.name}
+                      </SelectItem>
+                    ))
+                  }
+                  {/* <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="chi_thi">Chỉ thị</SelectItem>
+                  <SelectItem value="thong_bao">Thông báo</SelectItem>
+                  <SelectItem value="ke_hoach">Kế hoạch</SelectItem>
+                  <SelectItem value="quy_dinh">Quy định</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
+            {/* <div>
               <label className="text-sm font-medium mb-2 block">Cơ quan ban hành</label>
               <Select value={selectedOrgan} onValueChange={setSelectedOrgan}>
                 <SelectTrigger>
@@ -136,10 +140,10 @@ export default function DocumentsPage() {
                   <SelectItem value="Phòng HC-KT F375">Phòng HC-KT F375</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
 
-          <div className="flex space-x-2">
+          {/* <div className="flex space-x-2">
             <Button>
               <Search className="h-4 w-4 mr-2" />
               Tìm kiếm
@@ -148,20 +152,20 @@ export default function DocumentsPage() {
               variant="outline"
               onClick={() => {
                 setSearchTerm("")
-                setSelectedUnit("all")
+                setSelectedCategory("all")
                 setSelectedType("all")
                 setSelectedOrgan("all")
               }}
             >
               Xóa bộ lọc
             </Button>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 
       {/* Danh sách tài liệu */}
       <div className="space-y-4">
-        {filteredDocuments.map((doc, index) => (
+        {filteredDocuments.map((doc:any, index:any) => (
           <Card key={index} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -187,15 +191,21 @@ export default function DocumentsPage() {
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Badge variant="secondary">{doc.type}</Badge>
+                    <Badge variant="secondary">{
+                    // doc.type
+                    types.find((type:any)=>type.value === doc.type)?.name
+                    }</Badge>
                     <Badge variant="outline">{doc.organ}</Badge>
                   </div>
                 </div>
-
-                <Button className="ml-4">
-                  <Download className="h-4 w-4 mr-2" />
+                
+                <a href={doc?.link}>
+                   <Button className="ml-4" >
+                  <Download className="h-4 w-4 mr-2"/>
                   Tải xuống
                 </Button>
+                </a>
+               
               </div>
             </CardContent>
           </Card>

@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Download, Calendar, Star, Search, Monitor, Smartphone, Globe, Shield, FileText, Database } from "lucide-react"
+import { softwareService } from "@/services/software.service"
 
 export default function SoftwarePage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -15,21 +16,23 @@ export default function SoftwarePage() {
 
   const categories = [
     { id: "all", name: "Tất cả", count: 12, icon: Monitor },
-    { id: "management", name: "Quản lý", count: 5, icon: FileText },
-    { id: "security", name: "Bảo mật", count: 3, icon: Shield },
-    { id: "utility", name: "Tiện ích", count: 2, icon: Globe },
-    { id: "database", name: "Cơ sở dữ liệu", count: 2, icon: Database },
+    { id: "quan_ly", name: "Quản lý", count: 5, icon: FileText },
+    { id: "bao_mat", name: "Bảo mật", count: 3, icon: Shield },
+    { id: "tien_ich", name: "Tiện ích", count: 2, icon: Globe },
+    { id: "co_so_du_lieu", name: "Cơ sở dữ liệu", count: 2, icon: Database },
   ]
 
   const platforms = [
     { id: "all", name: "Tất cả nền tảng" },
     { id: "windows", name: "Windows" },
     { id: "android", name: "Android" },
+    { id: "ios", name: "IOS" },
     { id: "web", name: "Web App" },
     { id: "cross", name: "Đa nền tảng" },
   ]
 
-  const software = [
+  const [software,setSoftware] = useState<any>([
+
     {
       id: 1,
       name: "Phần mềm quản lý văn bản v2.1",
@@ -138,20 +141,29 @@ export default function SoftwarePage() {
       developer: "Phòng Khí tượng",
       license: "Miễn phí",
     },
-  ]
+  ])
 
-  const filteredSoftware = software.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory
-    const matchesPlatform = selectedPlatform === "all" || item.platform === selectedPlatform
+ 
+  
 
-    return matchesSearch && matchesCategory && matchesPlatform
-  })
 
-  const featuredSoftware = filteredSoftware.filter((item) => item.featured)
-  const regularSoftware = filteredSoftware.filter((item) => !item.featured)
+  
+
+  const [filteredSoftware,setFilteredSoftware] = useState<any>([])
+  // software.filter((item) => {
+  //   const matchesSearch =
+  //     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     item.description.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesCategory = selectedCategory === "all" || item.category === selectedCategory
+  //   const matchesPlatform = selectedPlatform === "all" || item.platform === selectedPlatform
+
+  //   return matchesSearch && matchesCategory && matchesPlatform
+  // })
+
+  const [featuredSoftware,setFeaturedSoftware] = useState<any>([])
+  // filteredSoftware.filter((item) => item.featured)
+  const [regularSoftware,setRegularSoftware] = useState<any>([])
+  // filteredSoftware.filter((item) => !item.featured)
 
   const stats = [
     { label: "Tổng phần mềm", value: "12", icon: Monitor, color: "text-blue-600" },
@@ -160,6 +172,36 @@ export default function SoftwarePage() {
     { label: "Cập nhật tháng này", value: "5", icon: Calendar, color: "text-purple-600" },
   ]
 
+
+
+   useEffect(()=>{
+    setFeaturedSoftware(filteredSoftware.filter((item:any) => item.featured))
+    setRegularSoftware(filteredSoftware.filter((item:any) => !item.featured))
+  },[filteredSoftware])
+
+  useEffect(()=>{
+    setFilteredSoftware(
+      software.filter((item:any) => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === "all" || item?.category?.nametag === selectedCategory
+    const matchesPlatform = selectedPlatform === "all" || item?.platform?.nametag === selectedPlatform
+
+    return matchesSearch && matchesCategory && matchesPlatform
+  })
+    )
+  },[software,searchTerm,selectedCategory,selectedPlatform])
+useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    const res = await softwareService.getSoftwares() as any
+    if(res.statusCode === 200) {
+      setSoftware(res.data)
+    }
+  }
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -213,7 +255,9 @@ export default function SoftwarePage() {
                 <SelectContent>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
-                      {category.name} ({category.count})
+                      {category.name} ({
+                category.id === "all" ? software.length : software.filter((i:any)=>i?.category?.nametag === category.id).length
+              })
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -250,18 +294,20 @@ export default function SoftwarePage() {
             <category.icon className="h-4 w-4" />
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
-              {category.count}
+               {
+                category.id === "all" ? software.length : software.filter((i:any)=>i?.category?.nametag === category.id).length
+              }
             </Badge>
           </Button>
         ))}
       </div>
 
       {/* Featured Software */}
-      {featuredSoftware.length > 0 && (
+      {featuredSoftware?.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Phần mềm nổi bật</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {featuredSoftware.map((item) => (
+            {featuredSoftware.map((item:any) => (
               <Card key={item.id} className="hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -272,8 +318,8 @@ export default function SoftwarePage() {
                       <div>
                         <h3 className="font-bold text-lg line-clamp-1">{item.name}</h3>
                         <div className="flex items-center space-x-2">
-                          <Badge variant="destructive">{item.categoryName}</Badge>
-                          <Badge variant="outline">{item.platformName}</Badge>
+                          <Badge variant="destructive">{item?.category?.name}</Badge>
+                          <Badge variant="outline">{item?.platform?.name}</Badge>
                         </div>
                       </div>
                     </div>
@@ -325,7 +371,7 @@ export default function SoftwarePage() {
       <section>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Tất cả phần mềm</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {regularSoftware.map((item) => (
+          {(selectedCategory === "all"?regularSoftware:filteredSoftware).map((item:any) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="text-center mb-4">
@@ -334,8 +380,8 @@ export default function SoftwarePage() {
                   </div>
                   <h3 className="font-bold text-lg line-clamp-2 mb-2">{item.name}</h3>
                   <div className="flex justify-center space-x-2">
-                    <Badge variant="outline">{item.categoryName}</Badge>
-                    <Badge variant="secondary">{item.platformName}</Badge>
+                    <Badge variant="outline">{item?.category?.name}</Badge>
+                    <Badge variant="secondary">{item?.platform?.name}</Badge>
                   </div>
                 </div>
 
