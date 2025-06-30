@@ -19,9 +19,9 @@ export class UsersService {
     }
   }
 
-  async getUser(id: number) {
+  async getUser(data: any) {
     try {
-      const response = await apiClient.get<any>(`/users/${id}`)
+      const response = await apiClient.get<any>(`/users/login?username=${data?.username}&password=${data?.password}`)
       return response || null
     } catch (error) {
       console.error("Get user error:", error)
@@ -39,9 +39,9 @@ export class UsersService {
     }
   }
 
-  async updateUser(id: number, user: any) {
+  async updateUser(id: string, user: any) {
     try {
-      const response = await apiClient.uploadPut<any>(`/users/${id}`, user)
+      const response = await apiClient.uploadPatch<any>(`/users/${id}`, user)
       return response || null
     } catch (error) {
       console.error("Update user error:", error)
@@ -49,9 +49,9 @@ export class UsersService {
     }
   }
 
-  async deleteUser(id: number): Promise<boolean> {
+  async deleteUser(id: string) {
     try {
-      const response = await apiClient.delete<ApiResponse>(`/users/${id}`)
+      const response = await apiClient.delete<any>(`/users/${id}`)
       return response.success
     } catch (error) {
       console.error("Delete user error:", error)
@@ -59,7 +59,7 @@ export class UsersService {
     }
   }
 
-  async changeUserStatus(id: number, status: "active" | "inactive" | "pending"): Promise<boolean> {
+  async changeUserStatus(id: string, status: "active" | "inactive" | "pending"): Promise<boolean> {
     try {
       const response = await apiClient.put<ApiResponse>(`/users/${id}/status`, { status })
       return response.success

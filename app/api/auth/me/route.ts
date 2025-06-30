@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import jwt from "jsonwebtoken"
+import { usersService } from "@/services/users.service"
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"
 
@@ -35,10 +36,11 @@ export async function GET(request: NextRequest) {
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as any
-
+      const res = await usersService.getUser(decoded?.userId)
+      const dataUser = res?.data
       return NextResponse.json({
         success: true,
-        data: ADMIN_USER,
+        data: dataUser,
       })
     } catch (jwtError) {
       return NextResponse.json(

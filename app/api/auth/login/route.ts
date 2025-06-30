@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import jwt from "jsonwebtoken"
+import { usersService } from "@/services/users.service"
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"
 
@@ -23,13 +24,15 @@ export async function POST(request: NextRequest) {
     const { username, password } = await request.json()
 
     // Validate credentials
-    if (username === "admin" && password === "admin123") {
+    const res = await usersService.getUser({username,password})
+    if (res?.statusCode === 200) {
+      const dataUser = res?.data
       // Generate JWT token
       const token = jwt.sign(
         {
-          userId: ADMIN_USER.id,
+          userId: dataUser.id,
           username: username,
-          role: ADMIN_USER.role,
+          role: dataUser.role,
         },
         JWT_SECRET,
         { expiresIn: "24h" },
@@ -38,7 +41,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: "Đăng nhập thành công",
-        user: ADMIN_USER,
+        user: dataUser,
         token: token,
       })
     } else {
