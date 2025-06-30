@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import "./styles.scss"
 import { Button } from "@/components/ui/button"
 import { Home, Info, Newspaper, Library, BookOpen, FileText, LogIn, ChevronDown, Menu, X } from "lucide-react"
 
@@ -10,8 +11,15 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
 
-  const isActive = (path: string) => pathname === path || pathname.startsWith(path)
 
+  const isActive = (path: string) => {
+    console.log(pathname,path,pathname === path || pathname.startsWith(path))
+    return pathname === path || pathname.startsWith(path)
+  }
+
+  useEffect(()=>{
+    console.log(pathname)
+  },[pathname])
   const menuItems = [
     {
       id: "home",
@@ -48,7 +56,7 @@ export default function Navigation() {
       label: "Thư viện",
       icon: Library,
       submenu: [
-        // { label: "Tất cả", href: "/thu-vien" },
+        { label: "Tất cả", href: "/thu-vien" },
         { label: "Hình ảnh", href: "/thu-vien/hinh-anh" },
         { label: "Video", href: "/thu-vien/video" },
         { label: "Audio", href: "/thu-vien/audio" },
@@ -80,8 +88,8 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-gradient-to-r from-green-700 via-green-600 to-green-700 text-white shadow-xl relative z-30">
-      <div className="container mx-auto px-4">
+    <nav className="bg-gradient-to-r text-black shadow-xl relative z-30 px-4 py-2">
+      <div className="px-0 w-full">
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center justify-between">
           <div className="flex items-center space-x-1">
@@ -90,8 +98,8 @@ export default function Navigation() {
                 {item.submenu ? (
                   <div className="relative">
                     <button
-                      className={`flex items-center space-x-2 px-4 bg-transparent py-4 hover:bg-green-600 transition-all duration-200 rounded-t-lg ${
-                        isActive(item.submenu[0]?.href || "") ? "bg-green-600 text-yellow-300" : ""
+                      className={`flex items-center space-x-2 px-4 bg-transparent py-4  hover:bg-[#94BBE9] transition-all duration-200 rounded-t-lg ${
+                        isActive(item.submenu[0]?.href || "") ? "!bg-[#94BBE9] text-white" : ""
                       }`}
                       onMouseEnter={() => setActiveDropdown(item.id)}
                       onMouseLeave={() => setActiveDropdown(null)}
@@ -103,7 +111,7 @@ export default function Navigation() {
 
                     {/* Dropdown Menu */}
                     <div
-                      className={`absolute top-full left-0 w-64 bg-white shadow-2xl rounded-b-lg rounded-tr-lg border-t-2 border-green-500 transform transition-all duration-200 ${
+                      className={`absolute top-full left-0 w-64 bg-white shadow-2xl rounded-b-lg rounded-tr-lg border-t-2 border-[#94BBE9] transform transition-all duration-200 ${
                         activeDropdown === item.id
                           ? "opacity-100 visible translate-y-0"
                           : "opacity-0 invisible -translate-y-2"
@@ -115,8 +123,8 @@ export default function Navigation() {
                         <Link
                           key={index}
                           href={subItem.href}
-                          className={`block px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors border-b border-gray-100 last:border-b-0 ${
-                            isActive(subItem.href) ? "bg-green-50 text-green-700 font-medium" : ""
+                          className={`block px-4 py-3 text-gray-700 hover:bg-[#94BBE9] hover:text-white transition-colors border-b border-gray-100 last:border-b-0 ${
+                            isActive(subItem.href) ? "bg-[#94BBE9] text-white font-medium" : ""
                           }`}
                         >
                           {subItem.label}
@@ -127,8 +135,8 @@ export default function Navigation() {
                 ) : (
                   <Link
                     href={item.href!}
-                    className={`flex items-center space-x-2 px-4 py-4 hover:bg-green-600 transition-all duration-200 rounded-lg ${
-                      isActive(item.href!) ? "bg-green-600 text-yellow-300" : ""
+                    className={`flex items-center space-x-2 px-4 py-4 hover:bg-[#94BBE9] transition-all duration-200 rounded-lg ${
+                      false ? "bg-[#94BBE9] text-white" : ""
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -159,7 +167,7 @@ export default function Navigation() {
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white hover:bg-green-600"
+            className="text-white hover:bg-[#94BBE9]"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -167,7 +175,7 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-green-800 shadow-2xl border-t border-green-600 z-50">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-[#94BBE9] shadow-2xl border-t border-[#94BBE9] z-50">
             <div className="container mx-auto px-4 py-4 space-y-2">
               {menuItems.map((item) => (
                 <div key={item.id}>
@@ -175,7 +183,7 @@ export default function Navigation() {
                     <div>
                       <button
                         onClick={() => handleDropdownToggle(item.id)}
-                        className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-green-700 rounded-lg transition-colors"
+                        className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-[#94BBE9] rounded-lg transition-colors"
                       >
                         <div className="flex items-center space-x-2">
                           <item.icon className="h-4 w-4" />
@@ -191,8 +199,8 @@ export default function Navigation() {
                             <Link
                               key={index}
                               href={subItem.href}
-                              className={`block px-4 py-2 text-sm hover:bg-green-700 rounded transition-colors ${
-                                isActive(subItem.href) ? "bg-green-700 text-yellow-300" : ""
+                              className={`block px-4 py-2 text-sm hover:bg-[#94BBE9] rounded transition-colors ${
+                                isActive(subItem.href) ? "bg-[#94BBE9] text-white" : ""
                               }`}
                               onClick={() => setMobileMenuOpen(false)}
                             >
@@ -205,8 +213,8 @@ export default function Navigation() {
                   ) : (
                     <Link
                       href={item.href!}
-                      className={`flex items-center space-x-2 px-4 py-3 hover:bg-green-700 rounded-lg transition-colors ${
-                        isActive(item.href!) ? "bg-green-700 text-yellow-300" : ""
+                      className={`flex items-center space-x-2 px-4 py-3 hover:bg-[#94BBE9] rounded-lg transition-colors ${
+                        isActive(item.href!) ? "bg-[#94BBE9] text-white" : ""
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -219,7 +227,7 @@ export default function Navigation() {
 
               <Link
                 href="/admin/login"
-                className="flex items-center space-x-2 px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors mt-4"
+                className="flex items-center space-x-2 px-4 py-3 bg-red-600 hover:bg-red-700 !text-white rounded-lg transition-colors mt-4"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <LogIn className="h-4 w-4" />

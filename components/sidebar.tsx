@@ -14,7 +14,7 @@ import AudioPlayer from "./audio-player"
 import dynamic from "next/dynamic"
 
 export default function Sidebar() {
-  const quickLinks = ["Bộ Quốc phòng", "Quân khu 7", "Báo Quân đội nhân dân", "VOV Giao thông", "Thời tiết"]
+  const quickLinks = [{name:"Quản lý văn bản",link:"http://quanlyvanban.bqp"},{name:"Hệ thông tin CĐ-ĐH QC",link:"http://htt.qcpkkq.bqp"},{name:"Hệ thông tin CĐ-ĐH F375",link:"https://192.168.1.120"},{name:"Mail QS",link:"https://mail.bqp"},{name:"Cổng TTĐT QC",link:"http://qcpkkq.bqp"}]
   const [imageTop,setImageTop] = useState<any>()
   const [isPlaying,setPlaying] = useState<boolean>(false)
   const [videoTop,setVideoTop] = useState<any>()
@@ -94,13 +94,14 @@ useEffect(()=>{
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            {quickLinks.map((link, index) => (
+            {quickLinks.map((link:any, index) => (
               <a
                 key={index}
-                href="#"
+                target="_blank"
+                href={link?.link}
                 className="flex items-center justify-between p-2 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors"
               >
-                <span>{link}</span>
+                <span>{link?.name}</span>
                 <ExternalLink className="h-3 w-3" />
               </a>
             ))}

@@ -29,7 +29,7 @@ export class DocumentService {
 
   async createDocument(document: any) {
     try {
-      const response = await apiClient.post<any>("/documents", document)
+      const response = await apiClient.upload<any>("/documents", document)
       return response || null
     } catch (error) {
       console.error("Create document error:", error)
@@ -39,7 +39,7 @@ export class DocumentService {
 
   async updateDocument(id: string, data: any) {
     try {
-      const response = await apiClient.patch<any>(`/documents/${id}`, data)
+      const response = await apiClient.uploadPatch<any>(`/documents/${id}`, data)
       return response || null
     } catch (error) {
       console.error("Update document error:", error)

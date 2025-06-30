@@ -1,9 +1,12 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { History, Award, Target } from "lucide-react"
+import { historyService } from "@/services/histories.service"
+import { useEffect, useState } from "react"
 
 export default function HistoryPage() {
-  const milestones = [
+  const [milestones,setMilestones] = useState([
     {
       year: "1965",
       title: "Thành lập Sư đoàn",
@@ -32,7 +35,19 @@ export default function HistoryPage() {
       title: "Hội nhập và phát triển",
       description: "Ứng dụng công nghệ cao, tham gia các hoạt động quốc tế",
     },
-  ]
+  ])
+
+
+  const fetchData = async()=>{
+      const res = await historyService.getHistories()
+      if(res.statusCode === 200){
+        setMilestones(res.data)
+      }
+    }
+  
+    useEffect(()=>{
+      fetchData()
+    },[])
 
   return (
     <div className="space-y-8">

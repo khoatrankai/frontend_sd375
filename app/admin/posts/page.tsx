@@ -18,13 +18,18 @@ export default function AdminPostsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const refBtn = useRef(null)
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const [selectedFilterCategory, setSelectedFilterCategory] = useState<string | undefined>(undefined);
   const [categories, setCategories] = useState<any>([])
+const [filteredNews,setFilteredNews] = useState<any>([])
+    
 
   const [selectedActivity, setSelectedActivity] = useState<string | undefined>(undefined);
+  const [selectedFilterActivity, setSelectedFilterActivity] = useState<string | undefined>(undefined);
   const [categoriesActivity, setcategoriesActivity] = useState<any>([])
 
   const [Region, setRegion] = useState<any>([])
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(undefined);
+  const [selectedFilterRegion, setSelectedFilterRegion] = useState<string | undefined>(undefined);
 
   const [News, setNews] = useState<any>([])
   const [selectedNews, setSelectedNews] = useState<string | undefined>(undefined);
@@ -70,7 +75,6 @@ export default function AdminPostsPage() {
 
 
 
-
   useEffect(() => {
     fetchData()
     fetchDataActivity()
@@ -101,9 +105,6 @@ export default function AdminPostsPage() {
       setcategoriesActivity(res.data)
     }
   }
-
-
-  const totalNews = News.length;
 
 
   const stats = [
@@ -140,11 +141,11 @@ export default function AdminPostsPage() {
     setPreviewUrl(null);
   };
 
-  useEffect(() => {
-    // console.log(selectedActivity)
-  }, [selectedActivity])
+  
   const [open, setOpen] = useState(false);
   const handleFocusUpdate = (post: any) => {
+    setSelectedFile(null)
+    setPreviewUrl(post?.image);
     setTitle(post.title)
     setExcerpt(post.excerpt)
     setSelectedActivity(post?.categoryActivity?.id ?? undefined)
@@ -189,10 +190,20 @@ export default function AdminPostsPage() {
     setIsFeatured(false);
     setSelectedFile(null);
   };
-  const filteredNews = selectedCategory
-    ? News.filter((post: any) => post?.category?.id === selectedCategory)
-    : News;
 
+
+  useEffect(()=>{
+    setFilteredNews(News.filter((post:any)=>{
+        const matchesSearch =
+      post?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post?.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesSearch && (selectedFilterActivity === "all" || selectedFilterActivity === post?.categoryActivity?.nametag || !selectedFilterActivity) && 
+      (selectedFilterCategory === "all" || selectedFilterCategory === post?.category?.nametag || !selectedFilterCategory) &&
+      (selectedFilterRegion === "all" || selectedFilterRegion === post?.region?.nametag || !selectedFilterRegion)
+    }))
+  },[News,selectedFilterActivity,selectedFilterCategory,selectedFilterRegion,searchTerm])
+
+  
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -243,7 +254,7 @@ export default function AdminPostsPage() {
                         <SelectItem value="undefined">Không</SelectItem>
 
                         {Region?.map((region: any) => (
-                          <SelectItem key={region.id} value={region.id}>
+                          <SelectItem key={region.id} value={region?.id}>
                             {region?.name}
                           </SelectItem>
 
@@ -307,7 +318,7 @@ export default function AdminPostsPage() {
 
                         {categories.map((category: any) => (
 
-                          <SelectItem key={category.id} value={category.id}>
+                          <SelectItem key={category.id} value={category?.id}>
                             {category?.name}
                           </SelectItem>
                         ))}
@@ -411,13 +422,13 @@ export default function AdminPostsPage() {
             </div>
 
             <div className="flex-1 min-w-[200px]">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select value={selectedFilterCategory} onValueChange={setSelectedFilterCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="HĐ Quân Sự" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category: any) => (
-                    <SelectItem key={category.id} value={category?.id}>
+                    <SelectItem key={category.id} value={category?.nametag}>
                       {category?.name}
                     </SelectItem>
                   ))}
@@ -426,13 +437,13 @@ export default function AdminPostsPage() {
             </div>
 
             <div className="flex-1 min-w-[200px]">
-              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+              <Select value={selectedFilterRegion} onValueChange={setSelectedFilterRegion}>
                 <SelectTrigger>
                   <SelectValue placeholder="HĐ Ngoài Nước" />
                 </SelectTrigger>
                 <SelectContent>
                   {Region.map((region: any) => (
-                    <SelectItem key={region?.id} value={region?.id}>
+                    <SelectItem key={region?.id} value={region?.nametag}>
                       {region?.name}
                     </SelectItem>
                   ))}
@@ -441,13 +452,13 @@ export default function AdminPostsPage() {
             </div>
 
             <div className="flex-1 min-w-[200px]">
-              <Select value={selectedActivity} onValueChange={setSelectedActivity}>
+              <Select value={selectedFilterActivity} onValueChange={setSelectedFilterActivity}>
                 <SelectTrigger>
                   <SelectValue placeholder="HĐ Sư Đoàn" />
                 </SelectTrigger>
                 <SelectContent>
                   {categoriesActivity.map((item: any) => (
-                    <SelectItem key={item.id} value={item.id}>
+                    <SelectItem key={item.id} value={item.nametag}>
                       {item?.name}
                     </SelectItem>
                   ))}
@@ -455,12 +466,12 @@ export default function AdminPostsPage() {
               </Select>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
+            {/* <div className="flex-1 min-w-[200px]">
               <Button variant="outline" className="w-full">
                 <Search className="h-4 w-4 mr-2" />
                 Tìm kiếm
               </Button>
-            </div>
+            </div> */}
           </div>
 
         </CardContent>
@@ -469,11 +480,11 @@ export default function AdminPostsPage() {
       {/* Posts Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách bảng tin ({News.length})</CardTitle>
+          <CardTitle>Danh sách bảng tin ({filteredNews.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {News.map((post: any) => (
+            {filteredNews.map((post: any) => (
               <div key={post?.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
@@ -571,8 +582,10 @@ export default function AdminPostsPage() {
                                   disabled
                                 />
 
-                                {selectedFile && (
-                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                {/* {selectedFile && (
+                                 
+                                )} */}
+                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
                                     {previewUrl && (
                                       <img
                                         src={previewUrl}
@@ -582,7 +595,7 @@ export default function AdminPostsPage() {
                                     )}
                                     <div>
                                       <span className="text-sm text-green-700 block">
-                                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                                        ✓ File đã được tải lên: <strong>{selectedFile?.name}</strong>
                                       </span>
                                       <button
                                         disabled
@@ -593,7 +606,6 @@ export default function AdminPostsPage() {
                                       </button>
                                     </div>
                                   </div>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -725,18 +737,20 @@ export default function AdminPostsPage() {
                                   onChange={handleFileChange}
                                 />
 
-                                {selectedFile && (
+                                {/* {selectedFile && ( */}
                                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
                                     {previewUrl && (
                                       <img
-                                        src={previewUrl}
+                                        src={previewUrl ?? ""}
                                         alt="Preview"
                                         className="w-24 h-24 object-cover rounded"
                                       />
                                     )}
-                                    <div>
+                                    {
+                                      selectedFile &&
+<div>
                                       <span className="text-sm text-green-700 block">
-                                        ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                                        ✓ File đã được tải lên: <strong>{selectedFile?.name}</strong>
                                       </span>
                                       <button
                                         onClick={handleRemoveFile}
@@ -745,8 +759,10 @@ export default function AdminPostsPage() {
                                         Xóa
                                       </button>
                                     </div>
+                                    }
+                                    
                                   </div>
-                                )}
+                                {/* )} */}
                               </div>
                             </div>
                           </div>

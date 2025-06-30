@@ -1,7 +1,22 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, Award, Users, History, Phone, Mail } from "lucide-react"
+import { historyService } from "@/services/histories.service"
+import { Shield, Award, Users, History, Phone, Mail,Star, Medal, Trophy } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export default function IntroductionPage() {
+  const [histories,setHistories] = useState<any>([])
+
+  const fetchData = async()=>{
+    const res = await historyService.getHistories()
+    if(res.statusCode === 200){
+      setHistories(res.data)
+    }
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[])
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -24,24 +39,22 @@ export default function IntroductionPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <img
-                src="/public/placeholder.svg?height=300&width=500"
+                src="/logo.jpg"
                 alt="Sư đoàn phòng không 375"
                 className="w-full h-64 object-cover rounded-lg"
               />
             </div>
             <div className="space-y-4">
               <p className="text-gray-700">
-                Sư đoàn phòng không 375 được thành lập vào năm 1965, là một trong những đơn vị phòng không chủ lực của
-                Quân đội nhân dân Việt Nam. Qua hơn 50 năm xây dựng và phát triển, Sư đoàn đã trở thành lực lượng tinh
-                nhuệ, hiện đại.
+                Sư đoàn 375 là một đơn vị quan trọng thuộc Quân chủng Phòng không - Không quân của Quân đội nhân dân Việt Nam. Sư đoàn có bề dày lịch sử và truyền thống vẻ vang, đặc biệt trong cuộc kháng chiến chống Mỹ cứu nước.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <p className="text-2xl font-bold text-red-600">58</p>
+                  <p className="text-2xl font-bold text-red-600">{(new Date()).getFullYear() - 1968}</p>
                   <p className="text-sm text-gray-600">Năm thành lập</p>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">15</p>
+                  <p className="text-2xl font-bold text-green-600">10</p>
                   <p className="text-sm text-gray-600">Đơn vị trực thuộc</p>
                 </div>
               </div>
@@ -60,26 +73,33 @@ export default function IntroductionPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            <div className="border-l-4 border-red-600 pl-4">
-              <h3 className="font-bold text-lg">1965 - 1975: Kháng chiến chống Mỹ</h3>
-              <p className="text-gray-700">
-                Tham gia bảo vệ các mục tiêu quan trọng, đặc biệt là cầu Hàm Rồng, sân bay Vinh và các tuyến giao thông
-                chiến lược.
-              </p>
-            </div>
-            <div className="border-l-4 border-blue-600 pl-4">
-              <h3 className="font-bold text-lg">1979: Chiến tranh bảo vệ biên giới phía Bắc</h3>
-              <p className="text-gray-700">
-                Đảm nhiệm nhiệm vụ bảo vệ vùng trời các tỉnh biên giới, góp phần quan trọng vào thắng lợi chung.
-              </p>
-            </div>
-            <div className="border-l-4 border-green-600 pl-4">
+            {
+              histories?.map((dt:any)=>{
+                if(dt?.highlight){
+                  return <div className="border-l-4 border-red-600 pl-4">
+                  <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
+                  <p className="text-gray-700">
+                    {dt?.description}
+                  </p>
+                </div>
+                }
+                return <div className="border-l-4 border-blue-600 pl-4">
+                   <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
+                  <p className="text-gray-700">
+                    {dt?.description}
+                  </p>
+                </div>
+              })
+            }
+            
+            
+            {/* <div className="border-l-4 border-green-600 pl-4">
               <h3 className="font-bold text-lg">1980 - nay: Thời kỳ hòa bình</h3>
               <p className="text-gray-700">
                 Tiếp tục hiện đại hóa, nâng cao năng lực sẵn sàng chiến đấu, tham gia tích cực các hoạt động xây dựng và
                 bảo vệ Tổ quốc.
               </p>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>

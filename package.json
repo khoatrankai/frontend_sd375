@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3003",
+    "dev": "next dev -p 80",
     "build": "next build",
-    "start": "next start -p 3003",
+    "start": "next start -p 80",
     "lint": "next lint"
   },
   "dependencies": {
@@ -99,6 +99,7 @@
     "reflect-metadata": "latest",
     "relative-time": "^1.0.0",
     "rxjs": "latest",
+    "sass": "^1.89.2",
     "sonner": "^1.7.1",
     "sql.js": "latest",
     "sqlite3": "latest",

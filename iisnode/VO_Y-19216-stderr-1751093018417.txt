@@ -1,0 +1,11 @@
+ ⨯ uncaughtException:  Error: listen EACCES: permission denied 0.0.0.0:80
+    at <unknown> (Error: listen EACCES: permission denied 0.0.0.0:80)
+    at <unknown> (D:\lIENMINH\riotleague\frontend_sd375\server.js:24:6) {
+  code: 'EACCES',
+  errno: -4092,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 80
+}
+(node:19216) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

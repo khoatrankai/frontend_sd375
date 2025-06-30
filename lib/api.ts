@@ -96,6 +96,16 @@ class ApiClient {
       })
     )
   }
+
+  uploadPut<T>(endpoint: string, formData: FormData) {
+    return this.handleRequest<T>(
+      this.axiosInstance.put<T>(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    )
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL)

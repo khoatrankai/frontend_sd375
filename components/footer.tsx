@@ -1,6 +1,7 @@
 import { Phone, Mail, MapPin, Clock } from "lucide-react"
 
 export default function Footer() {
+  const quickLinks = [{name:"Quản lý văn bản",link:"http://quanlyvanban.bqp"},{name:"Hệ thông tin CĐ-ĐH QC",link:"http://htt.qcpkkq.bqp"},{name:"Hệ thông tin CĐ-ĐH F375",link:"https://192.168.1.120"},{name:"Mail QS",link:"https://mail.bqp"},{name:"Cổng TTĐT QC",link:"http://qcpkkq.bqp"}]
   return (
     <footer className="bg-gray-800 text-white py-8 mt-8">
       <div className="container mx-auto px-4">
@@ -28,18 +29,15 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4 text-red-400">Liên kết nhanh</h3>
             <div className="space-y-2">
-              <a href="#" className="block hover:text-red-400 transition-colors">
-                Bộ Quốc phòng
+              {
+                quickLinks.map((dt)=>{
+                  return <a key={dt.name} href={dt.link} target="_blank" className="block hover:text-red-400 transition-colors">
+                {dt.name}
               </a>
-              <a href="#" className="block hover:text-red-400 transition-colors">
-                Quân khu 7
-              </a>
-              <a href="#" className="block hover:text-red-400 transition-colors">
-                Báo Quân đội nhân dân
-              </a>
-              <a href="#" className="block hover:text-red-400 transition-colors">
-                Trang thông tin điện tử Chính phủ
-              </a>
+                })
+              }
+              
+              
             </div>
           </div>
 

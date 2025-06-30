@@ -11,9 +11,11 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTr
 import { DialogHeader } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { usePathname } from "next/navigation"
+import { articlesService } from "@/services/articles.service"
 
 export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [dataSave,setDataSave] = useState<any>({})
   const [selectedType, setSelectedType] = useState("all")
   const [selectedUnit, setSelectedUnit] = useState("all")
 
@@ -21,15 +23,34 @@ export default function AdminDocumentsPage() {
   const documentTypes = [
     // { id: "all", name: "Tất cả loại" },
     // { id: "regulation", name: "Liên hệ góp ý" },
-    { id: "report", name: "CCHC & Chuyển đổi số" },
-    { id: "directive", name: "Thông tin tuyên truyền" },
-    { id: "notice", name: "Thông tin Pháp luật" },
-    { id: "plan", name: "Thông tin KHQS" },
+    { id: "cchc", name: "CCHC & Chuyển đổi số" },
+    { id: "tttt", name: "Thông tin tuyên truyền" },
+    { id: "ttpl", name: "Thông tin Pháp luật" },
+    { id: "khqs", name: "Thông tin KHQS" },
   ]
 
+const [categories,setCategories] = useState<any>([
+  ])
 
+  //   const categoryKHQS = [
+  //   { id: "technology", name: "Công nghệ quân sự", count: 4 },
+  //   { id: "strategy", name: "Chiến lược", count: 3 },
+  //   { id: "research", name: "Nghiên cứu", count: 2 },
+  // ]
 
-  const documents = [
+  //   const categoryTTPL = [
+  //   { id: "defense-law", name: "Luật Quốc phòng", count: 3 },
+  //   { id: "military-law", name: "Luật Quân sự", count: 2 },
+  //   { id: "regulations", name: "Quy định", count: 3 },
+  // ]
+
+  //  const categoryTTTT = [
+  //   { id: "education", name: "Giáo dục chính trị", count: 4 },
+  //   { id: "media", name: "Truyền thông", count: 3 },
+  //   { id: "culture", name: "Văn hóa", count: 3 },
+  // ]
+
+  const [articles, setArticles] = useState<any>([
     {
       id: 1,
       title: "Chỉ thị số 01/CT-F375 về công tác chuẩn bị năm 2025",
@@ -95,14 +116,16 @@ export default function AdminDocumentsPage() {
       size: "2.7 MB",
       status: "published",
     },
-  ]
+  ])
 
-  const filteredDocuments = documents.filter((doc) => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = selectedType === "all" || doc.type === selectedType
-    const matchesUnit = selectedUnit === "all" || doc.unit === selectedUnit
-    return matchesSearch && matchesType && matchesUnit
-  })
+  // const filteredDocuments = documents.filter((doc) => {
+  //   const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesType = selectedType === "all" || doc.type === selectedType
+  //   const matchesUnit = selectedUnit === "all" || doc.unit === selectedUnit
+  //   return matchesSearch && matchesType && matchesUnit
+  // })
+
+  const [filteredArticles,setFilteredArticales] = useState<any>([])
 
   const stats = [
     { label: "CCHC & Chuyển đổi số", value: "89", color: "text-blue-600" },
@@ -110,6 +133,8 @@ export default function AdminDocumentsPage() {
     { label: "Thông tin Pháp luật", value: "8", color: "text-yellow-600" },
     { label: "TThông tin KHQS", value: "5", color: "text-red-600" },
   ]
+
+
   const handleDelete = () => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
 
@@ -159,18 +184,11 @@ export default function AdminDocumentsPage() {
   const handleRemoveFile = () => {
     setSelectedFile(null);
   };
-  const [selectedDocType, setSelectedDocType] = useState("all");
+  const [selectedDocType, setSelectedDocType] = useState("cchc");
   const reportSectionRef = useRef<HTMLDivElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const pathname = usePathname()
   const [dialogOpen, setDialogOpen] = useState(false)
-  useEffect(() => {
-    // Nếu đang ở trang giới thiệu thì tự chọn "report" và mở dialog
-    if (pathname === "/admin/topic") {
-      setSelectedDocType("report")
-      // setDialogOpen(true)
-    }
-  }, [pathname])
   const [inputValue, setInputValue] = useState("")
   const [fields, setFields] = useState<string[]>([])
 
@@ -180,6 +198,37 @@ export default function AdminDocumentsPage() {
       setFields([...fields, trimmed])
     }
     setInputValue("") // Reset ô input
+  }
+
+  const fetchData = async()=>{
+    const res = await articlesService.getCategories()
+    const res2 = await articlesService.getArticles()
+    if(res.statusCode === 200){
+      setCategories(res.data)
+    }
+    if(res2.statusCode === 200){
+      setArticles(res2.data)
+    }
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  useEffect(()=>{
+    setFilteredArticales(articles.filter((article:any)=>{
+      return article.title.toLowerCase().includes(searchTerm.toLowerCase()) && article.type === selectedDocType
+    }))
+  },[searchTerm,articles,selectedDocType])
+
+  const handleSubmit = async()=>{
+    const res = await articlesService.createArticle({...dataSave,type:selectedDocType,tags:fields?.length ? fields :['']} as any) as any
+    if(res.statusCode === 201){
+      setDataSave({})
+      fetchData()
+      setFields([])
+    }
+    
   }
 
   return (
@@ -219,7 +268,7 @@ export default function AdminDocumentsPage() {
               />
             </div>
             <div>
-              <Select onValueChange={setSelectedDocType} defaultValue="report" >
+              <Select onValueChange={setSelectedDocType} defaultValue="cchc" >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn mục" />
                 </SelectTrigger>
@@ -234,12 +283,12 @@ export default function AdminDocumentsPage() {
 
             </div>
 
-            <div>
+            {/* <div>
               <Button variant="outline" className="w-full">
                 <Search className="h-4 w-4 mr-2" />
                 Tìm kiếm
               </Button>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>
@@ -249,160 +298,99 @@ export default function AdminDocumentsPage() {
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-4">
-              <CardTitle>Danh sách quản lý </CardTitle>
+              <CardTitle>Danh sách chuyên đề</CardTitle>
             </div>
             <div className="text-right" >
-              {selectedDocType === "report" && (
+              {/* {selectedDocType === "cchc" && ( */}
                 <Dialog >
                   <DialogTrigger asChild>
                     <Button
                       className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      Thêm CCHC & Chuyển đổi số
+                     {
+                        selectedDocType === "cchc" ? "Thêm CCHC & Chuyển đổi số" : selectedDocType === "ttpl" ? "Thêm Thông tin Pháp luật" : selectedDocType === "khqs" ? "Thêm Thông tin KHQS" : selectedDocType === "tttt" ? "Thêm Thông tin tuyên truyền" : selectedDocType === "regulation" ? "Thêm Liên hệ góp ý" : ""
+                      }
                     </Button>
                   </DialogTrigger>
 
                   <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
 
                     <DialogHeader >
-                      <DialogTitle>CCHC & Chuyển đổi số</DialogTitle>
+                      <DialogTitle>{
+                        selectedDocType === "cchc" ? "CCHC & Chuyển đổi số" : selectedDocType === "ttpl" ? "Thông tin Pháp luật" : selectedDocType === "khqs" ? "Thông tin KHQS" : selectedDocType === "tttt" ? "Thông tin tuyên truyền" : selectedDocType === "regulation" ? "Liên hệ góp ý" : ""
+                      }</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div>
                         <label>Tiêu đề *</label>
-                        <Input placeholder="Nhập tiêu đề " />
+                        <Input value={dataSave?.title} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            title: e.target.value
+                          }
+                        })}} placeholder="Nhập tiêu đề " />
                       </div>
 
                       <div>
                         <label>Mô tả *</label>
                         <Textarea
-                          id="description"
+                          id="excerpt"
                           placeholder="Nhập mô tả "
+                          value={dataSave?.excerpt}
+                          onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              excerpt: e.target.value
+                            }
+                          })}}
                           rows={10}
                         />
                       </div>
-                      <div>
+                       <div>
                         <label>Loại bài viết</label>
-                        <Select>
+                        <Select onValueChange={(value:any)=>{
+                          setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              category: value
+                            }
+                          })
+                        }}>
                           <SelectTrigger>
                             <SelectValue placeholder="Chọn loại bài viết" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="chuyen-doi-so">Chuyển đổi số</SelectItem>
-                            <SelectItem value="cai-cach-hanh-chinh">Cải cách hành chính</SelectItem>
-                            <SelectItem value="chinh-phu-dien-tu">Chính phủ điện tử</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label>Thuộc lĩnh vực</label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Input
-                            className="w-60"
-                            placeholder="Nhập"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                          />
-                          <Button type="button" onClick={handleAddField}>
-                            Nhập
-                          </Button>
-                        </div>
-
-                        {/* Hiển thị các lĩnh vực đã nhập */}
-                        {fields.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {fields.map((field, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                              >
-                                <span>{field}</span>
-                                <button
-                                  onClick={() => {
-                                    const updated = fields.filter((_, i) => i !== index)
-                                    setFields(updated)
-                                  }}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  aria-label={`Xoá ${field}`}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                      </div>
-                      <div>
-                        <label>Tên và cấp bậc</label>
-                        <Input placeholder="Nhập tên và cấp bậc " />
-                      </div>
-
-                      <DialogFooter >
-                        <DialogClose asChild>
-
-                          <Button type="button"  >
-                            Hủy
-                          </Button>
-                        </DialogClose>
-                        <DialogClose asChild>
-
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                            Lưu
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-
-
-                    </div>
-                  </DialogContent>
-
-                </Dialog>
-              )}
-              {selectedDocType === "directive" && (
-                <Dialog >
-                  <DialogTrigger asChild>
-                    <Button
-                      className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm Thông tin tuyên truyền
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-
-                    <DialogHeader >
-                      <DialogTitle>Thông tin tuyên truyền</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <label>Tiêu đề *</label>
-                        <Input placeholder="Nhập tiêu đề " />
-                      </div>
-
-                      <div>
-                        <label>Mô tả *</label>
-                        <Textarea
-                          id="description"
-                          placeholder="Nhập mô tả "
-                          rows={10}
-                        />
-                      </div>
-                      <div>
-                        <label>Loại bài viết</label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại bài viết" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
+                            {
+                              categories.map((item:any)=>{
+                                return(
+                                  <SelectItem value={item.id}>{item.name}</SelectItem>
+                                )
+                              })
+                            }
+                            {/* <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
                             <SelectItem value="truyen-thong">Truyền Thông</SelectItem>
-                            <SelectItem value="van-hoa">Văn hóa</SelectItem>
+                            <SelectItem value="van-hoa">Văn hóa</SelectItem> */}
                           </SelectContent>
                         </Select>
+                      </div>
+                     <div>
+                        <label>Thời gian đăng</label>
+                        <Input value={dataSave?.date} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            date: e.target.value
+                          }
+                        })}} placeholder="Nhập tiêu đề " />
+                      </div>
+                      <div>
+                        <label>Thời gian đọc</label>
+                        <Input value={dataSave?.readTime} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            readTime: e.target.value
+                          }
+                        })}} placeholder="Nhập tiêu đề " />
                       </div>
                       <div>
                         <label>Thuộc lĩnh vực</label>
@@ -445,8 +433,13 @@ export default function AdminDocumentsPage() {
 
                       </div>
                       <div>
-                        <label>Tên và cấp bậc</label>
-                        <Input placeholder="Nhập tên và cấp bậc " />
+                        <label>Tên người đăng</label>
+                        <Input placeholder="Nhập tên "  value={dataSave?.author} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            author: e.target.value
+                          }
+                        })}}/>
                       </div>
 
                       <DialogFooter >
@@ -458,7 +451,7 @@ export default function AdminDocumentsPage() {
                         </DialogClose>
                         <DialogClose asChild>
 
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
                             Lưu
                           </Button>
                         </DialogClose>
@@ -469,225 +462,8 @@ export default function AdminDocumentsPage() {
                   </DialogContent>
 
                 </Dialog>
-              )}
-              {selectedDocType === "notice" && (
-                <Dialog >
-                  <DialogTrigger asChild>
-                    <Button
-                      className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm Thông tin Pháp luật
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-
-                    <DialogHeader >
-                      <DialogTitle>Thông tin Pháp luật</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <label>Tiêu đề *</label>
-                        <Input placeholder="Nhập tiêu đề " />
-                      </div>
-
-                      <div>
-                        <label>Mô tả *</label>
-                        <Textarea
-                          id="description"
-                          placeholder="Nhập mô tả "
-                          rows={10}
-                        />
-                      </div>
-                      <div>
-                        <label>Loại bài viết</label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại bài viết" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="luat-quoc-phong">Luật Quốc phòng</SelectItem>
-                            <SelectItem value="luat-quan-su">Luật Quân sự</SelectItem>
-                            <SelectItem value="quy-dinh">Quy định</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label>Thuộc lĩnh vực</label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Input
-                            className="w-60"
-                            placeholder="Nhập"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                          />
-                          <Button type="button" onClick={handleAddField}>
-                            Nhập
-                          </Button>
-                        </div>
-
-                        {/* Hiển thị các lĩnh vực đã nhập */}
-                        {fields.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {fields.map((field, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                              >
-                                <span>{field}</span>
-                                <button
-                                  onClick={() => {
-                                    const updated = fields.filter((_, i) => i !== index)
-                                    setFields(updated)
-                                  }}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  aria-label={`Xoá ${field}`}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                      </div>
-                      <div>
-                        <label>Tên và cấp bậc</label>
-                        <Input placeholder="Nhập tên và cấp bậc " />
-                      </div>
-
-                      <DialogFooter >
-                        <DialogClose asChild>
-
-                          <Button type="button"  >
-                            Hủy
-                          </Button>
-                        </DialogClose>
-                        <DialogClose asChild>
-
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                            Lưu
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-
-
-                    </div>
-                  </DialogContent>
-
-                </Dialog>
-              )}
-              {selectedDocType === "plan" && (
-                <Dialog >
-                  <DialogTrigger asChild>
-                    <Button
-                      className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm Thông tin KHQS
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-
-                    <DialogHeader >
-                      <DialogTitle>CCHC & Chuyển đổi số</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <label>Tiêu đề *</label>
-                        <Input placeholder="Nhập tiêu đề " />
-                      </div>
-
-                      <div>
-                        <label>Mô tả *</label>
-                        <Textarea
-                          id="description"
-                          placeholder="Nhập mô tả "
-                          rows={10}
-                        />
-                      </div>
-                      <div>
-                        <label>Loại bài viết</label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại bài viết" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="cong-nghe-quan-su">Công nghệ Quân sự</SelectItem>
-                            <SelectItem value="chien-luoc">Chiến lược</SelectItem>
-                            <SelectItem value="nghien-cuu">Nghiên cứu</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label>Thuộc lĩnh vực</label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Input
-                            className="w-60"
-                            placeholder="Nhập"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                          />
-                          <Button type="button" onClick={handleAddField}>
-                            Nhập
-                          </Button>
-                        </div>
-
-                        {/* Hiển thị các lĩnh vực đã nhập */}
-                        {fields.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {fields.map((field, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                              >
-                                <span>{field}</span>
-                                <button
-                                  onClick={() => {
-                                    const updated = fields.filter((_, i) => i !== index)
-                                    setFields(updated)
-                                  }}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  aria-label={`Xoá ${field}`}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                      </div>
-                      <div>
-                        <label>Tên và cấp bậc</label>
-                        <Input placeholder="Nhập tên và cấp bậc " />
-                      </div>
-
-                      <DialogFooter >
-                        <DialogClose asChild>
-
-                          <Button type="button"  >
-                            Hủy
-                          </Button>
-                        </DialogClose>
-                        <DialogClose asChild>
-
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                            Lưu
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-
-
-                    </div>
-                  </DialogContent>
-
-                </Dialog>
-              )}
+              {/* )} */}
+         
 
 
             </div>
@@ -696,27 +472,24 @@ export default function AdminDocumentsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredDocuments.map((doc) => (
+            {filteredArticles.map((doc:any) => (
               <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <FileText className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800 mb-2">{doc.title}</h3>
+                    <h3 className="font-semibold text-gray-800 mb-2">{doc?.title}</h3>
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <Badge variant="outline">{doc.typeName}</Badge>
+                      {/* <Badge variant="outline"></Badge> */}
                       <Badge
                         variant={
-                          doc.status === "published" ? "default" : doc.status === "draft" ? "secondary" : "destructive"
+                          "destructive"
                         }
                       >
-                        {doc.status === "published" ? "Đã xuất bản" : doc.status === "draft" ? "Bản nháp" : "Chờ duyệt"}
+                        {doc?.category?.name}
                       </Badge>
-                      <div className="flex items-center">
-                        <Building className="h-4 w-4 mr-1" />
-                        {doc.unitName}
-                      </div>
+                      
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
                         {doc.author}
@@ -725,8 +498,8 @@ export default function AdminDocumentsPage() {
                         <Calendar className="h-4 w-4 mr-1" />
                         {doc.date}
                       </div>
-                      <span>Dung lượng: {doc.size}</span>
-                      <span>Lượt tải: {doc.downloads}</span>
+                      <span>Thời lượng: {doc.readTime}</span>
+                      <span>Lượt xem: {doc.views}</span>
                     </div>
                   </div>
                 </div>
@@ -827,286 +600,7 @@ export default function AdminDocumentsPage() {
 
                     </Dialog>
                   )}
-                  {selectedDocType === "directive" && (
-                    <Dialog >
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-
-                        <DialogHeader >
-                          <DialogTitle>Xem thông tin tuyên truyền</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <label>Tiêu đề *</label>
-                            <Input placeholder="xem tiêu đề " disabled />
-                          </div>
-
-                          <div>
-                            <label>Mô tả *</label>
-                            <Textarea
-                              id="description"
-                              placeholder="Xem mô tả "
-                              rows={10}
-                              disabled />
-                          </div>
-                          <div>
-                            <label>Loại bài viết</label>
-                            <Select disabled>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại bài viết" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
-                                <SelectItem value="truyen-thong">Truyền Thông</SelectItem>
-                                <SelectItem value="van-hoa">Văn hóa</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <label>Thuộc lĩnh vực</label>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Input
-                                className="w-60"
-                                placeholder="Xem"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                                disabled />
-                              <Button type="button" onClick={handleAddField} disabled>
-                                Nhập
-                              </Button>
-                            </div>
-
-                            {/* Hiển thị các lĩnh vực đã nhập */}
-                            {fields.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-3">
-                                {fields.map((field, index) => (
-                                  <div
-                                    key={index}
-                                    className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                                  >
-                                    <span>{field}</span>
-                                    <button
-                                      onClick={() => {
-                                        const updated = fields.filter((_, i) => i !== index)
-                                        setFields(updated)
-                                      }}
-                                      className="ml-2 text-red-500 hover:text-red-700"
-                                      aria-label={`Xoá ${field}`}
-                                    >
-                                      ✕
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                          </div>
-                          <div>
-                            <label>Tên và cấp bậc</label>
-                            <Input placeholder="Xem tên và cấp bậc " disabled />
-                          </div>
-
-
-
-
-                        </div>
-                      </DialogContent>
-
-                    </Dialog>
-                  )}
-                  {selectedDocType === "notice" && (
-                    <Dialog >
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-
-                        <DialogHeader >
-                          <DialogTitle>Xem thông tin Pháp luật</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <label>Tiêu đề *</label>
-                            <Input placeholder="xem tiêu đề " disabled />
-                          </div>
-
-                          <div>
-                            <label>Mô tả *</label>
-                            <Textarea
-                              id="description"
-                              placeholder="Xem mô tả "
-                              rows={10}
-                              disabled />
-                          </div>
-                          <div>
-                            <label>Loại bài viết</label>
-                            <Select disabled>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại bài viết" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="luat-quoc-phong">Luật Quốc phòng</SelectItem>
-                                <SelectItem value="luat-quan-su">Luật Quân sự</SelectItem>
-                                <SelectItem value="quy-dinh">Quy định</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <label>Thuộc lĩnh vực</label>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Input
-                                className="w-60"
-                                placeholder="Xem"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                                disabled />
-                              <Button type="button" onClick={handleAddField} disabled>
-                                Nhập
-                              </Button>
-                            </div>
-
-                            {/* Hiển thị các lĩnh vực đã nhập */}
-                            {fields.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-3">
-                                {fields.map((field, index) => (
-                                  <div
-                                    key={index}
-                                    className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                                  >
-                                    <span>{field}</span>
-                                    <button
-                                      onClick={() => {
-                                        const updated = fields.filter((_, i) => i !== index)
-                                        setFields(updated)
-                                      }}
-                                      className="ml-2 text-red-500 hover:text-red-700"
-                                      aria-label={`Xoá ${field}`}
-                                    >
-                                      ✕
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                          </div>
-                          <div>
-                            <label>Tên và cấp bậc</label>
-                            <Input placeholder="Xem tên và cấp bậc " disabled />
-                          </div>
-
-
-
-
-                        </div>
-                      </DialogContent>
-
-                    </Dialog>
-                  )}
-                  {selectedDocType === "plan" && (
-                    <Dialog >
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-
-                        <DialogHeader >
-                          <DialogTitle>Xem thông tin KHQS</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <label>Tiêu đề *</label>
-                            <Input placeholder="xem tiêu đề " disabled />
-                          </div>
-
-                          <div>
-                            <label>Mô tả *</label>
-                            <Textarea
-                              id="description"
-                              placeholder="Xem mô tả "
-                              rows={10}
-                              disabled />
-                          </div>
-                          <div>
-                            <label>Loại bài viết</label>
-                            <Select disabled>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại bài viết" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="cong-nghe-quan-su">Công nghệ Quân sự</SelectItem>
-                                <SelectItem value="chien-luoc">Chiến lược</SelectItem>
-                                <SelectItem value="nghien-cuu">Nghiên cứu</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <label>Thuộc lĩnh vực</label>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Input
-                                className="w-60"
-                                placeholder="Xem"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                                disabled />
-                              <Button type="button" onClick={handleAddField} disabled>
-                                Nhập
-                              </Button>
-                            </div>
-
-                            {/* Hiển thị các lĩnh vực đã nhập */}
-                            {fields.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-3">
-                                {fields.map((field, index) => (
-                                  <div
-                                    key={index}
-                                    className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                                  >
-                                    <span>{field}</span>
-                                    <button
-                                      disabled
-                                      onClick={() => {
-                                        const updated = fields.filter((_, i) => i !== index)
-                                        setFields(updated)
-                                      }}
-                                      className="ml-2 text-red-500 hover:text-red-700"
-                                      aria-label={`Xoá ${field}`}
-                                    >
-                                      ✕
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                          </div>
-                          <div>
-                            <label>Tên và cấp bậc</label>
-                            <Input placeholder="Xem tên và cấp bậc " disabled />
-                          </div>
-
-
-
-
-                        </div>
-                      </DialogContent>
-
-                    </Dialog>
-                  )}
+                 
 
 
 

@@ -1,9 +1,12 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Award, Star, Medal, Trophy } from "lucide-react"
+import { useEffect, useState } from "react"
+import { awardService } from "@/services/awards.service"
 
 export default function AwardsPage() {
-  const awards = [
+  const [awards,setAwards] = useState([
     {
       id: 1,
       name: "Danh hiệu Đơn vị Anh hùng Lực lượng vũ trang nhân dân",
@@ -64,15 +67,25 @@ export default function AwardsPage() {
       bgColor: "bg-orange-50",
       level: "Đặc biệt",
     },
-  ]
+  ])
 
-  const statistics = [
+  const [statistics,setStatistics] = useState([
     { label: "Tổng số phần thưởng", value: "45+", icon: Trophy },
-    { label: "Huân chương Nhà nước", value: "12", icon: Medal },
+    { label: "Huân chương Nhà nước", value: "5", icon: Medal },
     { label: "Bằng khen các cấp", value: "28", icon: Award },
     { label: "Danh hiệu tập thể", value: "5", icon: Star },
-  ]
+  ])
 
+  const fetchData = async()=>{
+    const res = await awardService.getAwards()
+    if(res.statusCode === 200){
+      setAwards(res.data)
+    }
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[])
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -102,14 +115,15 @@ export default function AwardsPage() {
         {awards.map((award) => (
           <Card
             key={award.id}
-            className={`hover:shadow-xl transition-all duration-300 ${award.bgColor} border-l-4 border-l-current ${award.color}`}
+            className={`hover:shadow-xl transition-all duration-300 border-l-4 border-l-current`}
+            // style={{background: `${award.bgColor}`,color:`${award.color}`}}
           >
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${award.bgColor}`}>
-                  <award.icon className={`h-6 w-6 ${award.color}`} />
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center bg-black`}>
+                  <award.icon className={`h-6 w-6 !text-white`} />
                 </div>
-                <Badge variant="outline" className={award.color}>
+                <Badge variant="outline">
                   {award.level}
                 </Badge>
               </div>
@@ -143,9 +157,10 @@ export default function AwardsPage() {
               {awards.slice(0, 4).map((award, index) => (
                 <div key={award.id} className="relative flex items-start space-x-4">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${award.bgColor} border-2 border-white shadow-md`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-md` }
+                    style={{background: `${award.bgColor}`}}
                   >
-                    <award.icon className={`h-4 w-4 ${award.color}`} />
+                    <award.icon className={`h-4 w-4 ${award.color}`} style={{color:`${award.color}`}}/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2 mb-1">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,103 +10,41 @@ import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Buildin
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { documentService } from "@/services/documents.service"
+import { downloadFile } from "@/lib/DownloadImage"
+import { CustomFormData } from "@/lib/CustomFormData"
 
 export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
-  const [selectedUnit, setSelectedUnit] = useState("all")
-
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [dataSave,setDataSave] = useState<any>({})
   const documentTypes = [
     { id: "all", name: "Tất cả loại" },
-    { id: "directive", name: "Chỉ thị" },
-    { id: "notice", name: "Thông báo" },
-    { id: "plan", name: "Kế hoạch" },
-    { id: "regulation", name: "Quy định" },
-    { id: "report", name: "Báo cáo" },
+    { id: "chi_thi", name: "Chỉ thị" },
+    { id: "thong_bao", name: "Thông báo" },
+    { id: "ke_hoach", name: "Kế hoạch" },
+    { id: "quy_dinh", name: "Quy định" }
   ]
 
-  const units = [
+  const [categories,setCategories] = useState([
     { id: "all", name: "Tất cả đơn vị" },
     { id: "command", name: "Chỉ huy sư đoàn" },
     { id: "political", name: "Phòng chính trị" },
     { id: "staff", name: "Phòng tham mưu" },
     { id: "logistics", name: "Phòng HC-KT" },
-  ]
+  ])
 
-  const documents = [
-    {
-      id: 1,
-      title: "Chỉ thị số 01/CT-F375 về công tác chuẩn bị năm 2025",
-      type: "directive",
-      typeName: "Chỉ thị",
-      unit: "command",
-      unitName: "Chỉ huy sư đoàn",
-      author: "Đại tá Nguyễn Văn A",
-      date: "15/12/2024",
-      downloads: 45,
-      size: "2.3 MB",
-      status: "published",
-    },
-    {
-      id: 2,
-      title: "Thông báo về việc tổ chức hội nghị tổng kết",
-      type: "notice",
-      typeName: "Thông báo",
-      unit: "political",
-      unitName: "Phòng chính trị",
-      author: "Trung tá Trần Văn B",
-      date: "12/12/2024",
-      downloads: 32,
-      size: "1.8 MB",
-      status: "published",
-    },
-    {
-      id: 3,
-      title: "Kế hoạch huấn luyện quý I/2025",
-      type: "plan",
-      typeName: "Kế hoạch",
-      unit: "staff",
-      unitName: "Phòng tham mưu",
-      author: "Thiếu tá Lê Văn C",
-      date: "10/12/2024",
-      downloads: 67,
-      size: "4.1 MB",
-      status: "draft",
-    },
-    {
-      id: 4,
-      title: "Quy định về quản lý tài sản kỹ thuật",
-      type: "regulation",
-      typeName: "Quy định",
-      unit: "logistics",
-      unitName: "Phòng HC-KT",
-      author: "Đại úy Phạm Văn D",
-      date: "08/12/2024",
-      downloads: 28,
-      size: "3.2 MB",
-      status: "pending",
-    },
-    {
-      id: 5,
-      title: "Báo cáo tình hình thực hiện nhiệm vụ tháng 12",
-      type: "report",
-      typeName: "Báo cáo",
-      unit: "staff",
-      unitName: "Phòng tham mưu",
-      author: "Trung tá Hoàng Văn E",
-      date: "05/12/2024",
-      downloads: 19,
-      size: "2.7 MB",
-      status: "published",
-    },
-  ]
+  const [documents,setDocuments] = useState<any>([
+  ])
 
-  const filteredDocuments = documents.filter((doc) => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = selectedType === "all" || doc.type === selectedType
-    const matchesUnit = selectedUnit === "all" || doc.unit === selectedUnit
-    return matchesSearch && matchesType && matchesUnit
-  })
+  const [filteredDocuments,setFilteredDocuments] = useState([]) 
+  // documents.filter((doc) => {
+  //   const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesType = selectedType === "all" || doc.type === selectedType
+  //   const matchesUnit = selectedUnit === "all" || doc.unit === selectedUnit
+  //   return matchesSearch && matchesType && matchesUnit
+  // })
 
   const stats = [
     { label: "Tổng văn bản", value: "89", color: "text-blue-600" },
@@ -114,11 +52,13 @@ export default function AdminDocumentsPage() {
     { label: "Bản nháp", value: "8", color: "text-yellow-600" },
     { label: "Chờ duyệt", value: "5", color: "text-red-600" },
   ]
-  const handleDelete = () => {
+  const handleDelete = async(id:string) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
 
     if (confirmDelete) {
       // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
+      const res = await documentService.deleteDocument(id)
+      fetchData()
       console.log("Đã xoá bài viết");
 
       // 👉 Thông báo
@@ -142,40 +82,12 @@ export default function AdminDocumentsPage() {
       }
     }
   };
-  const handleDownloadAll = async () => {
-    const fileUrls = [
-      "https://example.com/file1.pdf",
-      "https://example.com/image.jpg",
-    ];
-
-    for (const url of fileUrls) {
-      try {
-        const res = await fetch(url);
-        const blob = await res.blob();
-
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = url.split("/").pop() || "download"; // đặt tên file
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        // cleanup
-        URL.revokeObjectURL(a.href);
-      } catch (err) {
-        console.error("Lỗi tải file:", err);
-      }
-    }
-  };
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) {
-        alert("Kích thước file không được vượt quá 50MB");
-        return;
-      }
+      
       setSelectedFile(file);
     }
   };
@@ -216,7 +128,62 @@ export default function AdminDocumentsPage() {
   //     }
   //   };
 
+  const fetchData= async()=>{
+    const res = await documentService.getDocuments()
+    const res2 = await documentService.getCategories()
+    if(res.statusCode === 200){
+      setDocuments(res.data)
+    }
+    if(res2.statusCode === 200){
+      setCategories(res2.data)
+    }
+  }
+  useEffect(()=>{
+    fetchData()
+  },[])
 
+  useEffect(()=>{
+    setFilteredDocuments(documents.filter((doc:any)=>{
+         const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
+          const matchesType = selectedType === "all" || doc.type === selectedType
+          const matchesCategory = selectedCategory === "all" || doc?.category?.nametag === selectedCategory
+          return matchesSearch && matchesType && matchesCategory
+    }))
+  },[documents,searchTerm,selectedType,selectedCategory])
+
+  const handleSubmit = async(e:any)=>{
+    try{
+      e.preventDefault();
+      const formData = CustomFormData({...dataSave,coverDocument:selectedFile})
+      const res = await documentService.createDocument(formData)
+      if(res.statusCode === 201){
+        fetchData()
+        setDataSave({})
+        setSelectedFile(null)
+      }
+    }catch{
+      console.log("Lỗi khi lưu dữ liệu")
+    }
+  }
+
+  const handleSubmitUp = async(e:any,id:string)=>{
+    try{
+      e.preventDefault();
+      const formData = CustomFormData({...dataSave,coverDocument:selectedFile})
+      const res = await documentService.updateDocument(id,formData)
+      if(res.statusCode === 201){
+        fetchData()
+        setDataSave({})
+        setSelectedFile(null)
+      }
+    }catch{
+      console.log("Lỗi khi lưu dữ liệu")
+    }
+  }
+
+  const handleFocusData = async(data:any)=>{
+    setDataSave(data)
+  }
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -236,42 +203,60 @@ export default function AdminDocumentsPage() {
               <DialogTitle>Tạo văn bản mới</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <form className="space-y-4" >
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <label>Tiêu đề *</label>
                   <Input placeholder="Nhập tiêu đề văn bản"
-                  // value={title}
-                  //     onChange={(e) => setTitle(e.target.value)} 
+                  value={dataSave?.title || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,title:e.target.value}
+                    })} 
                   />
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <label>Loại văn bản *</label>
-                    <Select>
+                    <Select onValueChange={(value)=>{
+                      setDataSave((preValue:any)=>{
+                        return {...preValue,type:value}
+                      })
+                    }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn loại văn bản" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="chi-thi">Chỉ thị</SelectItem>
-                        <SelectItem value="thong-bao">THông báo</SelectItem>
-                        <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
-                        <SelectItem value="quy-dinh">Quy định</SelectItem>
-                        <SelectItem value="bao-cao">Báo cáo</SelectItem>
+                        <SelectItem value="chi_thi">Chỉ thị</SelectItem>
+                        <SelectItem value="thong_bao">Thông báo</SelectItem>
+                        <SelectItem value="ke_hoach">Kế hoạch</SelectItem>
+                        <SelectItem value="quy_dinh">Quy định</SelectItem>
+                        {/* <SelectItem value="bao_cao">Báo cáo</SelectItem> */}
 
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="flex-1">
                     <label>Đơn vị đăng tải *</label>
-                    <Select>
+                    <Select 
+                    onValueChange={(value:any)=>{
+                      setDataSave((preValue:any)=>{
+                        return {...preValue,category:value}
+                      })
+                    }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn loại văn bản" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                        {
+                          categories.map((category) => {
+                            return (
+                              <SelectItem value={category.id}>{category.name}</SelectItem>
+                            )
+                          })
+                        }
+                        {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
                         <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
                         <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
-                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
+                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
                       </SelectContent>
                     </Select>
                   </div>
@@ -279,11 +264,30 @@ export default function AdminDocumentsPage() {
                 <div>
                   <label>Người đăng tải(kèm cấp bậc) *</label>
                   <Input placeholder="Nhập người đăng tải"
-                  //  value={title}
-                  //  onChange={(e) => setTitle(e.target.value)} 
+                   value={dataSave?.organ || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,organ:e.target.value}
+                    })} 
                   />
                 </div>
-
+<div>
+                  <label>Ngày đăng tải</label>
+                  <Input placeholder="Nhập ngày đăng"
+                   value={dataSave?.date || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,date:e.target.value}
+                    })} 
+                  />
+                </div>
+                <div>
+                  <label>Kích thước</label>
+                  <Input placeholder="Nhập kích thước"
+                   value={dataSave?.size || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,size:e.target.value}
+                    })} 
+                  />
+                </div>
                 <div>
                   <label htmlFor="">Tải file </label>
 
@@ -291,7 +295,6 @@ export default function AdminDocumentsPage() {
                     <Input
                       id="imageFile"
                       type="file"
-                      accept="image/*"
                       className="cursor-pointer"
                       onChange={handleFileChange}
                     />
@@ -389,25 +392,25 @@ export default function AdminDocumentsPage() {
               </Select>
             </div>
             <div>
-              <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn đơn vị" />
                 </SelectTrigger>
                 <SelectContent>
-                  {units.map((unit) => (
-                    <SelectItem key={unit.id} value={unit.id}>
-                      {unit.name}
+                  {categories.map((category:any) => (
+                    <SelectItem key={category.nametag} value={category.nametag}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            {/* <div>
               <Button variant="outline" className="w-full">
                 <Search className="h-4 w-4 mr-2" />
                 Tìm kiếm
               </Button>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>
@@ -419,7 +422,7 @@ export default function AdminDocumentsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredDocuments.map((doc) => (
+            {filteredDocuments.map((doc:any) => (
               <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -428,21 +431,15 @@ export default function AdminDocumentsPage() {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 mb-2">{doc.title}</h3>
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <Badge variant="outline">{doc.typeName}</Badge>
-                      <Badge
-                        variant={
-                          doc.status === "published" ? "default" : doc.status === "draft" ? "secondary" : "destructive"
-                        }
-                      >
-                        {doc.status === "published" ? "Đã xuất bản" : doc.status === "draft" ? "Bản nháp" : "Chờ duyệt"}
-                      </Badge>
+                      <Badge variant="outline">{documentTypes.find((type:any) => type?.id === doc.type)?.name}</Badge>
+                  
                       <div className="flex items-center">
                         <Building className="h-4 w-4 mr-1" />
-                        {doc.unitName}
+                        {doc?.category?.name}
                       </div>
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
-                        {doc.author}
+                        {doc.organ}
                       </div>
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
@@ -454,13 +451,13 @@ export default function AdminDocumentsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" onClick={handleDownloadAll}>
+                  <Button variant="outline" size="sm" onClick={()=>{downloadFile(doc?.link)}}>
                     <Download className="h-4 w-4" />
                   </Button>
 
                   <Dialog >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" >
+                      <Button variant="outline" size="sm" onClick={()=>{handleFocusData({...doc,category:doc?.category?.id})}}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -469,89 +466,141 @@ export default function AdminDocumentsPage() {
                       <DialogHeader>
                         <DialogTitle>Cập nhật văn bản </DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <label>Tiêu đề *</label>
-                          <Input placeholder="Nhập tiêu đề văn bản" />
-                        </div>
-                        <div className="flex gap-4">
-                          <div className="flex-1">
-                            <label>Loại văn bản *</label>
-                            <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại văn bản" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="chi-thi">Chỉ thị</SelectItem>
-                                <SelectItem value="thong-bao">THông báo</SelectItem>
-                                <SelectItem value="ke-hoach">Kế hoạch</SelectItem>
-                                <SelectItem value="quy-dinh">Quy định</SelectItem>
-                                <SelectItem value="bao-cao">Báo cáo</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="flex-1">
-                            <label>Đơn vị đăng tải *</label>
-                            <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại văn bản" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
-                                <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
-                                <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
-                                <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <div>
-                          <label>Người đăng tải(kèm cấp bậc) *</label>
-                          <Input placeholder="Nhập người đăng tải" />
-                        </div>
+                       <form className="space-y-4" onSubmit={(e)=>{handleSubmitUp(e,doc?.id)}}>
+                <div>
+                  <label>Tiêu đề *</label>
+                  <Input placeholder="Nhập tiêu đề văn bản"
+                  value={dataSave?.title || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,title:e.target.value}
+                    })} 
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label>Loại văn bản *</label>
+                    <Select onValueChange={(value)=>{
+                      setDataSave((preValue:any)=>{
+                        return {...preValue,type:value}
+                      })
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại văn bản" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="chi_thi">Chỉ thị</SelectItem>
+                        <SelectItem value="thong_bao">Thông báo</SelectItem>
+                        <SelectItem value="ke_hoach">Kế hoạch</SelectItem>
+                        <SelectItem value="quy_dinh">Quy định</SelectItem>
+                        {/* <SelectItem value="bao_cao">Báo cáo</SelectItem> */}
 
-                        <div>
-                          <label htmlFor="">Tải file lên</label>
-                          <div className="space-y-2 mt-2">
-                            <Input
-                              id="fileUrl"
-                              type="file"
-                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                              onChange={handleFileChange}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1">
+                    <label>Đơn vị đăng tải *</label>
+                    <Select 
+                    onValueChange={(value:any)=>{
+                      setDataSave((preValue:any)=>{
+                        return {...preValue,category:value}
+                      })
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại văn bản" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          categories.map((category) => {
+                            return (
+                              <SelectItem value={category.id}>{category.name}</SelectItem>
+                            )
+                          })
+                        }
+                        {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                        <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                        <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <label>Người đăng tải(kèm cấp bậc) *</label>
+                  <Input placeholder="Nhập người đăng tải"
+                   value={dataSave?.organ || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,organ:e.target.value}
+                    })} 
+                  />
+                </div>
+<div>
+                  <label>Ngày đăng tải</label>
+                  <Input placeholder="Nhập ngày đăng"
+                   value={dataSave?.date || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,date:e.target.value}
+                    })} 
+                  />
+                </div>
+                <div>
+                  <label>Kích thước</label>
+                  <Input placeholder="Nhập kích thước"
+                   value={dataSave?.size || ""}
+                    onChange={(e) => setDataSave((preValue:any)=>{
+                      return {...preValue,size:e.target.value}
+                    })} 
+                  />
+                </div>
+                <div>
+                  <label htmlFor="">Tải file </label>
+
+                  <div className="space-y-2">
+                    <Input
+                      id="imageFile"
+                      type="file"
+                      className="cursor-pointer"
+                      onChange={handleFileChange}
+                    />
+
+                    {/* {selectedFile && (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                          {previewUrl && (
+                            <img
+                              src={previewUrl}
+                              alt="Preview"
+                              className="w-24 h-24 object-cover rounded"
                             />
-
-                            {selectedFile && (
-                              <div className="flex items-center gap-2 p-2 bg-green-50 rounded border border-green-300">
-                                <span className="text-sm text-green-700">
-                                  ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                                </span>
-                                <button
-                                  onClick={handleRemoveFile}
-                                  className="text-red-500 text-sm hover:underline"
-                                >
-                                  Xóa
-                                </button>
-                              </div>
-                            )}
+                          )}
+                          <div>
+                            <span className="text-sm text-green-700 block">
+                              ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                            </span>
+                            <button
+                              onClick={handleRemoveFile}
+                              className="text-red-500 text-sm hover:underline mt-1"
+                            >
+                              Xóa
+                            </button>
                           </div>
                         </div>
-                        <DialogFooter>
-                          <DialogClose asChild>
+                      )} */}
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
 
-                            <Button type="button"  >
-                              Hủy
-                            </Button>
-                          </DialogClose>
-                          <DialogClose asChild>
+                    <Button type="button"  >
+                      Hủy
+                    </Button>
+                  </DialogClose>
+                  <DialogClose asChild>
 
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                              Lưu
-                            </Button>
-                          </DialogClose>
-                        </DialogFooter>
-
-
-                      </div>
+                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                      Chỉnh sửa
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </form>
                     </DialogContent>
 
                   </Dialog>
@@ -559,7 +608,7 @@ export default function AdminDocumentsPage() {
                     variant="outline"
                     size="sm"
                     className="text-red-600 hover:text-red-700"
-                    onClick={handleDelete}
+                    onClick={()=>{handleDelete(doc?.id)}}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
