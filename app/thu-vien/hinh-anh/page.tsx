@@ -97,16 +97,7 @@ export default function ImagesPage() {
         {filteredImages.map((image:any) => (
           <Card key={image.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
-              {/* <img
-                src={image.thumbnail || "/public/placeholder.svg"}
-                alt={image.title}
-                className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${
-                  viewMode === "grid" ? "h-48" : "h-32"
-                }`}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div> */}
+              
               <Image src={image.thumbnail || "/public/placeholder.svg"} alt="" className="w-full min-h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
               <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center">
                 <Eye className="h-3 w-3 mr-1" />
