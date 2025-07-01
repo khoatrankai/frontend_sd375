@@ -32,9 +32,9 @@ export default function AdminMediaPage() {
   const [categoryTracks, setCategoryTracks] = useState<any>([])
   const [categorySoftwares, setCategorySoftwares] = useState<any>([])
   const [platform, setPlatform] = useState<any>([])
-  const [videos,setVideos] = useState<any>([])
-  const [tracks,setTracks] = useState<any>([])
-  const [softwares,setSoftwares] = useState<any>([])
+  const [videos, setVideos] = useState<any>([])
+  const [tracks, setTracks] = useState<any>([])
+  const [softwares, setSoftwares] = useState<any>([])
 
   const mediaTypes = [
     { id: "all", name: "Tất cả" },
@@ -57,7 +57,7 @@ export default function AdminMediaPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewUrlVideo, setPreviewUrlVideo] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  const [dataSave,setDataSave] = useState<any>({});
+  const [dataSave, setDataSave] = useState<any>({});
 
 
   // const [title, setTitle] = useState(""); m 
@@ -65,7 +65,7 @@ export default function AdminMediaPage() {
   // const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
 
 
-  const handleReset = ()=>{
+  const handleReset = () => {
     setDataSave({})
   }
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,26 +93,26 @@ export default function AdminMediaPage() {
       }
     };
   }, [previewUrl]);
-  const handleDelete = async(id:string,docType:string) => {
+  const handleDelete = async (id: string, docType: string) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
 
     if (confirmDelete) {
       // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
-       if(docType === "image"){
-          const res = await imagesService.deleteImage(id)
-          fetchDataNews()
+      if (docType === "image") {
+        const res = await imagesService.deleteImage(id)
+        fetchDataNews()
       }
-      if(docType === "video"){
-       const res = await videosService.deleteVideo(id)
-         fetchDataVideos()
+      if (docType === "video") {
+        const res = await videosService.deleteVideo(id)
+        fetchDataVideos()
       }
-      if(docType === "audio"){
-       const res = await tracksService.deleteTrack(id)
-          fetchDataTracks()
+      if (docType === "audio") {
+        const res = await tracksService.deleteTrack(id)
+        fetchDataTracks()
       }
-      if(docType === "software"){
+      if (docType === "software") {
         const res = await softwareService.deleteSoftware(id)
-         fetchDataSoftwares()
+        fetchDataSoftwares()
       }
 
       // 👉 Thông báo
@@ -150,7 +150,7 @@ export default function AdminMediaPage() {
     fetchDataVideos()
   }, [])
 
-  
+
   const fetchData = async () => {
     const res = await imagesService.getCategories()
     const res2 = await softwareService.getPlatforms()
@@ -163,10 +163,10 @@ export default function AdminMediaPage() {
     if (res2.statusCode === 200) {
       setPlatform(res2.data)
     }
-     if (res3.statusCode === 200) {
+    if (res3.statusCode === 200) {
       setCategoryVideos(res3.data)
     }
-     if (res4.statusCode === 200) {
+    if (res4.statusCode === 200) {
       setCategorySoftwares(res4.data)
     }
     if (res5.statusCode === 200) {
@@ -180,21 +180,21 @@ export default function AdminMediaPage() {
     }
   };
 
-  const fetchDataVideos = async()=>{
+  const fetchDataVideos = async () => {
     const res = await videosService.getVideos()
     if (res.statusCode === 200) {
       setVideos(res.data)
     }
   }
 
-  const fetchDataTracks = async()=>{
+  const fetchDataTracks = async () => {
     const res = await tracksService.getTracks()
     if (res.statusCode === 200) {
       setTracks(res.data)
     }
   }
 
-  const fetchDataSoftwares = async()=>{
+  const fetchDataSoftwares = async () => {
     const res = await softwareService.getSoftwares()
     if (res.statusCode === 200) {
       setSoftwares(res.data)
@@ -203,7 +203,7 @@ export default function AdminMediaPage() {
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
     console.log(selectedFile)
-    const fileOK ={coverThumbnail:selectedFile,coverImage:selectedFile,coverVideo:selectedFileVideo,coverTrack:selectedFile,coverSoftware:selectedFile}
+    const fileOK = { coverThumbnail: selectedFile, coverImage: selectedFile, coverVideo: selectedFileVideo, coverTrack: selectedFile, coverSoftware: selectedFile }
     // const dataSave = {
     //   title: title,
     //   category: selectedCategory,
@@ -218,7 +218,7 @@ export default function AdminMediaPage() {
     //   fileOK: fileOK,
     // }
 
-    const formData = CustomFormData({...dataSave,...fileOK})
+    const formData = CustomFormData({ ...dataSave, ...fileOK })
     // const formData = new FormData();
     // formData.append("title", title);
     // formData.append("category", selectedCategory ?? "");
@@ -234,36 +234,42 @@ export default function AdminMediaPage() {
     try {
       // Gửi dữ liệu đến API backend
       const response = await apiClient.upload(selectedDocType === "image" ? "/images" : selectedDocType === "video" ? "/videos" : selectedDocType === "track" ? "/tracks" : selectedDocType === "software" ? "/softwares" : "/tracks", formData) as any;
-      if(response.statusCode === 201){
-        if(selectedDocType === "image"){
+      if (response.statusCode === 201) {
+        if (selectedDocType === "image") {
           fetchDataNews()
           handleReset()
         }
-        if(selectedDocType === "video"){
+        if (selectedDocType === "video") {
           fetchDataVideos()
           handleReset()
         }
-        if(selectedDocType === "track"){
+        if (selectedDocType === "track") {
           fetchDataTracks()
           handleReset()
         }
-        if(selectedDocType === "software"){
+        if (selectedDocType === "software") {
           fetchDataSoftwares()
           handleReset()
         }
-      
+
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-    
+  const resetForm = () => {
+    setCategory(null)
+    setCategoryVideos(null)
+    setCategoryTracks(null)
+    setCategorySoftwares(null)
+    setSelectedFile(null);
+  };
 
-      
-    
 
-   
+
+
+
 
   return (
     <div className="p-6 space-y-6">
@@ -271,7 +277,7 @@ export default function AdminMediaPage() {
         <h1 className="text-3xl font-bold text-gray-800">Quản lý thư viện</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700">
+            <Button className="bg-red-600 hover:bg-red-700" onClick={resetForm}>
               <Upload className="h-4 w-4 mr-2" />
               Tải lên file mới
             </Button>
@@ -291,7 +297,7 @@ export default function AdminMediaPage() {
                     <SelectValue placeholder="Chọn hoạt động" />
                   </SelectTrigger>
                   <SelectContent>
-                    
+
                     <SelectItem value="image">Ảnh</SelectItem>
                     <SelectItem value="video">Video</SelectItem>
                     <SelectItem value="audio">Âm thanh</SelectItem>
@@ -299,469 +305,462 @@ export default function AdminMediaPage() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 {selectedDocType === "image" && (
 
-<>
-                  <div>
-<label className="block text-sm font-medium mb-1">Tiêu đề</label>
-              <Input placeholder="Nhập tiêu đề bảng tin"
-                defaultValue={dataSave?.title}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,title:e.target.value}
-                })} />
-                  </div>
-                    
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
-                    <Select onValueChange={(e)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,category:e}
-                      })
-                    }} >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn hoạt động" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {/* <SelectItem value="undefined">Không</SelectItem> */}
-
-                        {category?.map((category: any) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category?.name}
-                          </SelectItem>
-
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <>
                     <div>
-                <label className="block text-sm font-medium mb-1">Chọn thumbnail</label>
-                <Input
-                  type="file"
-                  accept={"image/*"
-                  }
-                  onChange={handleFileChange}
-                />
-                 {selectedFile && (
-                <div className="mt-2 text-sm text-gray-700">
-                  <span className="text-sm text-green-700">
-                    ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                  </span>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="text-red-500 text-sm hover:underline"
-                  >
-                    Xóa
-                  </button>
-                  {previewUrl && (
-                    <div className="mt-2">
-                      <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                      <label className="block text-sm font-medium mb-1">Tiêu đề</label>
+                      <Input placeholder="Nhập tiêu đề bảng tin"
+                        defaultValue={dataSave?.title}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, title: e.target.value }
+                        })} />
                     </div>
-                  )}
-                </div>
-              )}
-              </div>
 
-              {/* Preview */}
-             
-</>
-                
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                      <Select onValueChange={(e) => {
+                        setDataSave((preValue: any) => {
+                          return { ...preValue, category: e }
+                        })
+                      }} >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn hoạt động" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* <SelectItem value="undefined">Không</SelectItem> */}
+
+                          {category?.map((category: any) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category?.name}
+                            </SelectItem>
+
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Chọn thumbnail</label>
+                      <Input
+                        type="file"
+                        accept={"image/*"
+                        }
+                        onChange={handleFileChange}
+                      />
+                      {selectedFile && (
+                        <div className="mt-2 text-sm text-gray-700">
+                          <span className="text-sm text-green-700">
+                            ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                          </span>
+                          <button
+                            onClick={handleRemoveFile}
+                            className="text-red-500 text-sm hover:underline"
+                          >
+                            Xóa
+                          </button>
+                          {previewUrl && (
+                            <div className="mt-2">
+                              <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Preview */}
+
+                  </>
+
                 )}
                 {selectedDocType === "video" && (
                   <>
                     <div>
-<label className="block text-sm font-medium mb-1">Tiêu đề</label>
-              <Input placeholder="Nhập tiêu đề video"
-                defaultValue={dataSave?.title}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,title:e.target.value}
-                })} />
-                  </div>
-                  <div>
-<label className="block text-sm font-medium mb-1">Mô tả</label>
-              <Input placeholder="Nhập mô tả"
-                defaultValue={dataSave?.description}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,description:e.target.value}
-                })} />
-                  </div>
-                   <div>
-<label className="block text-sm font-medium mb-1">Duration</label>
-              <Input placeholder="Nhập thoi lượng"
-                defaultValue={dataSave?.duration}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,duration:e.target.value}
-                })} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
-                    <Select onValueChange={(e)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,category:e}
-                      })
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn hoạt động" />
-                      </SelectTrigger>
-                      <SelectContent>
-                       {
-                      categoryVideos.map((item:any) => (
-                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                      ))
-                    }
-
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                <label className="block text-sm font-medium mb-1">Chọn thumbnail</label>
-                <Input
-                  type="file"
-                  accept={"image/*"
-                  }
-                  onChange={handleFileChange}
-                />
-              </div>
-
-              {/* Preview */}
-              {selectedFile && (
-                <div className="mt-2 text-sm text-gray-700">
-                  <span className="text-sm text-green-700">
-                    ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                  </span>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="text-red-500 text-sm hover:underline"
-                  >
-                    Xóa
-                  </button>
-                  {previewUrl && (
-                    <div className="mt-2">
-                      <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                      <label className="block text-sm font-medium mb-1">Tiêu đề</label>
+                      <Input placeholder="Nhập tiêu đề video"
+                        defaultValue={dataSave?.title}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, title: e.target.value }
+                        })} />
                     </div>
-                  )}
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-medium mb-1">Chọn video</label>
-                <Input
-                  type="file"
-                  accept={
-                    (selectedDocType as any) === "image"
-                      ? "image/*"
-                      : selectedDocType === "video"
-                        ? "video/*"
-                        : selectedDocType === "audio"
-                          ? "audio/*"
-                          : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
-                  }
-                  onChange={handleFileChangeVideo}
-                />
-                 {selectedFileVideo && (
-                <div className="mt-2 text-sm text-gray-700">
-                  <span className="text-sm text-green-700">
-                    ✓ File đã được tải lên: <strong>{selectedFileVideo.name}</strong>
-                  </span>
-                  <button
-                    onClick={handleRemoveFileVideo}
-                    className="text-red-500 text-sm hover:underline"
-                  >
-                    Xóa
-                  </button>
-                  {previewUrl && (
-                    <div className="mt-2">
-                      {(selectedDocType as any) === "image" && (
-                        <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
-                      )}
-                      {(selectedDocType as any) === "video" && (
-                        <video src={previewUrl} controls className="max-h-40 rounded" />
-                      )}
-                      {(selectedDocType as any) === "audio" && (
-                        <audio src={previewUrl} controls className="w-full" />
-                      )}
-                      {(selectedDocType as any) === "software" && (
-                        <div className="text-sm text-gray-500">
-                          Không thể xem trước phần mềm
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Mô tả</label>
+                      <Input placeholder="Nhập mô tả"
+                        defaultValue={dataSave?.description}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, description: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Duration</label>
+                      <Input placeholder="Nhập thoi lượng"
+                        defaultValue={dataSave?.duration}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, duration: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                      <Select onValueChange={(e) => {
+                        setDataSave((preValue: any) => {
+                          return { ...preValue, category: e }
+                        })
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn hoạt động" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {
+                            categoryVideos.map((item: any) => (
+                              <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                            ))
+                          }
+
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Chọn thumbnail</label>
+                      <Input
+                        type="file"
+                        accept={"image/*"
+                        }
+                        onChange={handleFileChange}
+                      />
+                    </div>
+
+                    {/* Preview */}
+                    {selectedFile && (
+                      <div className="mt-2 text-sm text-gray-700">
+                        <span className="text-sm text-green-700">
+                          ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                        </span>
+                        <button
+                          onClick={handleRemoveFile}
+                          className="text-red-500 text-sm hover:underline"
+                        >
+                          Xóa
+                        </button>
+                        {previewUrl && (
+                          <div className="mt-2">
+                            <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Chọn video</label>
+                      <Input
+                        type="file"
+                        accept={
+                          (selectedDocType as any) === "image"
+                            ? "image/*"
+                            : selectedDocType === "video"
+                              ? "video/*"
+                              : selectedDocType === "audio"
+                                ? "audio/*"
+                                : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
+                        }
+                        onChange={handleFileChangeVideo}
+                      />
+                      {selectedFileVideo && (
+                        <div className="mt-2 text-sm text-gray-700">
+                          <span className="text-sm text-green-700">
+                            ✓ File đã được tải lên: <strong>{selectedFileVideo.name}</strong>
+                          </span>
+                          <button
+                            onClick={handleRemoveFileVideo}
+                            className="text-red-500 text-sm hover:underline"
+                          >
+                            Xóa
+                          </button>
+                          {previewUrl && (
+                            <div className="mt-2">
+                              {(selectedDocType as any) === "image" && (
+                                <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                              )}
+                              {(selectedDocType as any) === "video" && (
+                                <video src={previewUrl} controls className="max-h-40 rounded" />
+                              )}
+                              {(selectedDocType as any) === "audio" && (
+                                <audio src={previewUrl} controls className="w-full" />
+                              )}
+                              {(selectedDocType as any) === "software" && (
+                                <div className="text-sm text-gray-500">
+                                  Không thể xem trước phần mềm
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-              )}
-              </div>
                   </>
                 )}
                 {selectedDocType === "audio" && (
                   <>
                     <div>
-<label className="block text-sm font-medium mb-1">Tiêu đề</label>
-              <Input placeholder="Nhập tiêu đề bảng tin"
-                defaultValue={dataSave?.title}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,title:e.target.value}
-                })} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
-                    <Select onValueChange={(e)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,category:e}
-                      })
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn hoạt động" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {
-                      categoryTracks.map((item:any) => (
-                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                      ))
-                    }
-
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <label className="block text-sm font-medium mb-1">Tiêu đề</label>
+                      <Input placeholder="Nhập tiêu đề bảng tin"
+                        defaultValue={dataSave?.title}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, title: e.target.value }
+                        })} />
+                    </div>
                     <div>
-<label className="block text-sm font-medium mb-1">Tác giả</label>
-              <Input placeholder="Nhập tên tác giả"
-                defaultValue={dataSave?.artist}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,artist:e.target.value}
-                })} />
-                  </div>
-                 <div>
-<label className="block text-sm font-medium mb-1">Ngày phát hành</label>
-              <Input placeholder="Nhập mô tả"
-                defaultValue={dataSave?.releaseDate}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,releaseDate:e.target.value}
-                })} />
-                  </div>
-                  <div>
-<label className="block text-sm font-medium mb-1">Mô tả</label>
-              <Input placeholder="Nhập mô tả"
-                defaultValue={dataSave?.description}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,description:e.target.value}
-                })} />
-                  </div>
-                  <div>
-<label className="block text-sm font-medium mb-1">Duration</label>
-              <Input placeholder="Nhập thời lượng"
-                defaultValue={dataSave?.duration}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,duration:e.target.value}
-                })} />
-                  </div>
-                  <div>
-                      <div>
-                <label className="block text-sm font-medium mb-1">Chọn âm thanh</label>
-                <Input
-                  type="file"
-                  accept={
-                    (selectedDocType as any) === "image"
-                      ? "image/*"
-                      : (selectedDocType as any) === "video"
-                        ? "video/*"
-                        : selectedDocType === "audio"
-                          ? "audio/*"
-                          : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
-                  }
-                  onChange={handleFileChange}
-                />
-              </div>
+                      <label className="block text-sm font-medium mb-1">Loại hoạt động</label>
+                      <Select onValueChange={(e) => {
+                        setDataSave((preValue: any) => {
+                          return { ...preValue, category: e }
+                        })
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn hoạt động" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {
+                            categoryTracks.map((item: any) => (
+                              <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                            ))
+                          }
 
-              {/* Preview */}
-              {selectedFile && (
-                <div className="mt-2 text-sm text-gray-700">
-                  <span className="text-sm text-green-700">
-                    ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                  </span>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="text-red-500 text-sm hover:underline"
-                  >
-                    Xóa
-                  </button>
-                  {previewUrl && (
-                    <div className="mt-2">
-                      {(selectedDocType as any) === "image" && (
-                        <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
-                      )}
-                      {(selectedDocType as any) === "video" && (
-                        <video src={previewUrl} controls className="max-h-40 rounded" />
-                      )}
-                      {selectedDocType === "audio" && (
-                        <audio src={previewUrl} controls className="w-full" />
-                      )}
-                      {(selectedDocType as any) === "software" && (
-                        <div className="text-sm text-gray-500">
-                          Không thể xem trước phần mềm
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Tác giả</label>
+                      <Input placeholder="Nhập tên tác giả"
+                        defaultValue={dataSave?.artist}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, artist: e.target.value }
+                        })} />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Mô tả</label>
+                      <Input placeholder="Nhập mô tả"
+                        defaultValue={dataSave?.description}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, description: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Duration</label>
+                      <Input placeholder="Nhập thời lượng"
+                        defaultValue={dataSave?.duration}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, duration: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Chọn âm thanh</label>
+                        <Input
+                          type="file"
+                          accept={
+                            (selectedDocType as any) === "image"
+                              ? "image/*"
+                              : (selectedDocType as any) === "video"
+                                ? "video/*"
+                                : selectedDocType === "audio"
+                                  ? "audio/*"
+                                  : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
+                          }
+                          onChange={handleFileChange}
+                        />
+                      </div>
+
+                      {/* Preview */}
+                      {selectedFile && (
+                        <div className="mt-2 text-sm text-gray-700">
+                          <span className="text-sm text-green-700">
+                            ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                          </span>
+                          <button
+                            onClick={handleRemoveFile}
+                            className="text-red-500 text-sm hover:underline"
+                          >
+                            Xóa
+                          </button>
+                          {previewUrl && (
+                            <div className="mt-2">
+                              {(selectedDocType as any) === "image" && (
+                                <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                              )}
+                              {(selectedDocType as any) === "video" && (
+                                <video src={previewUrl} controls className="max-h-40 rounded" />
+                              )}
+                              {selectedDocType === "audio" && (
+                                <audio src={previewUrl} controls className="w-full" />
+                              )}
+                              {(selectedDocType as any) === "software" && (
+                                <div className="text-sm text-gray-500">
+                                  Không thể xem trước phần mềm
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-              )}
-                  </div>
                   </>
                 )}
                 {selectedDocType === "software" && (
                   <>
                     <div>
-<label className="block text-sm font-medium mb-1">Tiêu đề</label>
-              <Input placeholder="Nhập tiêu đề phần mềm"
-                defaultValue={dataSave?.name}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,name:e.target.value}
-                })} />
-                  </div>
-                  <div>
-<label className="block text-sm font-medium mb-1">Mô tả</label>
-              <Input placeholder="Nhập mô tả"
-                defaultValue={dataSave?.description}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,description:e.target.value}
-                })} />
-                  </div>
-                  <div>
-<label className="block text-sm font-medium mb-1">Version</label>
-              <Input placeholder="Nhập mô tả"
-                defaultValue={dataSave?.version}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,version:e.target.value}
-                })} />
-                  </div>
-                  <div>
-<label className="block text-sm font-medium mb-1">Size</label>
-              <Input placeholder="Nhập kích thước"
-                defaultValue={dataSave?.size}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,size:e.target.value}
-                })} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Loại phần mềm</label>
-                    <Select onValueChange={(e)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,category:e}
-                      })
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn hoạt động" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {
-                      categorySoftwares.map((item:any) => (
-                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                      ))
-                    }
+                      <label className="block text-sm font-medium mb-1">Tiêu đề</label>
+                      <Input placeholder="Nhập tiêu đề phần mềm"
+                        defaultValue={dataSave?.name}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, name: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Mô tả</label>
+                      <Input placeholder="Nhập mô tả"
+                        defaultValue={dataSave?.description}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, description: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Version</label>
+                      <Input placeholder="Nhập mô tả"
+                        defaultValue={dataSave?.version}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, version: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Size</label>
+                      <Input placeholder="Nhập kích thước"
+                        defaultValue={dataSave?.size}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, size: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Loại phần mềm</label>
+                      <Select onValueChange={(e) => {
+                        setDataSave((preValue: any) => {
+                          return { ...preValue, category: e }
+                        })
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn hoạt động" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {
+                            categorySoftwares.map((item: any) => (
+                              <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                            ))
+                          }
 
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
                       <div>
-                <label className="block text-sm font-medium mb-1">Chọn phần mềm</label>
-                <Input
-                  type="file"
-                  accept={
-                    (selectedDocType as any) === "image"
-                      ? "image/*"
-                      : (selectedDocType as any) === "video"
-                        ? "video/*"
-                        : (selectedDocType as any) === "audio"
-                          ? "audio/*"
-                          : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
-                  }
-                  onChange={handleFileChange}
-                />
-              </div>
+                        <label className="block text-sm font-medium mb-1">Chọn phần mềm</label>
+                        <Input
+                          type="file"
+                          accept={
+                            (selectedDocType as any) === "image"
+                              ? "image/*"
+                              : (selectedDocType as any) === "video"
+                                ? "video/*"
+                                : (selectedDocType as any) === "audio"
+                                  ? "audio/*"
+                                  : ".exe,.msi,.dmg,.pkg,.deb,.rpm"
+                          }
+                          onChange={handleFileChange}
+                        />
+                      </div>
 
-              {/* Preview */}
-              {selectedFile && (
-                <div className="mt-2 text-sm text-gray-700">
-                  <span className="text-sm text-green-700">
-                    ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                  </span>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="text-red-500 text-sm hover:underline"
-                  >
-                    Xóa
-                  </button>
-                  {previewUrl && (
-                    <div className="mt-2">
-                      {(selectedDocType as any) === "image" && (
-                        <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
-                      )}
-                      {(selectedDocType as any) === "video" && (
-                        <video src={previewUrl} controls className="max-h-40 rounded" />
-                      )}
-                      {(selectedDocType as any) === "audio" && (
-                        <audio src={previewUrl} controls className="w-full" />
-                      )}
-                      {selectedDocType === "software" && (
-                        <div className="text-sm text-gray-500">
-                          Không thể xem trước phần mềm
+                      {/* Preview */}
+                      {selectedFile && (
+                        <div className="mt-2 text-sm text-gray-700">
+                          <span className="text-sm text-green-700">
+                            ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
+                          </span>
+                          <button
+                            onClick={handleRemoveFile}
+                            className="text-red-500 text-sm hover:underline"
+                          >
+                            Xóa
+                          </button>
+                          {previewUrl && (
+                            <div className="mt-2">
+                              {(selectedDocType as any) === "image" && (
+                                <img src={previewUrl} alt="Preview" className="max-h-40 rounded" />
+                              )}
+                              {(selectedDocType as any) === "video" && (
+                                <video src={previewUrl} controls className="max-h-40 rounded" />
+                              )}
+                              {(selectedDocType as any) === "audio" && (
+                                <audio src={previewUrl} controls className="w-full" />
+                              )}
+                              {selectedDocType === "software" && (
+                                <div className="text-sm text-gray-500">
+                                  Không thể xem trước phần mềm
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-              )}
-                  </div>
                     <div>
-<label className="block text-sm font-medium mb-1">Đánh giá</label>
-              <Input placeholder="Nhập đánh giá"
-                defaultValue={dataSave?.rating}
-                onChange={(e) => setDataSave((preValue:any)=>{
-                  return {...preValue,rating:e.target.value}
-                })} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Hệ điều hành</label>
-                    <Select onValueChange={(e)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,platform:e}
-                      })
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn hệ điều hành" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {
-                      platform.map((item:any) => (
-                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                      ))
-                    }
+                      <label className="block text-sm font-medium mb-1">Đánh giá</label>
+                      <Input placeholder="Nhập đánh giá"
+                        defaultValue={dataSave?.rating}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, rating: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Hệ điều hành</label>
+                      <Select onValueChange={(e) => {
+                        setDataSave((preValue: any) => {
+                          return { ...preValue, platform: e }
+                        })
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn hệ điều hành" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {
+                            platform.map((item: any) => (
+                              <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                            ))
+                          }
 
-                      </SelectContent>
-                    </Select>
-                  </div>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </>
                 )}
               </div>
 
               {/* Upload input */}
               <div className="text-end">
-              <DialogClose asChild>
+                <DialogClose asChild>
 
-                <Button type="button"  >
-                  Hủy
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
+                  <Button type="button"  >
+                    Hủy
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
 
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 ml-2">
-                  Lưu
-                </Button>
-              </DialogClose>
-            </div>
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 ml-2">
+                    Lưu
+                  </Button>
+                </DialogClose>
+              </div>
             </form>
 
-            
+
           </DialogContent>
 
         </Dialog>
@@ -806,7 +805,7 @@ export default function AdminMediaPage() {
                   ))}
                 </SelectContent>
               </Select>
-             
+
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -836,7 +835,8 @@ export default function AdminMediaPage() {
         <CardContent>
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {(selectedType === "all" || selectedType === "image") && images?.filter((dt:any) => dt?.title.toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
+              {(selectedType === "all" || selectedType === "image") && images?.filter((dt: any) => (dt?.title ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
@@ -865,8 +865,8 @@ export default function AdminMediaPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 mt-3">
-                    
-                      <Button variant="outline" size="sm" onClick={()=>{
+
+                      <Button variant="outline" size="sm" onClick={() => {
                         downloadFile(`/public/videos?id=1b23f96b-4e6a-4c1b-8eff-e6a6d6fd8db0.mp4`)
                       }}>
                         <Download className="h-3 w-3" />
@@ -875,7 +875,7 @@ export default function AdminMediaPage() {
                         variant="outline"
                         size="sm"
                         className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id,'image')}
+                        onClick={() => handleDelete(file?.id, 'image')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -883,7 +883,8 @@ export default function AdminMediaPage() {
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" || selectedType === "video") && videos?.filter((dt:any) => dt?.title.toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
+              {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
@@ -912,8 +913,8 @@ export default function AdminMediaPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 mt-3">
-                    
-                      <Button variant="outline" size="sm" onClick={()=>{
+
+                      <Button variant="outline" size="sm" onClick={() => {
                         downloadFile(file?.link)
                       }}>
                         <Download className="h-3 w-3" />
@@ -922,7 +923,7 @@ export default function AdminMediaPage() {
                         variant="outline"
                         size="sm"
                         className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id,'video')}
+                        onClick={() => handleDelete(file?.id, 'video')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -930,11 +931,12 @@ export default function AdminMediaPage() {
                   </div>
                 </div>
               ))}
-               {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt:any) => dt?.title.toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
+              {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
-                      src={ "/public/placeholder.svg"}
+                      src={"/public/placeholder.svg"}
                       alt={file.title}
                       className="w-full h-32 object-cover"
                     />
@@ -959,8 +961,8 @@ export default function AdminMediaPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 mt-3">
-                    
-                      <Button variant="outline" size="sm" onClick={()=>{
+
+                      <Button variant="outline" size="sm" onClick={() => {
                         downloadFile(file?.link)
                       }}>
                         <Download className="h-3 w-3" />
@@ -969,7 +971,7 @@ export default function AdminMediaPage() {
                         variant="outline"
                         size="sm"
                         className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id,'audio')}
+                        onClick={() => handleDelete(file?.id, 'audio')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -977,7 +979,8 @@ export default function AdminMediaPage() {
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt:any) => dt?.name.toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
+              {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt: any) => (dt?.name ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
@@ -1006,8 +1009,8 @@ export default function AdminMediaPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 mt-3">
-                    
-                      <Button variant="outline" size="sm" onClick={()=>{
+
+                      <Button variant="outline" size="sm" onClick={() => {
                         downloadFile(file?.link)
                       }}>
                         <Download className="h-3 w-3" />
@@ -1016,7 +1019,7 @@ export default function AdminMediaPage() {
                         variant="outline"
                         size="sm"
                         className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id,'software')}
+                        onClick={() => handleDelete(file?.id, 'software')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -1027,7 +1030,8 @@ export default function AdminMediaPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {(selectedType === "all" ||  selectedType === "image") && images?.filter((dt:any) => dt?.title.toLowerCase().includes(searchTerm.toLowerCase())).map((file:any) => (
+              {(selectedType === "all" || selectedType === "image") && images?.filter((dt: any) => (dt?.title ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <img
@@ -1049,8 +1053,8 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                 
-                    <Button variant="outline" size="sm" onClick={()=>{
+
+                    <Button variant="outline" size="sm" onClick={() => {
                       downloadFile(file?.thumbnail)
                     }}>
                       <Download className="h-4 w-4" />
@@ -1059,14 +1063,15 @@ export default function AdminMediaPage() {
                       variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id,'image')}
+                      onClick={() => handleDelete(file?.id, 'image')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" ||  selectedType === "video") && videos?.filter((dt:any) => dt?.title.toLowerCase().includes(searchTerm.toLowerCase())).map((file:any) => (
+              {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <img
@@ -1088,8 +1093,8 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                 
-                    <Button variant="outline" size="sm" onClick={()=>{
+
+                    <Button variant="outline" size="sm" onClick={() => {
                       downloadFile(file?.link)
                     }}>
                       <Download className="h-4 w-4" />
@@ -1098,14 +1103,15 @@ export default function AdminMediaPage() {
                       variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id,'video')}
+                      onClick={() => handleDelete(file?.id, 'video')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" ||  selectedType === "audio") && tracks?.filter((dt:any) => dt?.title.toLowerCase().includes(searchTerm.toLowerCase())).map((file:any) => (
+              {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <img
@@ -1127,8 +1133,8 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                 
-                    <Button variant="outline" size="sm" onClick={()=>{
+
+                    <Button variant="outline" size="sm" onClick={() => {
                       downloadFile(file?.link)
                     }}>
                       <Download className="h-4 w-4" />
@@ -1137,14 +1143,15 @@ export default function AdminMediaPage() {
                       variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id,'audio')}
+                      onClick={() => handleDelete(file?.id, 'audio')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" ||  selectedType === "software") && softwares?.filter((dt:any) => dt?.name.toLowerCase().includes(searchTerm.toLowerCase())).map((file:any) => (
+              {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt: any) => (dt?.name ?? ""
+              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <img
@@ -1166,8 +1173,8 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                 
-                    <Button variant="outline" size="sm" onClick={()=>{
+
+                    <Button variant="outline" size="sm" onClick={() => {
                       downloadFile(file?.link)
                     }}>
                       <Download className="h-4 w-4" />
@@ -1176,7 +1183,7 @@ export default function AdminMediaPage() {
                       variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id,'software')}
+                      onClick={() => handleDelete(file?.id, 'software')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
