@@ -4,46 +4,52 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Eye, Calendar, Grid3X3, List, Filter } from "lucide-react"
+import { Eye, Calendar, Grid3X3, List, Filter, Images } from "lucide-react"
 import { imagesService } from "@/services/images.service"
 import { Image } from "antd"
 
 export default function ImagesPage() {
   const [viewMode, setViewMode] = useState("grid")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [categories,setCategories] = useState<any>([])
+  const [categories, setCategories] = useState<any>([])
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const [images, setImages] = useState<any>([])
+  const currentImages = images.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(images.length / itemsPerPage);
 
-  const [images,setImages] = useState<any>([
-  ])
 
-  const [filteredImages,setFilteredImage] = useState<any>([]) 
+  const [filteredImages, setFilteredImage] = useState<any>([])
   // selectedCategory === "all" ? images : images.filter((img:any) => img.category.nametag === selectedCategory)
 
 
 
-  const fetchData = async()=>{
+  const fetchData = async () => {
     const res = await imagesService.getImages() as any
     const res2 = await imagesService.getCategories() as any
     // console.log(res)
-    if(res.statusCode === 200){
+    if (res.statusCode === 200) {
       // console.log(res)
       setImages(res.data)
     }
 
-    if(res2.statusCode === 200){
+    if (res2.statusCode === 200) {
       setCategories(res2.data)
     }
   }
-  
 
-  useEffect(()=>{
+
+  useEffect(() => {
     console.log(images)
-    setFilteredImage(selectedCategory === "all" ? images : images.filter((img:any) => img.category.nametag === selectedCategory))
-  },[images,selectedCategory])
+    setFilteredImage(selectedCategory === "all" ? images : images.filter((img: any) => img.category.nametag === selectedCategory))
+  }, [images, selectedCategory])
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchData()
-  },[])
+  }, [])
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -53,7 +59,7 @@ export default function ImagesPage() {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {categories.map((category:any) => (
+        {categories.map((category: any) => (
           <Button
             key={category.nametag}
             variant={selectedCategory === category.nametag ? "default" : "outline"}
@@ -62,8 +68,8 @@ export default function ImagesPage() {
           >
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
-               {
-                category.nametag === "all" ? images.length : images.filter((i:any)=>i.category.nametag === category.nametag).length
+              {
+                category.nametag === "all" ? images.length : images.filter((i: any) => i.category.nametag === category.nametag).length
               }
             </Badge>
           </Button>
@@ -94,10 +100,10 @@ export default function ImagesPage() {
           viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-4"
         }
       >
-        {filteredImages.map((image:any) => (
+        {currentImages.map((image: any) => (
           <Card key={image.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
-              
+
               <Image src={image.thumbnail || "/public/placeholder.svg"} alt="" className="w-full min-h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
               <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center">
                 <Eye className="h-3 w-3 mr-1" />
@@ -117,11 +123,37 @@ export default function ImagesPage() {
       </div>
 
       {/* Load More */}
-      <div className="text-center">
-        <Button variant="outline" size="lg">
-          Xem thêm hình ảnh
+      <div className="flex justify-center items-center gap-4 mt-6">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => prev - 1)}
+        >
+          Trang trước
+        </Button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <Button
+            key={page}
+            variant={page === currentPage ? "default" : "outline"}
+            size="sm"
+            onClick={() => setCurrentPage(page)}
+            className={page === currentPage ? "font-bold" : ""}
+          >
+            {page}
+          </Button>
+        ))}
+
+
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Trang tiếp
         </Button>
       </div>
+
     </div>
   )
 }

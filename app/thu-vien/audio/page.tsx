@@ -13,114 +13,24 @@ export default function AudioPage() {
   const [currentTrack, setCurrentTrack] = useState(0)
   // const [isPlaying, setIsPlaying] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const [tracks, setTracks] = useState<any>([])
+  const currentTracks = tracks.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(tracks.length / itemsPerPage);
 
-  const [categories,setCategories] = useState<any>([
+  const [categories, setCategories] = useState<any>([
   ])
 
-  const [tracks,setTracks] = useState<any>([
-    {
-      id: 1,
-      title: "Quốc ca Việt Nam",
-      artist: "Văn Cao",
-      duration: "03:45",
-      category: "national",
-      categoryName: "Quốc ca",
-      plays: 5670,
-      description: "Quốc ca nước Cộng hòa xã hội chủ nghĩa Việt Nam",
-      releaseDate: "1944",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Bộ đội Cụ Hồ",
-      artist: "Quân đội nhân dân",
-      duration: "04:12",
-      category: "revolutionary",
-      categoryName: "Ca khúc cách mạng",
-      plays: 3420,
-      description: "Ca khúc bất hủ về Bộ đội Cụ Hồ",
-      releaseDate: "1965",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "Tiến quân ca",
-      artist: "Nguyễn Văn Cao",
-      duration: "02:58",
-      category: "military",
-      categoryName: "Hành khúc quân đội",
-      plays: 2890,
-      description: "Hành khúc của Quân đội nhân dân Việt Nam",
-      releaseDate: "1944",
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "Đường tới ngày vinh quang",
-      artist: "Văn Cao",
-      duration: "03:30",
-      category: "revolutionary",
-      categoryName: "Ca khúc cách mạng",
-      plays: 2156,
-      description: "Ca khúc cách mạng bất hủ",
-      releaseDate: "1945",
-      featured: false,
-    },
-    {
-      id: 5,
-      title: "Quân hành ca",
-      artist: "Đoàn Chuẩn",
-      duration: "03:15",
-      category: "military",
-      categoryName: "Hành khúc quân đội",
-      plays: 1890,
-      description: "Hành khúc truyền thống của quân đội",
-      releaseDate: "1946",
-      featured: false,
-    },
-    {
-      id: 6,
-      title: "Việt Nam, Hồ Chí Minh",
-      artist: "Lưu Hữu Phước",
-      duration: "04:05",
-      category: "national",
-      categoryName: "Quốc ca",
-      plays: 1567,
-      description: "Bài hát về Chủ tịch Hồ Chí Minh",
-      releaseDate: "1958",
-      featured: false,
-    },
-    {
-      id: 7,
-      title: "Hò kéo pháo",
-      artist: "Dân gian",
-      duration: "02:45",
-      category: "folk",
-      categoryName: "Dân ca",
-      plays: 1234,
-      description: "Dân ca truyền thống về tinh thần chiến đấu",
-      releaseDate: "Truyền thống",
-      featured: false,
-    },
-    {
-      id: 8,
-      title: "Khúc hát sông Pô",
-      artist: "Hoàng Việt",
-      duration: "03:50",
-      category: "revolutionary",
-      categoryName: "Ca khúc cách mạng",
-      plays: 987,
-      description: "Ca khúc về chiến trường miền Nam",
-      releaseDate: "1968",
-      featured: false,
-    },
-  ])
 
-  const [filteredTracks,setFilteredTracks] = useState<any>([])
-    // selectedCategory === "all" ? tracks : tracks.filter((track) => track.category === selectedCategory)
-  const [featuredTracks,setFeaturedTracks] = useState<any>([])
+  const [filteredTracks, setFilteredTracks] = useState<any>([])
+  // selectedCategory === "all" ? tracks : tracks.filter((track) => track.category === selectedCategory)
+  const [featuredTracks, setFeaturedTracks] = useState<any>([])
   // filteredTracks.filter((track) => track.featured)
-  const [regularTracks,setRegularTracks] = useState<any>([])
+  const [regularTracks, setRegularTracks] = useState<any>([])
   // filteredTracks.filter((track) => !track.featured)
 
   const handleReset = () => {
@@ -128,31 +38,31 @@ export default function AudioPage() {
     setCurrentTrack(0)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(filteredTracks)
-    setFeaturedTracks(filteredTracks.filter((track:any) => track.featured))
-    setRegularTracks(filteredTracks.filter((track:any) => !track.featured))
-  },[filteredTracks])
+    setFeaturedTracks(filteredTracks.filter((track: any) => track.featured))
+    setRegularTracks(filteredTracks.filter((track: any) => !track.featured))
+  }, [filteredTracks])
 
-  
 
-  useEffect(()=>{
-    console.log(tracks,selectedCategory)
-    setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track:any) => track.category.nametag === selectedCategory))
-  },[selectedCategory,tracks])
 
-  useEffect(()=>{
+  useEffect(() => {
+    console.log(tracks, selectedCategory)
+    setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track: any) => track.category.nametag === selectedCategory))
+  }, [selectedCategory, tracks])
+
+  useEffect(() => {
     fetchData()
-  },[])
+  }, [])
 
-  const fetchData = async ()=>{
+  const fetchData = async () => {
     const res = await tracksService.getTracks()
     const res2 = await tracksService.getCategories()
-    if(res.statusCode === 200){
+    if (res.statusCode === 200) {
       setTracks(res.data)
     }
 
-    if(res2.statusCode === 200){
+    if (res2.statusCode === 200) {
       setCategories(res2.data)
     }
   }
@@ -188,7 +98,7 @@ export default function AudioPage() {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category:any) => (
+        {categories.map((category: any) => (
           <Button
             key={category.id}
             variant={selectedCategory === category.nametag ? "default" : "outline"}
@@ -196,16 +106,16 @@ export default function AudioPage() {
               setSelectedCategory(category.nametag)
               // refBtn.current.click()
               handleReset()
-            } 
-              
-          }
+            }
+
+            }
             className="flex items-center space-x-2"
           >
             <Music className="h-4 w-4" />
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                category.nametag === "all" ? tracks.length : tracks.filter((i:any)=>i.category.nametag === category.nametag).length
+                category.nametag === "all" ? tracks.length : tracks.filter((i: any) => i.category.nametag === category.nametag).length
               }
             </Badge>
           </Button>
@@ -285,20 +195,18 @@ export default function AudioPage() {
             <section>
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Bài hát nổi bật</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {featuredTracks.map((track:any, index:number) => (
+                {currentTracks.map((track: any, index: number) => (
                   <Card
                     key={track.id}
-                    className={`cursor-pointer transition-all hover:shadow-lg ${
-                      currentTrack === index ? "ring-2 ring-red-500 bg-red-50" : ""
-                    }`}
+                    className={`cursor-pointer transition-all hover:shadow-lg ${currentTrack === index ? "ring-2 ring-red-500 bg-red-50" : ""
+                      }`}
                     onClick={() => selectTrack(index)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-4">
                         <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            currentTrack === index ? "bg-red-600 text-white" : "bg-gray-200"
-                          }`}
+                          className={`w-12 h-12 rounded-full flex items-center justify-center ${currentTrack === index ? "bg-red-600 text-white" : "bg-gray-200"
+                            }`}
                         >
                           {/* {currentTrack === index && isPlaying ? (
                             <Pause className="h-5 w-5" />
@@ -325,6 +233,36 @@ export default function AudioPage() {
                   </Card>
                 ))}
               </div>
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <Button
+                  variant="outline"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  Trang trước
+                </Button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className={page === currentPage ? "font-bold" : ""}
+                  >
+                    {page}
+                  </Button>
+                ))}
+
+
+                <Button
+                  variant="outline"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Trang tiếp
+                </Button>
+              </div>
             </section>
           )}
 
@@ -334,21 +272,19 @@ export default function AudioPage() {
             <Card>
               <CardContent className="p-0">
                 <div className="space-y-1">
-                  {regularTracks.map((track:any, index:number) => {
+                  {currentTracks.map((track: any, index: number) => {
                     const actualIndex = featuredTracks.length + index
                     return (
                       <div
                         key={track.id}
-                        className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${
-                          currentTrack === actualIndex ? "bg-red-50 border-red-200" : ""
-                        }`}
+                        className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${currentTrack === actualIndex ? "bg-red-50 border-red-200" : ""
+                          }`}
                         onClick={() => selectTrack(actualIndex)}
                       >
                         <div className="flex items-center space-x-4">
                           <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                              currentTrack === actualIndex ? "bg-red-600 text-white" : "bg-gray-200"
-                            }`}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center ${currentTrack === actualIndex ? "bg-red-600 text-white" : "bg-gray-200"
+                              }`}
                           >
                             {/* {currentTrack === actualIndex && isPlaying ? (
                               <Pause className="h-4 w-4" />
@@ -378,6 +314,36 @@ export default function AudioPage() {
                 </div>
               </CardContent>
             </Card>
+            <div className="flex justify-center items-center gap-4 mt-6">
+              <Button
+                variant="outline"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+              >
+                Trang trước
+              </Button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={page === currentPage ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className={page === currentPage ? "font-bold" : ""}
+                >
+                  {page}
+                </Button>
+              ))}
+
+
+              <Button
+                variant="outline"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+              >
+                Trang tiếp
+              </Button>
+            </div>
           </section>
         </div>
       </div>

@@ -412,7 +412,7 @@ export default function AdminMediaPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {
-                            categoryVideos.map((item: any) => (
+                            categoryVideos?.map((item: any) => (
                               <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                             ))
                           }
@@ -520,7 +520,7 @@ export default function AdminMediaPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {
-                            categoryTracks.map((item: any) => (
+                            categoryTracks?.map((item: any) => (
                               <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                             ))
                           }
@@ -534,6 +534,14 @@ export default function AdminMediaPage() {
                         defaultValue={dataSave?.artist}
                         onChange={(e) => setDataSave((preValue: any) => {
                           return { ...preValue, artist: e.target.value }
+                        })} />
+                    </div>
+                     <div>
+                      <label className="block text-sm font-medium mb-1">Ngày phát hành</label>
+                      <Input placeholder="Nhập Ngày phát hành"
+                        defaultValue={dataSave?.releaseDate}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, releaseDate: e.target.value }
                         })} />
                     </div>
 
@@ -652,7 +660,7 @@ export default function AdminMediaPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {
-                            categorySoftwares.map((item: any) => (
+                            categorySoftwares?.map((item: any) => (
                               <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                             ))
                           }
