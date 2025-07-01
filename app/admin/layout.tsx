@@ -2,11 +2,12 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X, Info } from "lucide-react"
 import { usePathname } from "next/navigation"
+import { authService } from "@/services/auth.service"
 
 export default function AdminLayout({
   children,
@@ -25,6 +26,33 @@ export default function AdminLayout({
     { href: "/admin/users", icon: Users, label: "Người dùng" },
     { href: "/admin/settings", icon: Settings, label: "Cài đặt" },
   ]
+  const checkLogin = async()=>{
+    const dataUser = await authService.getCurrentUser()
+    // console.log(dataUser,pathname.startsWith('/admin/login'),pathname)
+    if(!dataUser){
+      if(!pathname.startsWith('/admin/login')){
+        window.location.href = "/admin/login"
+      }
+    }
+    // if(!pathname.startsWith('/admin/login')){
+    //   // window.location.href = "/admin/login"
+    // }
+    // else{
+    //   if(pathname.startsWith('/admin/login')){
+    //     window.location.href = "/admin/dashboard"
+    //   }
+    // }
+  }
+  useEffect(()=>{
+    checkLogin()
+  },[])
+
+  const logoutUser = async()=>{
+     const res = await authService.logout() as any
+     if(res?.success){
+      window.location.href = "/admin/login"
+     }
+  }
 
   return (
     <>
@@ -71,7 +99,7 @@ export default function AdminLayout({
             onClick={(e) => {
               e.preventDefault();
               if (confirm("Bạn có chắc muốn đăng xuất?")) {
-                window.location.href = "/admin/login";
+                logoutUser()
               }
             }}
             className="w-full flex items-center justify-center border rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-100"
