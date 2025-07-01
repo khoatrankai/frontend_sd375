@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
+import { authService } from "@/services/auth.service"
 
 export default function AdminDashboard() {
   const stats = [
@@ -43,6 +44,13 @@ export default function AdminDashboard() {
     setPreviewUrl(null);
   };
 
+  const logoutUser = async()=>{
+     const res = await authService.logout() as any
+     if(res?.success){
+      window.location.href = "/admin/login"
+     }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -51,8 +59,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-bold text-gray-800">Bảng điều khiển Admin</h1>
           <div className="flex items-center space-x-4">
             <button>
-              <a
-                href="#"
+              <div
                 onClick={(e) => {
 
                   window.location.href = "/admin/settings";
@@ -62,22 +69,21 @@ export default function AdminDashboard() {
               >
                 <Settings className="h-4 w-4 mr-2" />
                 Cài Đặt
-              </a>
+              </div>
             </button>
             <button>
-              <a
-                href="#"
+              <div
                 onClick={(e) => {
                   e.preventDefault();
                   if (confirm("Bạn có chắc muốn đăng xuất?")) {
-                    window.location.href = "/admin/login";
+                    logoutUser()
                   }
                 }}
                 className="w-full flex items-center justify-center border rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-100"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Đăng xuất
-              </a>
+              </div>
             </button>
 
           </div>

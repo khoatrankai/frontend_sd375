@@ -19,8 +19,19 @@ export class UsersService {
     }
   }
 
-  async getUser(data: any) {
+  async getUser(id: string) {
     try {
+      const response = await apiClient.get<any>(`/users/${id}`)
+      return response || null
+    } catch (error) {
+      console.error("Get user error:", error)
+      return null
+    }
+  }
+
+  async loginUser(data: any) {
+    try {
+      console.log(data)
       const response = await apiClient.get<any>(`/users/login?username=${data?.username}&password=${data?.password}`)
       return response || null
     } catch (error) {

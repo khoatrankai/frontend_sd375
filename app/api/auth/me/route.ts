@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as any
+      // console.log(decoded,token)
       const res = await usersService.getUser(decoded?.userId)
       const dataUser = res?.data
       return NextResponse.json({

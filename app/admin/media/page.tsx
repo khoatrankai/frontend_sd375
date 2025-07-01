@@ -530,7 +530,14 @@ export default function AdminMediaPage() {
                   return {...preValue,artist:e.target.value}
                 })} />
                   </div>
-                 
+                 <div>
+<label className="block text-sm font-medium mb-1">Ngày phát hành</label>
+              <Input placeholder="Nhập mô tả"
+                defaultValue={dataSave?.releaseDate}
+                onChange={(e) => setDataSave((preValue:any)=>{
+                  return {...preValue,releaseDate:e.target.value}
+                })} />
+                  </div>
                   <div>
 <label className="block text-sm font-medium mb-1">Mô tả</label>
               <Input placeholder="Nhập mô tả"

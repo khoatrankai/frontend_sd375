@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const { username, password } = await request.json()
 
     // Validate credentials
-    const res = await usersService.getUser({username,password})
+    const res = await usersService.loginUser({username,password})
     if (res?.statusCode === 200) {
       const dataUser = res?.data
       // Generate JWT token

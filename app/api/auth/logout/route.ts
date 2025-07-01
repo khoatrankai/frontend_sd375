@@ -1,10 +1,11 @@
+import { apiLogin } from "@/lib/apiLogin"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
     // In a real application, you might want to blacklist the token
     // or perform other cleanup operations
-
+    apiLogin.removeToken()
     return NextResponse.json({
       success: true,
       message: "Đăng xuất thành công",

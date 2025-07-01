@@ -22,11 +22,12 @@ export class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await apiLogin.post("/auth/logout")
+      return await apiLogin.post("/auth/logout")
     } catch (error) {
       console.error("Logout error:", error)
     } finally {
-      apiLogin.removeToken()
+      // apiLogin.removeToken()
+      // window.location.href = "/admin/login"
     }
   }
 
