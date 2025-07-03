@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
+import { useRouter } from 'next/navigation'; 
+
 
 export default function DomesticNewsPage() {
  
@@ -33,7 +35,11 @@ export default function DomesticNewsPage() {
       console.log(res)
     }
   }
+  const router = useRouter();
 
+const loadDetail = async (id: string | number) => {
+  router.push(`/tin-tuc/${id}`); 
+};
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -79,7 +85,7 @@ export default function DomesticNewsPage() {
                         {item.views}
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => loadDetail(item.id)}>
                       Đọc thêm
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>

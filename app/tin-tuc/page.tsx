@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
+import { useRouter } from 'next/navigation'; 
+
 
 export default function NewsPage() {
   const [activeType, setActiveType] = useState("all")
@@ -74,6 +76,11 @@ export default function NewsPage() {
   useEffect(() => {
     fetchData()
   }, [])
+  const router = useRouter();
+
+const loadDetail = async (id: string | number) => {
+  router.push(`/tin-tuc/${id}`); 
+};
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -107,9 +114,9 @@ export default function NewsPage() {
       {activeType === "all" && featuredNews.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Tin nổi bật</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" >
             {featuredNews.map((item: any) => (
-              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={item.id} onClick={() => loadDetail(item.id)} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" >
                 <div className="relative">
                   <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
                   <Badge className="absolute top-4 left-4 bg-red-600">{types.find((i) => i.id === item.type)?.name}</Badge>
@@ -155,7 +162,7 @@ export default function NewsPage() {
               return true
             }
           }).map((item: any) => (
-            <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+            <Card key={item.id}  className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
@@ -188,7 +195,7 @@ export default function NewsPage() {
                           {item.views}
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => loadDetail(item.id)}>
                         Đọc thêm
                         <ChevronRight className="h-4 w-4 ml-1" />
                       </Button>

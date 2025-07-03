@@ -16,6 +16,7 @@ import { videosService } from "@/services/videos.service"
 import { tracksService } from "@/services/tracks.service"
 import { softwareService } from "@/services/software.service"
 import { CustomFormData } from "@/lib/CustomFormData"
+import { Image } from "antd"
 
 
 
@@ -536,7 +537,7 @@ export default function AdminMediaPage() {
                           return { ...preValue, artist: e.target.value }
                         })} />
                     </div>
-                     <div>
+                    <div>
                       <label className="block text-sm font-medium mb-1">Ngày phát hành</label>
                       <Input placeholder="Nhập Ngày phát hành"
                         defaultValue={dataSave?.releaseDate}
@@ -846,11 +847,20 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "image") && images?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="relative">
-                    <img
+                  <div className="flex justify-center">
+                    <Image
                       src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.name}
-                      className="w-full h-32 object-cover"
+                      width={450}
+                      height={228}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     {file?.category?.name && (
                       <Badge className="absolute top-2 right-2" variant="default">{file.category.name}</Badge>
@@ -894,11 +904,20 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="relative">
-                    <img
+                  <div className="flex justify-center">
+                    <Image
                       src={file?.thumbnail || "/public/placeholder.svg"}
                       alt={file?.title}
-                      className="w-full h-32 object-cover"
+                      width={450}
+                      height={228}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     {file?.category?.name && (
                       <Badge className="absolute top-2 right-2" variant="default">{file?.category?.name}</Badge>
@@ -942,11 +961,20 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="relative">
-                    <img
+                  <div className="flex justify-center">
+                    <Image
                       src={"/public/placeholder.svg"}
                       alt={file.title}
-                      className="w-full h-32 object-cover"
+                      width={450}
+                      height={228}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     {file?.category?.name && (
                       <Badge className="absolute top-2 right-2" variant="default">{file?.category?.name}</Badge>
@@ -990,11 +1018,20 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt: any) => (dt?.name ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="relative">
-                    <img
+                  <div className="flex justify-center">
+                    <Image
                       src={"/public/placeholder.svg"}
                       alt={file.name}
-                      className="w-full h-32 object-cover"
+                      width={450}
+                      height={228}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     {file?.category?.name && (
                       <Badge className="absolute top-2 right-2" variant="default">{file?.category?.name}</Badge>
@@ -1042,10 +1079,19 @@ export default function AdminMediaPage() {
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
-                    <img
+                    <Image
                       src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.title}
-                      className="w-12 h-12 object-cover rounded"
+                      width={50}
+                      height={50}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     <div>
                       <h4 className="font-medium">{file.title}</h4>
@@ -1082,10 +1128,20 @@ export default function AdminMediaPage() {
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
-                    <img
+                    <Image
+                    
                       src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.title}
-                      className="w-12 h-12 object-cover rounded"
+                      width={50}
+                      height={50}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     <div>
                       <h4 className="font-medium">{file.title}</h4>
@@ -1122,10 +1178,19 @@ export default function AdminMediaPage() {
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
-                    <img
-                      // src={file.thumbnail || "/public/placeholder.svg"}
+                    <Image
+                      src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.title}
-                      className="w-12 h-12 object-cover rounded"
+                      width={50}
+                      height={50}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     <div>
                       <h4 className="font-medium">{file.title}</h4>
@@ -1162,10 +1227,19 @@ export default function AdminMediaPage() {
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
-                    <img
-                      // src={file.thumbnail || "/public/placeholder.svg"}
+                    <Image
+                      src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file?.name}
-                      className="w-12 h-12 object-cover rounded"
+                      width={50}
+                      height={50}
+                      className=" object-cover"
+                      preview={{
+                        mask: (
+                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                            <Eye className="text-xl mb-1" />
+                          </div>
+                        ),
+                      }}
                     />
                     <div>
                       <h4 className="font-medium">{file?.name}</h4>

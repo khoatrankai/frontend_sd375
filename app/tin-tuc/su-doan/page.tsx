@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight, Users, Award, Calendar, Activity } from "lucide-react"
 import { newsService } from "@/services/news.service"
+import { useRouter } from 'next/navigation'; 
+
 
 export default function DivisionNewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -59,6 +61,11 @@ export default function DivisionNewsPage() {
     { label: "Giải thưởng thi đua các cấp", value: "23", color: "text-purple-600" },
     { label: "Sáng kiến kỹ thuật được áp dụng", value: "12", color: "text-orange-600" },
   ]
+    const router = useRouter();
+
+const loadDetail = async (id: string | number) => {
+  router.push(`/tin-tuc/${id}`); 
+};
 
   return (
     <div className="space-y-8">
@@ -180,7 +187,7 @@ export default function DivisionNewsPage() {
                           {item.views}
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => loadDetail(item.id)}>
                         Đọc thêm
                         <ChevronRight className="h-4 w-4 ml-1" />
                       </Button>
