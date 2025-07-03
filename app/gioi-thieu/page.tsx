@@ -1,18 +1,72 @@
 "use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { apiClient } from "@/lib/api"
 import { historyService } from "@/services/histories.service"
-import { Shield, Award, Users, History, Phone, Mail,Star, Medal, Trophy } from "lucide-react"
+import { reportService } from "@/services/report.service"
+import { Button, Input } from "antd"
+import { Shield, Award, Users, History, Phone, Mail,Star, Medal, Trophy, Send } from "lucide-react"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 export default function IntroductionPage() {
   const [histories,setHistories] = useState<any>([])
 
-  const fetchData = async()=>{
-    const res = await historyService.getHistories()
-    if(res.statusCode === 200){
-      setHistories(res.data)
+  
+  const [report, setReport] = useState<any>([])
+    const [catagory, setCategory] = useState<any>([])
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [subject, setSubject] = useState("");
+    const [message, setMessage] = useState("");
+    const [selectedReport, setSelectedReport] = useState<string | undefined>(undefined);
+  
+    const fetchData = async () => {
+      const res = await reportService.getCategories() as any
+      const res2 = await reportService.getReports() as any
+      if (res.statusCode === 200) {
+        setCategory(res.data)
+      }
+      if (res.statusCode === 200) {
+        setReport(res2.data)
+      }
     }
-  }
+    
+  
+    const handleSubmit = async (e: React.ChangeEvent<any>) => {
+      e.preventDefault();
+  
+  
+      const data = { name, email, phone, subject, message, category: selectedReport }
+      // console.log(selectedReport)?
+  
+      try {
+        // Gửi dữ liệu đến API backend
+        const response = await apiClient.post('/reports', data)
+  
+        if (!response) {
+          throw new Error("Lỗi khi lưu dữ liệu.");
+        }
+        fetchData()
+        toast.success("Góp ý của bạn đã được gửi thành công!");
+        resetForm()
+  
+        // Xử lý sau khi lưu thành công: reset form hoặc thông báo cho người dùng
+        console.log("Đã Gửi thành công!");
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const resetForm = () => {
+      setName('');
+      setEmail('');
+      setPhone('');
+      setSubject('');
+      setMessage('');
+      setSelectedReport('');
+  
+    };
 
   useEffect(()=>{
     fetchData()
@@ -76,14 +130,14 @@ export default function IntroductionPage() {
             {
               histories?.map((dt:any)=>{
                 if(dt?.highlight){
-                  return <div className="border-l-4 border-red-600 pl-4">
+                   <div className="border-l-4 border-red-600 pl-4">
                   <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
                   <p className="text-gray-700">
                     {dt?.description}
                   </p>
                 </div>
                 }
-                return <div className="border-l-4 border-blue-600 pl-4">
+                 <div className="border-l-4 border-blue-600 pl-4">
                    <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
                   <p className="text-gray-700">
                     {dt?.description}
@@ -200,32 +254,103 @@ export default function IntroductionPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h4 className="font-bold">Thông tin liên hệ</h4>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4 text-green-600" />
-                  <span>Điện thoại: 777322</span>
+         <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Họ và tên <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      name="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Nhập họ và tên"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      name="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Nhập địa chỉ email"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-blue-600" />
-                  <span>Email: banthongtin.f375@mail.bqp</span>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                    <Input
+                      name="phone"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Nhập số điện thoại"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Loại góp ý <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="category"
+                      value={selectedReport}
+                      onChange={(e) => { setSelectedReport(e.target.value) }}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      required
+                    >
+                      <option value="">Chọn loại góp ý</option>
+                      {catagory.map((rep: any) => (
+                        <option key={rep.id} value={rep?.id}>
+                          {rep.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="font-bold">Gửi góp ý</h4>
-              <form className="space-y-3">
-                <input type="text" placeholder="Họ và tên" className="w-full p-2 border rounded" />
-                <input type="email" placeholder="Email" className="w-full p-2 border rounded" />
-                <textarea placeholder="Nội dung góp ý" rows={3} className="w-full p-2 border rounded" />
-                <button type="submit" className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                  Gửi góp ý
-                </button>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tiêu đề <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    name="subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="Nhập tiêu đề góp ý"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nội dung <span className="text-red-500">*</span>
+                  </label>
+                  <Textarea
+                    name="message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Nhập nội dung góp ý chi tiết..."
+                    rows={6}
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-500">
+                    <span className="text-red-500">*</span> Thông tin bắt buộc
+                  </div>
+                 <Button htmlType="submit" type="primary" className="bg-red-600 hover:bg-red-700">
+                    <Send className="h-4 w-4 mr-2" />
+                    Gửi góp ý
+                  </Button>
+                </div>
               </form>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

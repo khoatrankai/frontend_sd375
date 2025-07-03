@@ -11,11 +11,11 @@ import AudioPlayerProUI from "@/components/audio-player-pro.ui"
 export default function AudioPage() {
   const refBtnReset = useRef<any>(undefined)
   const [currentTrack, setCurrentTrack] = useState(0)
-  // const [isPlaying, setIsPlaying] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 2;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const [tracks, setTracks] = useState<any>([])
@@ -68,9 +68,9 @@ export default function AudioPage() {
   }
 
 
-  // const togglePlay = () => {
-  //   setIsPlaying(!isPlaying)
-  // }
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying)
+  }
 
   const nextTrack = () => {
     setCurrentTrack((prev) => (prev + 1) % filteredTracks.length)
@@ -86,6 +86,17 @@ export default function AudioPage() {
     handleReset()
     // setIsPlaying(true)
   }
+  //điều hướng trang
+  const itemsPerPage2 = 2; // Số card mỗi slide
+  const [pageIndex2, setPageIndex2] = useState(0);
+
+  const totalPages2 = Math.ceil(featuredTracks.length / itemsPerPage2);
+  const pagedTracks2 = featuredTracks.slice(
+    pageIndex2 * itemsPerPage2,
+    (pageIndex2 + 1) * itemsPerPage2
+  );
+
+
 
   return (
     <div className="space-y-8">
@@ -185,7 +196,12 @@ export default function AudioPage() {
               </div>
             </CardContent>
           </Card> */}
-          <AudioPlayerProUI refBtnReset={refBtnReset} onNext={nextTrack} onPrev={prevTrack} duration={filteredTracks?.[currentTrack]?.duration} category={filteredTracks?.[currentTrack]?.category?.name} artist={filteredTracks?.[currentTrack]?.artist} title={filteredTracks?.[currentTrack]?.title} src={filteredTracks?.[currentTrack]?.link} />
+          <AudioPlayerProUI refBtnReset={refBtnReset} onNext={nextTrack} onPrev={prevTrack}
+            duration={filteredTracks?.[currentTrack]?.duration}
+            category={filteredTracks?.[currentTrack]?.category?.name}
+            artist={filteredTracks?.[currentTrack]?.artist}
+            title={filteredTracks?.[currentTrack]?.title}
+            src={filteredTracks?.[currentTrack]?.link} />
         </div>
 
         {/* Playlist */}
@@ -194,52 +210,114 @@ export default function AudioPage() {
           {featuredTracks.length > 0 && (
             <section>
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Bài hát nổi bật</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {currentTracks.map((track: any, index: number) => (
-                  <Card
-                    key={track.id}
-                    className={`cursor-pointer transition-all hover:shadow-lg ${currentTrack === index ? "ring-2 ring-red-500 bg-red-50" : ""
-                      }`}
-                    onClick={() => selectTrack(index)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-4">
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center ${currentTrack === index ? "bg-red-600 text-white" : "bg-gray-200"
-                            }`}
-                        >
-                          {/* {currentTrack === index && isPlaying ? (
-                            <Pause className="h-5 w-5" />
-                          ) : (
+              <div className="relative">
+                <div className="flex space-x-4 transition-all duration-300">
+                  {pagedTracks2.map((track: any, index: number) => (
+                    <Card
+                      key={track.id}
+                      className={`w-full md:w-[300px] cursor-pointer transition-all hover:shadow-lg ${currentTrack === index + pageIndex2 * itemsPerPage2
+                          ? "ring-2 ring-red-500 bg-red-50"
+                          : ""
+                        }`}
+                      onClick={() => selectTrack(index + pageIndex2 * itemsPerPage2)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-4">
+                          <div
+                            className={`w-12 h-12 rounded-full flex items-center justify-center ${currentTrack === index + pageIndex2 * itemsPerPage2
+                                ? "bg-red-600 text-white"
+                                : "bg-gray-200"
+                              }`}
+                          >
                             <Play className="h-5 w-5" />
-                          )} */}
-                          <Play className="h-5 w-5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-gray-800 truncate">{track.title}</h4>
-                          <p className="text-sm text-gray-600">{track.artist}</p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Badge variant="outline" className="text-xs">
-                              {track.category.name}
-                            </Badge>
-                            <span className="text-xs text-gray-500">{track.duration}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-800 truncate">{track.title}</h4>
+                            <p className="text-sm text-gray-600">{track.artist}</p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Badge variant="outline" className="text-xs">
+                                {track.category.name}
+                              </Badge>
+                              <span className="text-xs text-gray-500">{track.duration}</span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm text-gray-500">{track.plays} lượt phát</div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-gray-500">{track.plays} lượt phát</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Nút điều hướng */}
+                <div className="flex justify-center mt-4 space-x-4">
+                  <button
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                    onClick={() => setPageIndex2((prev) => Math.max(prev - 1, 0))}
+                    disabled={pageIndex2 === 0}
+                  >
+                    ←
+                  </button>
+                  <button
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                    onClick={() => setPageIndex2((prev) => Math.min(prev + 1, totalPages - 1))}
+                    disabled={pageIndex2 === totalPages - 1}
+                  >
+                    →
+                  </button>
+                </div>
               </div>
+
+            </section>
+          )}
+
+          {/* Regular Playlist */}
+          {regularTracks.length > 0 && (
+            <section>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Danh sách phát</h2>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Danh sách phát</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {currentTracks?.map((track: any, index: number) => (
+                      <div
+                        key={index}
+                        className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${index === currentTrack ? "bg-red-50 border border-red-200" : "hover:bg-gray-50"
+                          }`}
+                        onClick={() => setCurrentTrack(index)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${index === currentTrack ? "bg-red-600 text-white" : "bg-gray-200"
+                              }`}
+                          >
+                            {index === currentTrack && isPlaying ? (
+                              <Pause className="h-4 w-4" />
+                            ) : (
+                              <Play className="h-4 w-4" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">{track.title}</p>
+                            <p className="text-xs text-gray-500">{track.artist}</p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-gray-500">{track.duration}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
               <div className="flex justify-center items-center gap-4 mt-6">
                 <Button
                   variant="outline"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => prev - 1)}
                 >
-                  Trang trước
+                  Trước
                 </Button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -260,91 +338,12 @@ export default function AudioPage() {
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                 >
-                  Trang tiếp
+                  Tiếp
                 </Button>
               </div>
             </section>
           )}
 
-          {/* Regular Playlist */}
-          <section>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Danh sách phát</h2>
-            <Card>
-              <CardContent className="p-0">
-                <div className="space-y-1">
-                  {currentTracks.map((track: any, index: number) => {
-                    const actualIndex = featuredTracks.length + index
-                    return (
-                      <div
-                        key={track.id}
-                        className={`flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${currentTrack === actualIndex ? "bg-red-50 border-red-200" : ""
-                          }`}
-                        onClick={() => selectTrack(actualIndex)}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center ${currentTrack === actualIndex ? "bg-red-600 text-white" : "bg-gray-200"
-                              }`}
-                          >
-                            {/* {currentTrack === actualIndex && isPlaying ? (
-                              <Pause className="h-4 w-4" />
-                            ) : (
-                              <Play className="h-4 w-4" />
-                            )} */}
-                            <Play className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-gray-800">{track.title}</h4>
-                            <p className="text-sm text-gray-600">{track.artist}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <Badge variant="outline" className="text-xs">
-                            {track.category.name}
-                          </Badge>
-                          <span className="text-sm text-gray-500">{track.duration}</span>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Volume2 className="h-3 w-3 mr-1" />
-                            {track.plays}
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-              >
-                Trang trước
-              </Button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={page === currentPage ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentPage(page)}
-                  className={page === currentPage ? "font-bold" : ""}
-                >
-                  {page}
-                </Button>
-              ))}
-
-
-              <Button
-                variant="outline"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-              >
-                Trang tiếp
-              </Button>
-            </div>
-          </section>
         </div>
       </div>
 

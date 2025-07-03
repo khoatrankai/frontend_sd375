@@ -2,12 +2,16 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Phone, Mail, MapPin, Clock, Send, MessageSquare, Building } from "lucide-react"
+import { reportService } from "@/services/report.service"
+import { CustomFormData } from "@/lib/CustomFormData"
+import { apiClient } from "@/lib/api"
+import { toast } from "sonner"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -80,20 +84,63 @@ export default function ContactPage() {
   ]
 
   const categories = ["Góp ý về website", "Thông tin tuyên truyền", "Hợp tác truyền thông", "Khiếu nại, tố cáo", "Khác"]
+  const [report, setReport] = useState<any>([])
+  const [catagory, setCategory] = useState<any>([])
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [selectedReport, setSelectedReport] = useState<string | undefined>(undefined);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission
-    alert("Cảm ơn bạn đã gửi góp ý! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.")
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-      category: "",
-    })
+  const fetchData = async () => {
+    const res = await reportService.getCategories() as any
+    const res2 = await reportService.getReports() as any
+    if (res.statusCode === 200) {
+      setCategory(res.data)
+    }
+    if (res.statusCode === 200) {
+      setReport(res2.data)
+    }
   }
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const handleSubmit = async (e: React.ChangeEvent<any>) => {
+    e.preventDefault();
+
+
+    const data = { name, email, phone, subject, message, category: selectedReport }
+    // console.log(selectedReport)?
+
+    try {
+      // Gửi dữ liệu đến API backend
+      const response = await apiClient.post('/reports', data)
+
+      if (!response) {
+        throw new Error("Lỗi khi lưu dữ liệu.");
+      }
+      fetchData()
+      toast.success("Góp ý của bạn đã được gửi thành công!");
+      resetForm()
+
+      // Xử lý sau khi lưu thành công: reset form hoặc thông báo cho người dùng
+      console.log("Đã Gửi thành công!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const resetForm = () => {
+    setName('');
+    setEmail('');
+    setPhone('');
+    setSubject('');
+    setMessage('');
+    setSelectedReport('');
+
+  };
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -182,8 +229,8 @@ export default function ContactPage() {
                     </label>
                     <Input
                       name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       placeholder="Nhập họ và tên"
                       required
                     />
@@ -195,8 +242,8 @@ export default function ContactPage() {
                     <Input
                       name="email"
                       type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="Nhập địa chỉ email"
                       required
                     />
@@ -208,8 +255,8 @@ export default function ContactPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
                     <Input
                       name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       placeholder="Nhập số điện thoại"
                     />
                   </div>
@@ -219,15 +266,15 @@ export default function ContactPage() {
                     </label>
                     <select
                       name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
+                      value={selectedReport}
+                      onChange={(e) => { setSelectedReport(e.target.value) }}
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
                       required
                     >
                       <option value="">Chọn loại góp ý</option>
-                      {categories.map((category, index) => (
-                        <option key={index} value={category}>
-                          {category}
+                      {catagory.map((rep: any) => (
+                        <option key={rep.id} value={rep?.id}>
+                          {rep.name}
                         </option>
                       ))}
                     </select>
@@ -240,8 +287,8 @@ export default function ContactPage() {
                   </label>
                   <Input
                     name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
                     placeholder="Nhập tiêu đề góp ý"
                     required
                   />
@@ -253,8 +300,8 @@ export default function ContactPage() {
                   </label>
                   <Textarea
                     name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Nhập nội dung góp ý chi tiết..."
                     rows={6}
                     required
@@ -274,7 +321,7 @@ export default function ContactPage() {
             </CardContent>
           </Card>
 
-          {/* FAQ */}
+          {/* FAQ
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Câu hỏi thường gặp</CardTitle>
@@ -302,7 +349,7 @@ export default function ContactPage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>

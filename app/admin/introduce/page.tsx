@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building, Eye } from "lucide-react"
+import { Plus, Search, Edit, Trash2, Download, Calendar, User, FileText, Building, Eye, Phone } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { usePathname } from "next/navigation"
+import { reportService } from "@/services/report.service"
 
 export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -110,32 +111,37 @@ export default function AdminDocumentsPage() {
     { label: "Lãnh đạo - Chỉ huy", value: "8", color: "text-yellow-600" },
     { label: "Liên hệ - Góp ý", value: "5", color: "text-red-600" },
   ]
-  const handleDelete = () => {
+  const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
 
     if (confirmDelete) {
-      // 👉 Logic xoá ở đây — ví dụ API, xóa item, v.v.
-      console.log("Đã xoá bài viết");
+      const res = await reportService.deleteReport(id)
+      if (res?.statusCode === 200) {
+
+
+      }
+      console.log("Đã xoá phản hồi");
 
       // 👉 Thông báo
       if (Notification.permission === "granted") {
-        new Notification("Đã xoá bài viết", {
-          body: "Bài viết đã được xoá thành công.",
+        new Notification("Đã xoá phản hồi", {
+          body: "phản hồi đã được xoá thành công.",
         });
       } else if (Notification.permission !== "denied") {
         // Yêu cầu quyền nếu chưa được cấp
         Notification.requestPermission().then((permission) => {
           if (permission === "granted") {
-            new Notification("Đã xoá bài viết", {
-              body: "Bài viết đã được xoá thành công.",
+            new Notification("Đã xoá phản hồi", {
+              body: "phản hồi đã được xoá thành công.",
             });
           } else {
-            alert("Đã xoá bài viết.");
+            alert("Đã xoá phản hồi.");
           }
         });
       } else {
-        alert("Đã xoá bài viết.");
+        alert("Đã xoá phản hồi.");
       }
+      fetchData()
     }
   };
 
@@ -183,6 +189,23 @@ export default function AdminDocumentsPage() {
     setInputValue("") // Reset ô input
   }
   const [open, setOpen] = useState(false);
+
+  const [report, setReport] = useState<any>([])
+  const [catagory, setCategory] = useState<any>([])
+
+  const fetchData = async () => {
+    const res = await reportService.getCategories() as any
+    const res2 = await reportService.getReports() as any
+    if (res.statusCode === 200) {
+      setCategory(res.data)
+    }
+    if (res.statusCode === 200) {
+      setReport(res2.data)
+    }
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
 
 
   return (
@@ -664,37 +687,38 @@ export default function AdminDocumentsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredDocuments.map((doc) => (
+            {report.map((doc: any) => (
               <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <FileText className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800 mb-2">{doc.title}</h3>
+                    <h3 className="font-semibold text-gray-800 mb-2">{doc.subject}</h3>
+                    <div className="font-normal text-gray-400 mb-2">
+                      {doc.message.split(" ").slice(0, 2).join(" ") + (doc.message.split(" ").length > 2 ? "..." : "")}
+                    </div>
+
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <Badge variant="outline">{doc.typeName}</Badge>
-                      <Badge
-                        variant={
-                          doc.status === "published" ? "default" : doc.status === "draft" ? "secondary" : "destructive"
-                        }
-                      >
-                        {doc.status === "published" ? "Đã xuất bản" : doc.status === "draft" ? "Bản nháp" : "Chờ duyệt"}
-                      </Badge>
+                      {/* <Badge variant="outline">{doc.typeName}</Badge> */}
+
                       <div className="flex items-center">
                         <Building className="h-4 w-4 mr-1" />
-                        {doc.unitName}
+                        {doc.email}
                       </div>
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
-                        {doc.author}
+                        {doc.name}
+                      </div>
+                      <div className="flex items-center">
+                        <Phone className="h-4 w-4 mr-1" />
+                        {doc.phone}
                       </div>
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
-                        {doc.date}
+                        {doc?.category?.name}
                       </div>
-                      <span>Dung lượng: {doc.size}</span>
-                      <span>Lượt tải: {doc.downloads}</span>
+
                     </div>
                   </div>
                 </div>
@@ -1058,41 +1082,43 @@ export default function AdminDocumentsPage() {
                         <div className="space-y-4">
                           <div>
                             <label>Họ và tên </label>
-                            <Input placeholder="Xem họ và tên" disabled />
+                            <Input value={doc.name} placeholder="Xem họ và tên" disabled />
                           </div>
                           <div>
                             <label>Email</label>
-                            <Input placeholder="Xem Email" disabled />
+                            <Input value={doc.email} placeholder="Xem Email" disabled />
                           </div>
                           <div>
                             <label>Số điện thoại </label>
-                            <Input placeholder="Xem Số điện thoại" disabled />
+                            <Input value={doc.phone} placeholder="Xem Số điện thoại" disabled />
                           </div>
                           <div>
                             <label>Loại góp ý</label>
-                            <Select disabled>
+                            <Select value={doc?.category?.id} disabled>
                               <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại" />
+                                <SelectValue placeholder="Chọn loại">
+                                  {doc?.category?.name}
+                                </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="gop-y">Góp ý về Website</SelectItem>
-                                <SelectItem value="tuyen-truyen">Thông tin tuyên truyền</SelectItem>
-                                <SelectItem value="truyen-thong">Hợp tác truyền thông</SelectItem>
-                                <SelectItem value="khieu-nai">Khiếu nại</SelectItem>
-                                <SelectItem value="to-cao">Tố cáo</SelectItem>
-                                <SelectItem value="khac">Khác</SelectItem>
-
+                                {doc?.category && (
+                                  <SelectItem value={doc.category.id}>
+                                    {doc.category.name}
+                                  </SelectItem>
+                                )}
                               </SelectContent>
                             </Select>
                           </div>
+
                           <div>
                             <label>Tiêu đề </label>
-                            <Input placeholder="Xem họ và tên" disabled />
+                            <Input value={doc.subject} placeholder="Xem họ và tên" disabled />
                           </div>
 
                           <div>
                             <label>Nội dung</label>
                             <Textarea
+                              value={doc.message}
                               id="description"
                               placeholder="Nội dung"
                               rows={10}
@@ -1500,11 +1526,12 @@ export default function AdminDocumentsPage() {
 
 
                   </div>
+
                   <Button
                     variant="outline"
                     size="sm"
                     className="text-red-600 hover:text-red-700"
-                    onClick={handleDelete}
+                    key={doc.id} onClick={() => handleDelete(doc.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

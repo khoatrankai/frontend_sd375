@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { usersService } from "@/services/users.service"
 import { groupService } from "@/services/groups.service"
 import { historyService } from "@/services/histories.service"
+import { Image } from "antd"
 export const userTypes = [
   { name: "Thiếu úy", value: "thieu_uy" },
   { name: "Trung úy", value: "trung_uy" },
@@ -67,22 +68,32 @@ export default function LeadershipPage() {
       {/* Current Leadership */}
       <section>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Ban chỉ huy hiện tại</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {currentLeadership.map((leader:any, index:number) => (
             <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
+              <CardContent>
                 <div className="flex items-start space-x-4">
-                  <div className="relative">
-                    <img
+                  {/* <div className="relative flex-1 h-full">
+                    <Image
+                      width={100}
+                      height={100}
                       src={leader?.avatar || "/public/placeholder.svg"}
                       alt={leader?.name}
-                      className="w-24 h-24 rounded-full object-cover border-4 border-red-100"
+                      className="w-full h-48 rounded-sm object-cover border-4 border-red-100"
                     />
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
                       <Star className="h-4 w-4 text-white" />
                     </div>
+                  </div> */}
+                  <div className="flex-1 min-h-60">
+                    <Image
+                      src={leader?.avatar || "/public/placeholder.svg"}
+                      alt={leader?.name}
+                      className="!min-w-full !min-h-full rounded-sm"
+                    />
                   </div>
-                  <div className="flex-1">
+                   
+                  {/* <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-800 mb-1">{userTypes.find((dt)=> dt.value === leader?.type)?.name} {leader?.name}</h3>
                     <Badge variant="destructive" className="mb-3">
                       {leader?.position}
@@ -117,7 +128,7 @@ export default function LeadershipPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </CardContent>
             </Card>
@@ -140,7 +151,7 @@ export default function LeadershipPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-3 m-3">
                   <div>
                     <span className="font-medium text-gray-600">Trưởng phòng:</span>
                     <span className="ml-2 text-blue-600">{userTypes.find((dt)=> dt.value === dept?.head?.type)?.name} {dept?.head?.name}</span>

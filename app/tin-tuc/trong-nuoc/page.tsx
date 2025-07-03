@@ -8,20 +8,28 @@ import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
 
 export default function DomesticNewsPage() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [news,setNews] = useState([
-  ])
+ 
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const [news, setNews] = useState<any>([])
+  const currentNews= news.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(news.length / itemsPerPage);
 
-  useEffect(()=>{
+  
+
+  useEffect(() => {
     fetchData()
-  },[])
+  }, [])
 
-  const fetchData = async()=>{
-    const res = await newsService.getPosts({type:"trong_nuoc",page:currentPage,limit:10})
-    if(res.statusCode === 200){
+  const fetchData = async () => {
+    const res = await newsService.getPosts({ type: "trong_nuoc", page: currentPage, limit: 10 })
+    if (res.statusCode === 200) {
       setNews(res.data)
-      setCurrentPage(currentPage+1)
-    }else{
+      setCurrentPage(currentPage + 1)
+    } else {
       console.log(res)
     }
   }
@@ -37,7 +45,7 @@ export default function DomesticNewsPage() {
 
       {/* News List */}
       <div className="space-y-6">
-        {news.map((item:any) => (
+        {currentNews.map((item: any) => (
           <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row">
@@ -50,7 +58,7 @@ export default function DomesticNewsPage() {
                 </div>
                 <div className="md:w-2/3 p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge variant="outline">{item.category.name}</Badge>
+                    <Badge variant="outline">{item?.category?.name}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
                       {item.time}
@@ -84,14 +92,35 @@ export default function DomesticNewsPage() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center space-x-2">
-        <Button variant="outline" disabled={currentPage === 1}>
+     <div className="flex justify-center items-center gap-4 mt-6">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => prev - 1)}
+        >
           Trang trước
         </Button>
-        <Button variant="outline">1</Button>
-        <Button variant="outline">2</Button>
-        <Button variant="outline">3</Button>
-        <Button variant="outline">Trang sau</Button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <Button
+            key={page}
+            variant={page === currentPage ? "default" : "outline"}
+            size="sm"
+            onClick={() => setCurrentPage(page)}
+            className={page === currentPage ? "font-bold" : ""}
+          >
+            {page}
+          </Button>
+        ))}
+
+
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Trang tiếp
+        </Button>
       </div>
     </div>
   )

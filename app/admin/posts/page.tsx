@@ -20,8 +20,8 @@ export default function AdminPostsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [selectedFilterCategory, setSelectedFilterCategory] = useState<string | undefined>(undefined);
   const [categories, setCategories] = useState<any>([])
-const [filteredNews,setFilteredNews] = useState<any>([])
-    
+  const [filteredNews, setFilteredNews] = useState<any>([])
+
 
   const [selectedActivity, setSelectedActivity] = useState<string | undefined>(undefined);
   const [selectedFilterActivity, setSelectedFilterActivity] = useState<string | undefined>(undefined);
@@ -43,7 +43,7 @@ const [filteredNews,setFilteredNews] = useState<any>([])
 
 
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
-    // e.preventDefault();
+    e.preventDefault();
 
     // Tạo đối tượng FormData để dễ dàng truyền file cùng các trường text
     const formData = new FormData();
@@ -141,7 +141,7 @@ const [filteredNews,setFilteredNews] = useState<any>([])
     setPreviewUrl(null);
   };
 
-  
+
   const [open, setOpen] = useState(false);
   const handleFocusUpdate = (post: any) => {
     setSelectedFile(null)
@@ -192,18 +192,18 @@ const [filteredNews,setFilteredNews] = useState<any>([])
   };
 
 
-  useEffect(()=>{
-    setFilteredNews(News.filter((post:any)=>{
-        const matchesSearch =
-      post?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post?.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
-      return matchesSearch && (selectedFilterActivity === "all" || selectedFilterActivity === post?.categoryActivity?.nametag || !selectedFilterActivity) && 
-      (selectedFilterCategory === "all" || selectedFilterCategory === post?.category?.nametag || !selectedFilterCategory) &&
-      (selectedFilterRegion === "all" || selectedFilterRegion === post?.region?.nametag || !selectedFilterRegion)
+  useEffect(() => {
+    setFilteredNews(News.filter((post: any) => {
+      const matchesSearch =
+        post?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post?.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesSearch && (selectedFilterActivity === "all" || selectedFilterActivity === post?.categoryActivity?.nametag || !selectedFilterActivity) &&
+        (selectedFilterCategory === "all" || selectedFilterCategory === post?.category?.nametag || !selectedFilterCategory) &&
+        (selectedFilterRegion === "all" || selectedFilterRegion === post?.region?.nametag || !selectedFilterRegion)
     }))
-  },[News,selectedFilterActivity,selectedFilterCategory,selectedFilterRegion,searchTerm])
+  }, [News, selectedFilterActivity, selectedFilterCategory, selectedFilterRegion, searchTerm])
 
-  
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -585,27 +585,27 @@ const [filteredNews,setFilteredNews] = useState<any>([])
                                 {/* {selectedFile && (
                                  
                                 )} */}
-                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
-                                    {previewUrl && (
-                                      <img
-                                        src={previewUrl}
-                                        alt="Preview"
-                                        className="w-24 h-24 object-cover rounded"
-                                      />
-                                    )}
-                                    <div>
-                                      <span className="text-sm text-green-700 block">
-                                        ✓ File đã được tải lên: <strong>{selectedFile?.name}</strong>
-                                      </span>
-                                      <button
-                                        disabled
-                                        onClick={handleRemoveFile}
-                                        className="text-red-500 text-sm hover:underline mt-1"
-                                      >
-                                        Xóa
-                                      </button>
-                                    </div>
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                  {previewUrl && (
+                                    <img
+                                      src={previewUrl}
+                                      alt="Preview"
+                                      className="w-24 h-24 object-cover rounded"
+                                    />
+                                  )}
+                                  <div>
+                                    <span className="text-sm text-green-700 block">
+                                      ✓ File đã được tải lên: <strong>{selectedFile?.name}</strong>
+                                    </span>
+                                    <button
+                                      disabled
+                                      onClick={handleRemoveFile}
+                                      className="text-red-500 text-sm hover:underline mt-1"
+                                    >
+                                      Xóa
+                                    </button>
                                   </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -707,7 +707,7 @@ const [filteredNews,setFilteredNews] = useState<any>([])
                                 value={selectedRegion === undefined ? "undefined" : selectedRegion}
                                 onValueChange={(value) => {
                                   setSelectedRegion(value === "undefined" ? undefined : value);
-                                  
+
                                 }}
                               >
                                 <SelectTrigger>
@@ -738,17 +738,17 @@ const [filteredNews,setFilteredNews] = useState<any>([])
                                 />
 
                                 {/* {selectedFile && ( */}
-                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
-                                    {previewUrl && (
-                                      <img
-                                        src={previewUrl ?? ""}
-                                        alt="Preview"
-                                        className="w-24 h-24 object-cover rounded"
-                                      />
-                                    )}
-                                    {
-                                      selectedFile &&
-<div>
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
+                                  {previewUrl && (
+                                    <img
+                                      src={previewUrl ?? ""}
+                                      alt="Preview"
+                                      className="w-24 h-24 object-cover rounded"
+                                    />
+                                  )}
+                                  {
+                                    selectedFile &&
+                                    <div>
                                       <span className="text-sm text-green-700 block">
                                         ✓ File đã được tải lên: <strong>{selectedFile?.name}</strong>
                                       </span>
@@ -759,9 +759,9 @@ const [filteredNews,setFilteredNews] = useState<any>([])
                                         Xóa
                                       </button>
                                     </div>
-                                    }
-                                    
-                                  </div>
+                                  }
+
+                                </div>
                                 {/* )} */}
                               </div>
                             </div>
