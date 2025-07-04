@@ -39,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center pb-6">
+        <CardHeader className="text-center pb-6 bg-transparent">
           <div className="flex justify-center mb-4">
             <div className="bg-red-600 p-3 rounded-full">
               <Shield className="h-8 w-8 text-white" />
@@ -49,7 +49,7 @@ export default function LoginPage() {
           <p className="text-gray-600 mt-2">Sư đoàn phòng không 375</p>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="bg-transparent">
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Tên đăng nhập</Label>

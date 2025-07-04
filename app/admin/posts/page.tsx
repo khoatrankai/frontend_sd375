@@ -12,6 +12,8 @@ import { Label } from "recharts"
 import { DialogClose } from "@/components/ui/dialog";
 import { newsService } from "@/services/news.service"
 import { apiClient } from "@/lib/api"
+import { SimpleEditor } from "@/components/tiptap/tiptap-templates/simple/simple-editor"
+// import RichTextEditor from "@/components/editor/TipTap"
 
 
 export default function AdminPostsPage() {
@@ -215,7 +217,7 @@ export default function AdminPostsPage() {
               Thêm bảng tin mới
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
             <DialogHeader >
               <DialogTitle>Thêm bảng tin mới</DialogTitle>
             </DialogHeader>
@@ -230,13 +232,15 @@ export default function AdminPostsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                  <textarea
+                  {/* <textarea
                     className="mt-1 w-full border rounded-md p-2"
                     rows={10}
                     placeholder="Nhập nội dung bảng tin"
                     value={excerpt}
                     onChange={(e) => setExcerpt(e.target.value)}
-                  />
+                  /> */}
+                  {/* <RichTextEditor content="" onChange={()=>{}}/> */}
+                  <SimpleEditor content="Thêm nội dung vào đây" onChange={(e) => setExcerpt(e)}/>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -528,7 +532,7 @@ export default function AdminPostsPage() {
                       </Button>
                     </DialogTrigger>
 
-                    <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                    <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>Xem bảng tin</DialogTitle>
                       </DialogHeader>
@@ -544,12 +548,16 @@ export default function AdminPostsPage() {
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                            <textarea
+                            {/* <textarea
                               className="mt-1 w-full border rounded-md p-2"
                               rows={10}
                               placeholder="Nhập nội dung bảng tin"
                               value={post.excerpt}
-                              disabled />
+                              disabled /> */}
+                              {/* <div className="body-image-with-caption figcaption"> */}
+                                <div className="body-image-with-caption figcaption"  dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+
+                              {/* </div> */}
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
@@ -677,7 +685,7 @@ export default function AdminPostsPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                    <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
                       <DialogHeader >
                         <DialogTitle>Cập nhật bảng tin</DialogTitle>
                       </DialogHeader>
@@ -692,13 +700,14 @@ export default function AdminPostsPage() {
 
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                            <textarea
+                            {/* <textarea
                               className="mt-1 w-full border rounded-md p-2"
                               rows={10}
                               placeholder="Nhập nội dung bảng tin"
                               value={excerpt}
                               onChange={(e) => setExcerpt(e.target.value)}
-                            />
+                            /> */}
+                            <SimpleEditor content={excerpt} onChange={(content) => setExcerpt(content)} />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div>

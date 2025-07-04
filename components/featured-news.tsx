@@ -6,8 +6,10 @@ import { Clock, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { newsService } from "@/services/news.service"
 import TimeAgo from "./time-ago"
+import { useRouter } from "next/navigation"
 
 export default function FeaturedNews() {
+  const router = useRouter()
   const [currentMainNews, setCurrentMainNews] = useState(0)
 
   const [mainNews,setMainNews] = useState([
@@ -43,14 +45,18 @@ export default function FeaturedNews() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main news slideshow - 2/3 width */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2"> 
           <div className="relative h-96 overflow-hidden rounded-lg shadow-lg">
             {mainNews.map((news:any, index) => (
               <div
                 key={index}
-                className={`absolute inset-0 transition-opacity duration-500 ${
+                className={`absolute cursor-pointer inset-0 transition-opacity duration-500 ${
                   index === currentMainNews ? "opacity-100" : "opacity-0"
                 }`}
+                onClick={()=>{
+                  // window.location.href = `/tin-tuc/${news?.id}`
+                  router.push(`/tin-tuc/${news.id}`)
+                }}
               >
                 <img src={news.image || "/public/placeholder.svg"} alt={news.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
@@ -103,7 +109,7 @@ export default function FeaturedNews() {
         <div className="space-y-3">
           {sideNews.map((news:any, index) => (
             <Card onClick={()=>{
-              
+              router.push(`/tin-tuc/${news.id}`)
             }} key={index} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-2">

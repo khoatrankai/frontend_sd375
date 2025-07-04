@@ -12,8 +12,10 @@ const ReactPlayer = dynamic(() => import('react-player'), { ssr: false })
 import { Image } from "antd"
 import AudioPlayer from "./audio-player"
 import dynamic from "next/dynamic"
+import { useRouter } from "next/navigation"
 
 export default function Sidebar() {
+  const router = useRouter()
   const quickLinks = [{ name: "Quản lý văn bản", link: "http://quanlyvanban.bqp" }, { name: "Hệ thông tin CĐ-ĐH QC", link: "http://htt.qcpkkq.bqp" }, { name: "Hệ thông tin CĐ-ĐH F375", link: "https://192.168.1.120" }, { name: "Mail QS", link: "https://mail.bqp" }, { name: "Cổng TTĐT QC", link: "http://qcpkkq.bqp" }]
   const [imageTop, setImageTop] = useState<any>()
   const [isPlaying, setPlaying] = useState<boolean>(false)
@@ -78,7 +80,9 @@ export default function Sidebar() {
         <CardContent>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {newsFilter.map((item: any) => (
-              <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer">
+              <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/tin-tuc/${item.id}`)
+              }}>
                 <p className="text-sm text-gray-700 line-clamp-2">{item.title}</p>
                 <span className="text-xs text-gray-500">{<TimeAgo date={item.created_at} />}</span>
               </div>

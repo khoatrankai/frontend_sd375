@@ -12,6 +12,7 @@ import { DialogHeader } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { usePathname } from "next/navigation"
 import { articlesService } from "@/services/articles.service"
+import { SimpleEditor } from "@/components/tiptap/tiptap-templates/simple/simple-editor"
 
 export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -231,6 +232,16 @@ const [categories,setCategories] = useState<any>([
     
   }
 
+  const handleSubmitUp = async(id:string)=>{
+    const res = await articlesService.updateArticle(id,{...dataSave,type:selectedDocType,tags:fields?.length ? fields :['']} as any) as any
+    if(res.statusCode === 201){
+      setDataSave({})
+      fetchData()
+      setFields([])
+    }
+    
+  }
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -306,6 +317,10 @@ const [categories,setCategories] = useState<any>([
                   <DialogTrigger asChild>
                     <Button
                       className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
+                      onClick={()=>{
+                        setDataSave({})
+                        setFields([])
+                      }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                      {
@@ -314,7 +329,7 @@ const [categories,setCategories] = useState<any>([
                     </Button>
                   </DialogTrigger>
 
-                  <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                  <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
                     <DialogHeader >
                       <DialogTitle>{
@@ -334,7 +349,7 @@ const [categories,setCategories] = useState<any>([
 
                       <div>
                         <label>Mô tả *</label>
-                        <Textarea
+                        {/* <Textarea
                           id="excerpt"
                           placeholder="Nhập mô tả "
                           value={dataSave?.excerpt}
@@ -345,7 +360,13 @@ const [categories,setCategories] = useState<any>([
                             }
                           })}}
                           rows={10}
-                        />
+                        /> */}
+                        <SimpleEditor content="" onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              excerpt: e
+                            }
+                          })}}/>
                       </div>
                        <div>
                         <label>Loại bài viết</label>
@@ -364,7 +385,7 @@ const [categories,setCategories] = useState<any>([
                             {
                               categories.map((item:any)=>{
                                 return(
-                                  <SelectItem value={item.id}>{item.name}</SelectItem>
+                                  <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                                 )
                               })
                             }
@@ -507,7 +528,7 @@ const [categories,setCategories] = useState<any>([
                   {/* <Button variant="outline" size="sm" >
                     <Eye className="h-4 w-4" />
                   </Button> */}
-                  {selectedDocType === "report" && (
+                  {/* {selectedDocType === "report" && ( */}
                     <Dialog >
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" >
@@ -515,7 +536,7 @@ const [categories,setCategories] = useState<any>([
                         </Button>
                       </DialogTrigger>
 
-                      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                      <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
                         <DialogHeader >
                           <DialogTitle> Xem CCHC & Chuyển đổi số</DialogTitle>
@@ -523,49 +544,55 @@ const [categories,setCategories] = useState<any>([
                         <div className="space-y-4">
                           <div>
                             <label>Tiêu đề *</label>
-                            <Input placeholder="xem tiêu đề " disabled />
+                            <Input placeholder="xem tiêu đề " disabled value={doc?.title}/>
                           </div>
 
                           <div>
                             <label>Mô tả *</label>
-                            <Textarea
+                            {/* <Textarea
                               id="description"
                               placeholder="Xem mô tả "
                               rows={10}
-                              disabled />
+                              disabled /> */}
+                              {/* <div dangerouslySetInnerHTML={{__html:}}/> */}
+                            <div className="body-image-with-caption" dangerouslySetInnerHTML={{__html:doc?.excerpt}}/>
                           </div>
                           <div>
                             <label>Loại bài viết</label>
-                            <Select disabled>
+                            <Select disabled value={doc?.category?.id}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Chọn loại bài viết" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="chuyen-doi-so">Chuyển đổi số</SelectItem>
-                                <SelectItem value="cai-cach-hanh-chinh">Cải cách hành chính</SelectItem>
-                                <SelectItem value="dchinh-phu-dien-tu">Chính phủ điện tử</SelectItem>
+                                 {
+                              categories.map((item:any)=>{
+                                return(
+                                  <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                                )
+                              })
+                            }
                               </SelectContent>
                             </Select>
                           </div>
                           <div>
                             <label>Thuộc lĩnh vực</label>
-                            <div className="flex items-center gap-2 mt-1">
+                            {/* <div className="flex items-center gap-2 mt-1">
                               <Input
                                 className="w-60"
                                 placeholder="Xem"
-                                value={inputValue}
+                                // value={doc}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleAddField()}
                                 disabled />
                               <Button type="button" onClick={handleAddField} disabled>
                                 Nhập
                               </Button>
-                            </div>
+                            </div> */}
 
                             {/* Hiển thị các lĩnh vực đã nhập */}
-                            {fields.length > 0 && (
+                            {doc?.tags?.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-3">
-                                {fields.map((field, index) => (
+                                {doc?.tags?.map((field:any, index:number) => (
                                   <div
                                     key={index}
                                     className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
@@ -587,10 +614,10 @@ const [categories,setCategories] = useState<any>([
                             )}
 
                           </div>
-                          <div>
-                            <label>Tên và cấp bậc</label>
-                            <Input placeholder="Xem tên và cấp bậc " disabled />
-                          </div>
+                      <div>
+                        <label>Tên người đăng</label>
+                        <Input placeholder="Nhập tên "  value={doc?.author} disabled/>
+                      </div>
 
 
 
@@ -599,96 +626,156 @@ const [categories,setCategories] = useState<any>([
                       </DialogContent>
 
                     </Dialog>
-                  )}
+                  {/* )} */}
                  
 
 
 
                   <div className="text-right">
-                    {selectedDocType === "report" && (
+                    {/* {selectedDocType === "report" && ( */}
                       <Dialog >
                         <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" >
+                          <Button variant="outline" size="sm" onClick={()=>{
+                            setDataSave({...dataSave,category:doc?.category?.id})
+                            setFields(doc?.tags)
+                          }}>
                             <Edit className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
 
-                        <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                        <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
                           <DialogHeader >
                             <DialogTitle>Cập nhật CCHC & Chuyển đổi số</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
                             <div>
-                              <label>Tiêu đề *</label>
-                              <Input placeholder="Nhập tiêu đề " />
-                            </div>
+                        <label>Tiêu đề *</label>
+                        <Input defaultValue={doc?.title} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            title: e.target.value
+                          }
+                        })}} placeholder="Nhập tiêu đề " />
+                      </div>
 
-                            <div>
-                              <label>Mô tả *</label>
-                              <Textarea
-                                id="description"
-                                placeholder="Nhập mô tả "
-                                rows={10}
-                              />
-                            </div>
-                            <div>
-                              <label>Loại bài viết</label>
-                              <Select>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn loại bài viết" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="chuyen-doi-so">Chuyển đổi số</SelectItem>
-                                  <SelectItem value="cai-cach-hanh-chinh">Cải cách hành chính</SelectItem>
-                                  <SelectItem value="dchinh-phu-dien-tu">Chính phủ điện tử</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div>
-                              <label>Thuộc lĩnh vực</label>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Input
-                                  className="w-60"
-                                  placeholder="Nhập"
-                                  value={inputValue}
-                                  onChange={(e) => setInputValue(e.target.value)}
-                                  onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                                />
-                                <Button type="button" onClick={handleAddField}>
-                                  Nhập
-                                </Button>
+                      <div>
+                        <label>Mô tả *</label>
+                        {/* <Textarea
+                          id="excerpt"
+                          placeholder="Nhập mô tả "
+                          value={dataSave?.excerpt}
+                          onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              excerpt: e.target.value
+                            }
+                          })}}
+                          rows={10}
+                        /> */}
+                        <SimpleEditor content={doc?.excerpt} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              excerpt: e
+                            }
+                          })}}/>
+                      </div>
+                       <div>
+                        <label>Loại bài viết</label>
+                        <Select 
+                        defaultValue={doc?.category?.id}
+                        onValueChange={(value:any)=>{
+                          setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              category: value
+                            }
+                          })
+                        }}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Chọn loại bài viết" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {
+                              categories.map((item:any)=>{
+                                return(
+                                  <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                                )
+                              })
+                            }
+                            {/* <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
+                            <SelectItem value="truyen-thong">Truyền Thông</SelectItem>
+                            <SelectItem value="van-hoa">Văn hóa</SelectItem> */}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                     <div>
+                        <label>Thời gian đăng</label>
+                        <Input defaultValue={doc?.date} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            date: e.target.value
+                          }
+                        })}} placeholder="Nhập tiêu đề " />
+                      </div>
+                      <div>
+                        <label>Thời gian đọc</label>
+                        <Input defaultValue={doc?.readTime} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            readTime: e.target.value
+                          }
+                        })}} placeholder="Nhập tiêu đề " />
+                      </div>
+                      <div>
+                        <label>Thuộc lĩnh vực</label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Input
+                            className="w-60"
+                            placeholder="Nhập"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleAddField()}
+                          />
+                          <Button type="button" onClick={handleAddField}>
+                            Nhập
+                          </Button>
+                        </div>
+
+                        {/* Hiển thị các lĩnh vực đã nhập */}
+                        {fields.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {fields.map((field, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                              >
+                                <span>{field}</span>
+                                <button
+                                  onClick={() => {
+                                    const updated = fields.filter((_, i) => i !== index)
+                                    setFields(updated)
+                                  }}
+                                  className="ml-2 text-red-500 hover:text-red-700"
+                                  aria-label={`Xoá ${field}`}
+                                >
+                                  ✕
+                                </button>
                               </div>
+                            ))}
+                          </div>
+                        )}
 
-                              {/* Hiển thị các lĩnh vực đã nhập */}
-                              {fields.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-3">
-                                  {fields.map((field, index) => (
-                                    <div
-                                      key={index}
-                                      className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                                    >
-                                      <span>{field}</span>
-                                      <button
-                                        onClick={() => {
-                                          const updated = fields.filter((_, i) => i !== index)
-                                          setFields(updated)
-                                        }}
-                                        className="ml-2 text-red-500 hover:text-red-700"
-                                        aria-label={`Xoá ${field}`}
-                                      >
-                                        ✕
-                                      </button>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-
-                            </div>
-                            <div>
-                              <label>Tên và cấp bậc</label>
-                              <Input placeholder="Nhập tên và cấp bậc " />
-                            </div>
+                      </div>
+                      <div>
+                        <label>Tên người đăng</label>
+                        <Input placeholder="Nhập tên "  defaultValue={doc?.author} onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                          return{
+                            ...preValue,
+                            author: e.target.value
+                          }
+                        })}}/>
+                      </div>
 
                             <DialogFooter >
                               <DialogClose asChild>
@@ -699,7 +786,9 @@ const [categories,setCategories] = useState<any>([
                               </DialogClose>
                               <DialogClose asChild>
 
-                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700" onClick={()=>{
+                                  handleSubmitUp(doc?.id)
+                                }}>
                                   Lưu
                                 </Button>
                               </DialogClose>
@@ -710,7 +799,7 @@ const [categories,setCategories] = useState<any>([
                         </DialogContent>
 
                       </Dialog>
-                    )}
+                    {/* )} */}
                     {selectedDocType === "directive" && (
                       <Dialog >
                         <DialogTrigger asChild>
@@ -719,7 +808,7 @@ const [categories,setCategories] = useState<any>([
                           </Button>
                         </DialogTrigger>
 
-                        <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                        <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
                           <DialogHeader >
                             <DialogTitle>Cập nhật CCHC & Chuyển đổi số</DialogTitle>
@@ -825,7 +914,7 @@ const [categories,setCategories] = useState<any>([
                           </Button>
                         </DialogTrigger>
 
-                        <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                        <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
                           <DialogHeader >
                             <DialogTitle>Cập nhật CCHC & Chuyển đổi số</DialogTitle>
@@ -931,7 +1020,7 @@ const [categories,setCategories] = useState<any>([
                           </Button>
                         </DialogTrigger>
 
-                        <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+                        <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
                           <DialogHeader >
                             <DialogTitle>Cập nhật CCHC & Chuyển đổi số</DialogTitle>

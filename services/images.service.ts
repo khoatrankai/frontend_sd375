@@ -33,6 +33,16 @@ export class ImagesService {
     }
   }
 
+   async uploadImage(formData: FormData) {
+    try {
+      const response = await apiClient.upload<any>("/images/upload_image", formData)
+      return response || null
+    } catch (error) {
+      console.error("Create image error:", error)
+      return null
+    }
+  }
+
   async updateImage(id: string, formData: FormData) {
     try {
       const response = await apiClient.uploadPatch<any>(`/images/${id}`, formData)

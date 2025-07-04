@@ -121,7 +121,7 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
             </header>
 
             {/* Featured Image */}
-            {news.image && (
+            {/* {news.image && (
               <div className="mb-6">
                 <div className="relative w-full h-64 md:h-96 lg:h-[500px] rounded-lg overflow-hidden">
                   <Image
@@ -133,7 +133,7 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
                   />
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Image Slides */}
             {news.slides && news.slides.length > 0 && (
@@ -162,10 +162,10 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
             )}
 
             {/* Article Content */}
-            <div className="prose prose-lg max-w-none">
+            {/* <div className="prose prose-lg max-w-none">
               <Paragraph className="text-lg leading-relaxed text-gray-700 mb-6 font-medium">{news.excerpt}</Paragraph>
 
-              {/* Sample content - in real app, this would be the full article content */}
+         
               <div className="space-y-4 text-gray-800 leading-relaxed">
                 <Paragraph>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
@@ -185,8 +185,8 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
                   sunt explicabo.
                 </Paragraph>
               </div>
-            </div>
-
+            </div> */}
+              <div className="body-image-with-caption figcaption"  dangerouslySetInnerHTML={{ __html: news.excerpt }} />
             <Divider />
 
             {/* Article Footer */}
@@ -197,11 +197,11 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
                 {news.categoryActivity && <Tag color="cyan">{news.categoryActivity.name}</Tag>}
               </div>
 
-              <div className="flex items-center gap-4 mt-2 md:mt-0">
+              {/* <div className="flex items-center gap-4 mt-2 md:mt-0">
                 <Button type="primary" icon={<ShareAltOutlined />} onClick={handleShare}>
                   Chia sẻ bài viết
                 </Button>
-              </div>
+              </div> */}
             </div>
           </article>
         </Col>
