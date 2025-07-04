@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Volume2, SkipForward, SkipBack, Download, Clock, Music, Heart, Share2 } from "lucide-react"
+import { Play, Pause, Volume2, SkipForward, SkipBack, Download, Clock, Music, Heart, Share2, CloudCog } from "lucide-react"
 import { tracksService } from "@/services/tracks.service"
 import AudioPlayerProUI from "@/components/audio-player-pro.ui"
 
@@ -22,8 +22,19 @@ export default function AudioPage() {
   const currentTracks = tracks.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(tracks.length / itemsPerPage);
 
+  // //điều hướng trang
+  // const itemsPerPage2 = 2; // Số card mỗi slide
+  // const [pageIndex2, setPageIndex2] = useState(0);
+
+  // const totalPages2 = Math.ceil(featuredTracks.length / itemsPerPage2);
+  // const pagedTracks2 = featuredTracks.slice(
+  //   pageIndex2 * itemsPerPage2,
+  //   (pageIndex2 + 1) * itemsPerPage2
+  // );
+ 
   const [categories, setCategories] = useState<any>([
   ])
+
 
 
   const [filteredTracks, setFilteredTracks] = useState<any>([])
@@ -44,7 +55,9 @@ export default function AudioPage() {
     setRegularTracks(filteredTracks.filter((track: any) => !track.featured))
   }, [filteredTracks])
 
-
+  useEffect(()=>{
+    setCurrentTrack(0)
+  },[currentPage])
 
   useEffect(() => {
     console.log(tracks, selectedCategory)
@@ -73,11 +86,39 @@ export default function AudioPage() {
   }
 
   const nextTrack = () => {
-    setCurrentTrack((prev) => (prev + 1) % filteredTracks.length)
+    // console.log(currentPage,totalPages)
+    // if(currentTrack === totalPages -1){
+    //   setCurrentTrack(1)
+    // }else{
+    if(currentTrack === itemsPerPage - 1){
+      if(currentPage === totalPages){
+        setCurrentPage(1)
+      }else{
+        setCurrentPage((preValue)=>{
+          return preValue + 1
+        })
+      }
+    }else{
+    setCurrentTrack((prev) => (prev + 1) % currentTracks.length)
+
+    }
+    // }
   }
 
   const prevTrack = () => {
-    setCurrentTrack((prev) => (prev - 1 + filteredTracks.length) % filteredTracks.length)
+    
+    if(currentTrack === 0){
+      if(currentPage === 1){
+        setCurrentPage(totalPages)
+      }else{
+        setCurrentPage((preValue)=>{
+          return preValue - 1
+        })
+      }
+    }else{
+    setCurrentTrack((prev) => (prev - 1 + currentTracks.length) % currentTracks.length)
+
+    }
   }
 
   const selectTrack = (index: number) => {
@@ -86,15 +127,7 @@ export default function AudioPage() {
     handleReset()
     // setIsPlaying(true)
   }
-  //điều hướng trang
-  const itemsPerPage2 = 2; // Số card mỗi slide
-  const [pageIndex2, setPageIndex2] = useState(0);
-
-  const totalPages2 = Math.ceil(featuredTracks.length / itemsPerPage2);
-  const pagedTracks2 = featuredTracks.slice(
-    pageIndex2 * itemsPerPage2,
-    (pageIndex2 + 1) * itemsPerPage2
-  );
+  
 
 
 
@@ -197,11 +230,11 @@ export default function AudioPage() {
             </CardContent>
           </Card> */}
           <AudioPlayerProUI refBtnReset={refBtnReset} onNext={nextTrack} onPrev={prevTrack}
-            duration={filteredTracks?.[currentTrack]?.duration}
-            category={filteredTracks?.[currentTrack]?.category?.name}
-            artist={filteredTracks?.[currentTrack]?.artist}
-            title={filteredTracks?.[currentTrack]?.title}
-            src={filteredTracks?.[currentTrack]?.link} />
+            duration={currentTracks?.[currentTrack]?.duration}
+            category={currentTracks?.[currentTrack]?.category?.name}
+            artist={currentTracks?.[currentTrack]?.artist}
+            title={currentTracks?.[currentTrack]?.title}
+            src={currentTracks?.[currentTrack]?.link} />
         </div>
 
         {/* Playlist */}
@@ -212,24 +245,28 @@ export default function AudioPage() {
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Bài hát nổi bật</h2>
               <div className="relative">
                 <div className="flex space-x-4 transition-all duration-300">
-                  {pagedTracks2.map((track: any, index: number) => (
+                  {currentTracks.map((track: any, index: number) => (
                     <Card
-                      key={track.id}
-                      className={`w-full md:w-[300px] cursor-pointer transition-all hover:shadow-lg ${currentTrack === index + pageIndex2 * itemsPerPage2
-                          ? "ring-2 ring-red-500 bg-red-50"
-                          : ""
+                      key={index}
+                      className={`w-full md:w-[300px] cursor-pointer transition-all hover:shadow-lg ${index === currentTrack ? "bg-red-50 border border-red-200" : "hover:bg-gray-50"
                         }`}
-                      onClick={() => selectTrack(index + pageIndex2 * itemsPerPage2)}
+                      onClick={() => {
+                        setCurrentTrack(index); 
+                        setIsPlaying(true);           
+                      }}
+
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center space-x-4">
                           <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center ${currentTrack === index + pageIndex2 * itemsPerPage2
-                                ? "bg-red-600 text-white"
-                                : "bg-gray-200"
+                            className={`w-12 h-12 rounded-full flex items-center justify-center ${index === currentTrack ? "bg-red-600 text-white" : "bg-gray-200"
                               }`}
                           >
-                            <Play className="h-5 w-5" />
+                             {index === currentTrack && isPlaying ? (
+                              <Pause className="h-4 w-4" />
+                            ) : (
+                              <Play className="h-4 w-4" />
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-gray-800 truncate">{track.title}</h4>
@@ -250,23 +287,7 @@ export default function AudioPage() {
                   ))}
                 </div>
 
-                {/* Nút điều hướng */}
-                <div className="flex justify-center mt-4 space-x-4">
-                  <button
-                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                    onClick={() => setPageIndex2((prev) => Math.max(prev - 1, 0))}
-                    disabled={pageIndex2 === 0}
-                  >
-                    ←
-                  </button>
-                  <button
-                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                    onClick={() => setPageIndex2((prev) => Math.min(prev + 1, totalPages - 1))}
-                    disabled={pageIndex2 === totalPages - 1}
-                  >
-                    →
-                  </button>
-                </div>
+                
               </div>
 
             </section>
@@ -277,9 +298,7 @@ export default function AudioPage() {
             <section>
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Danh sách phát</h2>
               <Card>
-                <CardHeader>
-                  <CardTitle>Danh sách phát</CardTitle>
-                </CardHeader>
+                
                 <CardContent>
                   <div className="space-y-2">
                     {currentTracks?.map((track: any, index: number) => (
@@ -287,7 +306,11 @@ export default function AudioPage() {
                         key={index}
                         className={`flex items-center justify-between p-3 rounded cursor-pointer transition-colors ${index === currentTrack ? "bg-red-50 border border-red-200" : "hover:bg-gray-50"
                           }`}
-                        onClick={() => setCurrentTrack(index)}
+                        onClick={() => {
+                          setCurrentTrack(index);
+                          setIsPlaying(true);
+                        }}
+
                       >
                         <div className="flex items-center space-x-3">
                           <div

@@ -59,6 +59,15 @@ export class UsersService {
       return null
     }
   }
+  // async getUserById(id:string) {
+  //   try {
+  //     const response = await apiClient.get<any>(`/users/${id}`)
+  //     return response || { posts: [], total: 0, page: 1, limit: 10 }
+  //   } catch (error) {
+  //     console.error("Get posts error:", error)
+  //     return { posts: [], total: 0, page: 1, limit: 10 }
+  //   }
+  // }
 
   async deleteUser(id: string) {
     try {

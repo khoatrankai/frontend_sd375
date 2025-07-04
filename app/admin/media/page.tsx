@@ -785,6 +785,7 @@ export default function AdminMediaPage() {
                   <p className="text-sm font-medium text-gray-600">{stat.label}</p>
                   <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
                 </div>
+                
               </div>
             </CardContent>
           </Card>
@@ -847,7 +848,7 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "image") && images?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center relative">
                     <Image
                       src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.name}
@@ -862,9 +863,14 @@ export default function AdminMediaPage() {
                         ),
                       }}
                     />
-                    {file?.category?.name && (
-                      <Badge className="absolute top-2 right-2" variant="default">{file.category.name}</Badge>
-                    )}
+                    <div className="absolute top-2 right-2 flex gap-2">
+
+                      <Badge className=" top-2 right-2" variant="secondary">Hình ảnh</Badge>
+
+                      {file?.category?.name && (
+                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                      )}
+                    </div>
                   </div>
                   <div className="p-4">
                     <h4 className="font-medium text-sm line-clamp-2 mb-2">{file.title}</h4>
@@ -904,7 +910,7 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center relative">
                     <Image
                       src={file?.thumbnail || "/public/placeholder.svg"}
                       alt={file?.title}
@@ -919,9 +925,14 @@ export default function AdminMediaPage() {
                         ),
                       }}
                     />
-                    {file?.category?.name && (
-                      <Badge className="absolute top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                    )}
+                    <div className="absolute top-2 right-2 flex gap-2">
+
+                      <Badge className=" top-2 right-2" variant="secondary">Video</Badge>
+
+                      {file?.category?.name && (
+                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                      )}
+                    </div>
                   </div>
                   <div className="p-4">
                     <h4 className="font-medium text-sm line-clamp-2 mb-2">{file?.title}</h4>
@@ -961,7 +972,7 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center relative">
                     <Image
                       src={"/public/placeholder.svg"}
                       alt={file.title}
@@ -976,9 +987,14 @@ export default function AdminMediaPage() {
                         ),
                       }}
                     />
-                    {file?.category?.name && (
-                      <Badge className="absolute top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                    )}
+                    <div className="absolute top-2 right-2 flex gap-2">
+
+                      <Badge className=" top-2 right-2" variant="secondary">Audio</Badge>
+
+                      {file?.category?.name && (
+                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                      )}
+                    </div>
                   </div>
                   <div className="p-4">
                     <h4 className="font-medium text-sm line-clamp-2 mb-2">{file?.title}</h4>
@@ -1018,7 +1034,7 @@ export default function AdminMediaPage() {
               {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt: any) => (dt?.name ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center relative">
                     <Image
                       src={"/public/placeholder.svg"}
                       alt={file.name}
@@ -1033,9 +1049,14 @@ export default function AdminMediaPage() {
                         ),
                       }}
                     />
-                    {file?.category?.name && (
-                      <Badge className="absolute top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                    )}
+                    <div className="absolute top-2 right-2 flex gap-2">
+
+                      <Badge className=" top-2 right-2" variant="secondary">Phần mềm</Badge>
+
+                      {file?.category?.name && (
+                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                      )}
+                    </div>
                   </div>
                   <div className="p-4">
                     <h4 className="font-medium text-sm line-clamp-2 mb-2">{file?.name}</h4>
@@ -1097,6 +1118,9 @@ export default function AdminMediaPage() {
                       <h4 className="font-medium">{file.title}</h4>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Hình ảnh</Badge>
+                        {file?.category?.name && (
+                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                        )}
                         {/* <span>{file.size}</span> */}
                         <div className="flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
@@ -1129,7 +1153,7 @@ export default function AdminMediaPage() {
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <Image
-                    
+
                       src={file.thumbnail || "/public/placeholder.svg"}
                       alt={file.title}
                       width={50}
@@ -1147,6 +1171,9 @@ export default function AdminMediaPage() {
                       <h4 className="font-medium">{file.title}</h4>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Video</Badge>
+                        {file?.category?.name && (
+                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                        )}
                         <span>{file?.duration}</span>
                         <div className="flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
@@ -1196,6 +1223,9 @@ export default function AdminMediaPage() {
                       <h4 className="font-medium">{file.title}</h4>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Audio</Badge>
+                        {file?.category?.name && (
+                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                        )}
                         <span>{file?.duration}</span>
                         <div className="flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
@@ -1245,6 +1275,9 @@ export default function AdminMediaPage() {
                       <h4 className="font-medium">{file?.name}</h4>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Phần mềm</Badge>
+                        {file?.category?.name && (
+                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                        )}
                         <span>{file?.size}</span>
                         <div className="flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
