@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Search, ExternalLink, Play, Volume2 } from "lucide-react"
+import { Search, ExternalLink, Play, Volume2, Eye } from "lucide-react"
 import { newsService } from "@/services/news.service"
 import { useEffect, useState } from "react"
 import TimeAgo from "./time-ago"
@@ -115,9 +115,20 @@ export default function Sidebar() {
           <CardTitle className="text-lg">Hình ảnh</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="relative">
+          <div className="relative flex justify-center">
             <div className="w-full h-48 object-cover rounded">
-              <Image src={imageTop?.thumbnail || "/public/placeholder.svg?height=200&width=300"} alt="Hình ảnh hoạt động" height={'100%'} width={'100%'} />
+              <Image src={imageTop?.thumbnail || "/public/placeholder.svg?height=200&width=300"}
+              alt="Hình ảnh hoạt động" 
+              height={'100%'} width={'100%'} 
+              className=" object-cover"
+                preview={{
+                  mask: (
+                    <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                      <Eye className="text-xl mb-1" />
+                    </div>
+                  ),
+                }}
+              />
             </div>
 
             <div className="absolute bottom-2 left-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded text-xs">

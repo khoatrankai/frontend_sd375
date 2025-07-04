@@ -24,7 +24,7 @@ export default function AdminLayout({
     { href: "/admin/topic", icon: ImageIcon, label: "Chuyên đề" },
     { href: "/admin/documents", icon: FileText, label: "Văn bản" },
     { href: "/admin/users", icon: Users, label: "Người dùng" },
-    { href: "/admin/settings", icon: Settings, label: "Cài đặt" },
+    // { href: "/admin/settings", icon: Settings, label: "Cài đặt" },
   ]
   const checkLogin = async()=>{
     const dataUser = await authService.getCurrentUser()
