@@ -41,7 +41,7 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 overflow-auto max-h-screen">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Cài đặt hệ thống</h1>
         <Button onClick={handleSave} className="bg-red-600 hover:bg-red-700">
