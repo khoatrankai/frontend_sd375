@@ -21,6 +21,7 @@ export default function Sidebar() {
   const [isPlaying, setPlaying] = useState<boolean>(false)
   const [videoTop, setVideoTop] = useState<any>()
   const [tracks, setTracks] = useState<any>([])
+  const [translateY,setTranslateY] =useState(260)
   const [newsItems, setNewsItem] = useState<any>([
   ])
   const [newsFilter, setNewsFilter] = useState([])
@@ -52,6 +53,21 @@ export default function Sidebar() {
   useEffect(() => {
     setNewsFilter(newsItems.filter((i: any) => !i.featured).filter((i: any, index: number) => index < 3))
   }, [newsItems])
+
+  useEffect(()=>{
+    setInterval(()=>{
+      // if(translateY<-()){
+      //   setTranslateY(140)
+      // }
+      setTranslateY((prev)=>{
+        if(prev<-(newsFilter.length * 140 + 50)){
+          return 260
+        }
+        return prev - 1
+      })
+    },100)
+  },[newsFilter.length])
+ 
   useEffect(() => {
     fetchData()
   }, [])
@@ -78,16 +94,27 @@ export default function Sidebar() {
           <CardTitle className="text-lg">Bản tin</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 max-h-64 overflow-y-auto">
+          <div className="overflow-hidden h-64">
+            <div className={`space-y-3 ${translateY <= -(newsFilter.length * 140 + 50) || translateY === 260 ?'':'transition-transform *:duration-100'}`} style={{transform:`translateY(${translateY}px)`}}>
             {newsFilter.map((item: any) => (
               <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
                 router.push(`/tin-tuc/${item.id}`)
               }}>
-                <p className="text-sm text-gray-700 line-clamp-2">{item.title}</p>
+                <p className="text-sm text-gray-1400 line-clamp-2">{item.title}</p>
+                <span className="text-xs text-gray-500">{<TimeAgo date={item.created_at} />}</span>
+              </div>
+            ))}
+            {newsFilter.map((item: any) => (
+              <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/tin-tuc/${item.id}`)
+              }}>
+                <p className="text-sm text-gray-1400 line-clamp-2">{item.title}</p>
                 <span className="text-xs text-gray-500">{<TimeAgo date={item.created_at} />}</span>
               </div>
             ))}
           </div>
+          </div>
+          
         </CardContent>
       </Card>
 
@@ -165,7 +192,7 @@ export default function Sidebar() {
             {
               !isPlaying &&
               <div className="absolute inset-0 flex items-center justify-center">
-                <Button size="icon" className="rounded-full bg-red-600 hover:bg-red-700" onClick={() => setPlaying(!isPlaying)}>
+                <Button size="icon" className="rounded-full bg-red-600 hover:bg-red-1400" onClick={() => setPlaying(!isPlaying)}>
                   <Play className="h-6 w-6 text-white" />
                 </Button>
               </div>

@@ -68,7 +68,7 @@ export default function FeaturedNews() {
                         {<TimeAgo date={news.created_at} />}
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold mb-2 line-clamp-2">{news.title}</h3>
+                    <h3 className="text-xl font-bold mb-2 line-clamp-2 hover:underline">{news.title}</h3>
                     <p className="text-gray-200 line-clamp-2">{news.excerpt}</p>
                   </div>
                 </div>

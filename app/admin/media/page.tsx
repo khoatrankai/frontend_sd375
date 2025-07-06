@@ -273,7 +273,7 @@ export default function AdminMediaPage() {
 
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 overflow-auto max-h-screen">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý thư viện</h1>
         <Dialog>
@@ -907,6 +907,7 @@ export default function AdminMediaPage() {
                   </div>
                 </div>
               ))}
+              
               {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
@@ -969,6 +970,7 @@ export default function AdminMediaPage() {
                   </div>
                 </div>
               ))}
+             
               {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
