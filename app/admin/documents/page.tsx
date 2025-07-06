@@ -398,7 +398,7 @@ export default function AdminDocumentsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category:any) => (
-                    <SelectItem key={category.nametag} value={category.nametag}>
+                    <SelectItem key={category?.nametag} value={category.nametag}>
                       {category.name}
                     </SelectItem>
                   ))}
