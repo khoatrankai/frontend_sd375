@@ -4,21 +4,20 @@ import type { LoginCredentials, AuthResponse, User } from "@/lib/types"
 
 export class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    try {
-      const response = await apiLogin.post<AuthResponse>("/auth/login", credentials)
-
-      if (response.success && response.token) {
-        apiLogin.setToken(response.token)
-      }
-
-      return response
-    } catch (error) {
-      return {
-        success: false,
-        message: "Đăng nhập thất bại. Vui lòng thử lại.",
-      }
+  try {
+    const data = await apiLogin.post<AuthResponse>("/auth/login", credentials); // <-- đã trả về data
+    if (data.success && data.token) {
+      apiLogin.setToken(data.token);
     }
+    return data;
+  } catch (error) {
+    return {
+      success: false,
+      message: "Đăng nhập thất bại. Vui lòng thử lại.",
+    };
   }
+}
+
 
   async logout(): Promise<void> {
     try {
