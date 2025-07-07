@@ -11,28 +11,22 @@ import {
   SkipForward,
   SkipBack,
   Music,
-  Heart,
-  Share2,
-  Download,
 } from 'lucide-react';
 
 interface AudioPlayerProps {
   src: string;
   title: string;
   artist: string;
-  duration: string;
   category?: string;
   onNext?: () => void;
   onPrev?: () => void;
-  refBtnReset?:any,
-  handleReset?:any
+  refBtnReset?: any;
 }
 
-const AudioPlayerProUI: React.FC<AudioPlayerProps> = ({
+const AudioPlayerItemUI: React.FC<AudioPlayerProps> = ({
   src,
   title,
   artist,
-  duration,
   category,
   onNext,
   onPrev,
@@ -42,18 +36,18 @@ const AudioPlayerProUI: React.FC<AudioPlayerProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [totalDuration, setTotalDuration] = useState(0);
-  
-   useImperativeHandle(refBtnReset
-    , () => ({
-      reset: () => {
-        setCurrentTime(0);
-        setIsPlaying(false);
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-        }
-      },
-    }));
+
+  useImperativeHandle(refBtnReset, () => ({
+    reset: () => {
+      setCurrentTime(0);
+      setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    },
+  }));
+
   const formatTime = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60)
@@ -78,11 +72,15 @@ const AudioPlayerProUI: React.FC<AudioPlayerProps> = ({
     };
   }, []);
 
-  useEffect(()=>{
-    if(isPlaying){
-      setIsPlaying(false)
+  useEffect(() => {
+    // Reset play state when switching songs
+    setIsPlaying(false);
+    setCurrentTime(0);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
-  },[title,src])
+  }, [title, src]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -117,7 +115,6 @@ const AudioPlayerProUI: React.FC<AudioPlayerProps> = ({
       <CardContent>
         <audio ref={audioRef} src={src} preload="metadata" />
 
-        {/* Center section */}
         <div className="text-center mb-6">
           <div className="w-32 h-32 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Music className="h-16 w-16 text-white" />
@@ -133,16 +130,15 @@ const AudioPlayerProUI: React.FC<AudioPlayerProps> = ({
           )}
         </div>
 
-        {/* Control Buttons */}
         <div className="flex items-center justify-center space-x-4 mb-4">
-          <Button variant="outline" size="icon" onClick={()=>{
-            if(onPrev){
-              onPrev()
-            }
-            if(isPlaying)
-            togglePlay()
-
-          }}>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (onPrev) onPrev();
+              if (isPlaying) togglePlay();
+            }}
+          >
             <SkipBack className="h-4 w-4" />
           </Button>
 
@@ -150,60 +146,42 @@ const AudioPlayerProUI: React.FC<AudioPlayerProps> = ({
             {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
           </Button>
 
-          <Button variant="outline" size="icon" onClick={()=>{
-            if(onNext){
-              onNext()
-            }
-            if(isPlaying)
-            togglePlay()
-
-          }}>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (onNext) onNext();
+              if (isPlaying) togglePlay();
+            }}
+          >
             <SkipForward className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Progress bar */}
         <div className="w-full mb-2">
           <input
             type="range"
             min={0}
-            max={totalDuration}
+            max={totalDuration || 0}
             step="0.1"
             value={currentTime}
             onChange={handleSeek}
             className="w-full appearance-none h-2 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
             style={{
               background: `linear-gradient(to right, #dc2626 ${Math.floor(
-                (currentTime / totalDuration) * 100
+                (currentTime / totalDuration) * 100 || 0
               )}%, #e5e7eb 0%)`,
             }}
           />
         </div>
 
-        {/* Time Display */}
         <div className="flex justify-between text-sm text-gray-500 mb-4">
           <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(totalDuration) || duration}</span>
+          <span>{formatTime(totalDuration || 0)}</span>
         </div>
-
-        {/* Action Buttons */}
-        {/* <div className="flex justify-center space-x-2">
-          <Button variant="outline" size="sm">
-            <Heart className="h-4 w-4 mr-1" />
-            Yêu thích
-          </Button>
-          <Button variant="outline" size="sm">
-            <Share2 className="h-4 w-4 mr-1" />
-            Chia sẻ
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-1" />
-            Tải về
-          </Button>
-        </div> */}
       </CardContent>
     </Card>
   );
 };
 
-export default AudioPlayerProUI;
+export default AudioPlayerItemUI;

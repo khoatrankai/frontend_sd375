@@ -111,6 +111,26 @@ export class ArticlesService {
       return null
     }
   }
+
+  // async getAgency() {
+  //   try {
+  //     const response = await apiClient.get<any>(`/articles/agency`)
+  //     return response || []
+  //   } catch (error) {
+  //     console.error("Get categories error:", error)
+  //     return []
+  //   }
+  // }
+
+  // async createAgency(agency: { name: string,nametag:string }) {
+  //   try {
+  //     const response = await apiClient.post<any>(`/articles/agency`, agency)
+  //     return response || null
+  //   } catch (error) {
+  //     console.error("Create category error:", error)
+  //     return null
+  //   }
+  // }
 }
 
 export const articlesService = new ArticlesService()

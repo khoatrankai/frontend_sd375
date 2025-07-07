@@ -50,7 +50,7 @@ export default function AudioPage() {
   }
 
   useEffect(() => {
-    console.log(filteredTracks)
+    // console.log(filteredTracks)
     setFeaturedTracks(filteredTracks.filter((track: any) => track.featured))
     setRegularTracks(filteredTracks.filter((track: any) => !track.featured))
   }, [filteredTracks])

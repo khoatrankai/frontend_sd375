@@ -2,18 +2,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { apiClient } from "@/lib/api"
+import { awardService } from "@/services/awards.service"
 import { historyService } from "@/services/histories.service"
 import { reportService } from "@/services/report.service"
+import { usersService } from "@/services/users.service"
 import { Button, Input } from "antd"
 import { Shield, Award, Users, History, Phone, Mail,Star, Medal, Trophy, Send } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-
+export const userTypes = [
+  { name: "Thiếu úy", value: "thieu_uy" },
+  { name: "Trung úy", value: "trung_uy" },
+  { name: "Đại úy", value: "dai_uy" },
+  { name: "Thiếu tá", value: "thieu_ta" },
+  { name: "Trung tá", value: "trung_ta" },
+  { name: "Đại tá", value: "dai_ta" },
+  { name: "Thiếu tướng", value: "thieu_tuong" },
+  { name: "Trung tướng", value: "trung_tuong" },
+  { name: "Đại tướng", value: "dai_tuong" },
+]
 export default function IntroductionPage() {
-  const [histories,setHistories] = useState<any>([])
-
-  
-  const [report, setReport] = useState<any>([])
+    const [histories,setHistories] = useState<any>([])
+    const [awards,setAwards] = useState<any>([])
+    const [users,setUsers] = useState<any>([])
+    const [historyLeader,setHistoryLeader] = useState<any>([])
+    const [report, setReport] = useState<any>([])
     const [catagory, setCategory] = useState<any>([])
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -28,9 +41,25 @@ export default function IntroductionPage() {
       if (res.statusCode === 200) {
         setCategory(res.data)
       }
-      if (res.statusCode === 200) {
+      if (res2.statusCode === 200) {
         setReport(res2.data)
       }
+      const res3 = await historyService.getHistories()
+    if(res3.statusCode === 200){
+      setHistories(res3.data)
+    }
+     const res4 = await awardService.getAwards()
+        if (res4.statusCode === 200) {
+          setAwards(res4.data)
+        }
+        const res5 = await usersService.getUsers() as any
+        if (res5.statusCode === 200) {
+          setUsers(res5.data)
+        }
+         const res6 = await historyService.getLeaders() as any
+        if (res6.statusCode === 200) {
+          setHistoryLeader(res6.data)
+        }
     }
     
   
@@ -130,30 +159,26 @@ export default function IntroductionPage() {
             {
               histories?.map((dt:any)=>{
                 if(dt?.highlight){
-                   <div className="border-l-4 border-red-600 pl-4">
+                  return <>
+                   <div className="border-l-4 border-red-600 pl-4" key={dt?.id}>
                   <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
                   <p className="text-gray-700">
                     {dt?.description}
                   </p>
                 </div>
+                  </>
                 }
-                 <div className="border-l-4 border-blue-600 pl-4">
+                  return <><div className="border-l-4 border-blue-600 pl-4"  key={dt?.id}>
                    <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
                   <p className="text-gray-700">
                     {dt?.description}
                   </p>
                 </div>
+                  </>
               })
             }
             
             
-            {/* <div className="border-l-4 border-green-600 pl-4">
-              <h3 className="font-bold text-lg">1980 - nay: Thời kỳ hòa bình</h3>
-              <p className="text-gray-700">
-                Tiếp tục hiện đại hóa, nâng cao năng lực sẵn sàng chiến đấu, tham gia tích cực các hoạt động xây dựng và
-                bảo vệ Tổ quốc.
-              </p>
-            </div> */}
           </div>
         </CardContent>
       </Card>
@@ -168,21 +193,19 @@ export default function IntroductionPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="text-center p-4 border rounded-lg">
-              <Award className="h-12 w-12 text-yellow-600 mx-auto mb-2" />
-              <h4 className="font-bold">Huân chương Quân công hạng Nhất</h4>
-              <p className="text-sm text-gray-600">Năm 1975</p>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <Award className="h-12 w-12 text-red-600 mx-auto mb-2" />
-              <h4 className="font-bold">Danh hiệu Đơn vị Anh hùng</h4>
-              <p className="text-sm text-gray-600">Năm 1980</p>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <Award className="h-12 w-12 text-blue-600 mx-auto mb-2" />
-              <h4 className="font-bold">Huân chương Bảo vệ Tổ quốc hạng Nhất</h4>
-              <p className="text-sm text-gray-600">Năm 2015</p>
-            </div>
+            
+              {
+                awards?.map((dt:any) =>{
+                  return <div className="text-center p-4 border rounded-lg">
+                    <Award className="h-12 w-12 mx-auto mb-2" style={{color:dt?.color}} />
+                    <h4 className="font-bold">{dt?.name}</h4>
+                    <p className="text-sm text-gray-600">Năm {dt?.year}</p>
+                  </div>
+                })
+              }
+              
+           
+            
           </div>
         </CardContent>
       </Card>
@@ -200,45 +223,43 @@ export default function IntroductionPage() {
             <div className="space-y-4">
               <h4 className="font-bold text-lg">Lãnh đạo hiện tại</h4>
               <div className="space-y-3">
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
+                {
+                  users?.map((dt:any) =>{
+                    return <>
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
                   <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-white" />
+                    {
+                      dt?.avatar ? <img src={dt?.avatar} alt="" className="w-12 h-12 rounded-full" /> : <Users className="h-6 w-6 text-white" />
+                    }
+                    
                   </div>
                   <div>
-                    <p className="font-medium">Đại tá Nguyễn Văn A</p>
-                    <p className="text-sm text-gray-600">Chỉ huy trưởng Sư đoàn</p>
+                    <p className="font-medium">{userTypes.find(dtt => dtt.value === dt?.type)?.name} {dt?.name}</p>
+                    <p className="text-sm text-gray-600">{dt?.position}</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
-                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Đại tá Trần Văn B</p>
-                    <p className="text-sm text-gray-600">Chính ủy Sư đoàn</p>
-                  </div>
-                </div>
+                    </>
+                  })
+                }
+                
+                
               </div>
             </div>
             <div className="space-y-4">
               <h4 className="font-bold text-lg">Các thời kỳ trước</h4>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>1965-1975:</span>
-                  <span>Đại tá Lê Văn C</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>1975-1985:</span>
-                  <span>Đại tá Phạm Văn D</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>1985-2000:</span>
-                  <span>Đại tá Hoàng Văn E</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>2000-2015:</span>
-                  <span>Đại tá Vũ Văn F</span>
-                </div>
+                {
+                  historyLeader?.map((dt:any)=>{
+                    return <>
+                      <div className="flex justify-between">
+                        <span>{dt?.period}:</span>
+                        <span>Đại tá {dt?.name}</span>
+                      </div>
+                    </>
+                  })
+                }
+                
+                
               </div>
             </div>
           </div>

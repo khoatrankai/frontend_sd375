@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Search, ExternalLink, Play, Volume2, Eye } from "lucide-react"
 import { newsService } from "@/services/news.service"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import TimeAgo from "./time-ago"
 import { imagesService } from "@/services/images.service"
 import { videosService } from "@/services/videos.service"
@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 
 export default function Sidebar() {
   const router = useRouter()
+  const playerRef = useRef<any>(null)
   const quickLinks = [{ name: "Quản lý văn bản", link: "http://quanlyvanban.bqp" }, { name: "Hệ thông tin CĐ-ĐH QC", link: "http://htt.qcpkkq.bqp" }, { name: "Hệ thông tin CĐ-ĐH F375", link: "https://192.168.1.120" }, { name: "Mail QS", link: "https://mail.bqp" }, { name: "Cổng TTĐT QC", link: "http://qcpkkq.bqp" }]
   const [imageTop, setImageTop] = useState<any>()
   const [isPlaying, setPlaying] = useState<boolean>(false)
@@ -71,6 +72,22 @@ export default function Sidebar() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+  if (isPlaying && playerRef.current) {
+    const element = playerRef.current.wrapper; // ReactPlayer dùng wrapper để tham chiếu đến DOM
+
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) { // Safari
+      element.webkitRequestFullscreen();
+    } else if (element.mozRequestFullScreen) { // Firefox
+      element.mozRequestFullScreen();
+    } else if (element.msRequestFullscreen) { // IE/Edge
+      element.msRequestFullscreen();
+    }
+  }
+}, [isPlaying]);
   return (
     <aside className="w-80 p-4 space-y-6 bg-gray-50">
       {/* Thanh tìm kiếm */}
@@ -104,14 +121,7 @@ export default function Sidebar() {
                 <span className="text-xs text-gray-500">{<TimeAgo date={item.created_at} />}</span>
               </div>
             ))}
-            {newsFilter.map((item: any) => (
-              <div key={item?.id} className="p-3 bg-white rounded border hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
-                router.push(`/tin-tuc/${item.id}`)
-              }}>
-                <p className="text-sm text-gray-1400 line-clamp-2">{item.title}</p>
-                <span className="text-xs text-gray-500">{<TimeAgo date={item.created_at} />}</span>
-              </div>
-            ))}
+        
           </div>
           </div>
           
@@ -178,6 +188,7 @@ export default function Sidebar() {
           <div className="relative">
             <div className="w-full h-36 object-cover rounded overflow-hidden">
               <ReactPlayer
+                ref={playerRef}
                 url={videoTop?.link || "/public/placeholder.svg?height=200&width=300"}
                 className='react-player'
                 playing={isPlaying}
@@ -188,7 +199,14 @@ export default function Sidebar() {
                 style={{ position: 'absolute', top: 0, left: 0 }}
               />
             </div>
-
+            {
+              !isPlaying && 
+              <div  className="absolute inset-0 overflow-hidden object-contain">
+              <Image alt="" preview={false} src={videoTop?.thumbnail || "/public/placeholder.svg?height=200&width=300"} className="w-64 h-36 object-cover"/>
+                
+              </div>
+            }
+            
             {
               !isPlaying &&
               <div className="absolute inset-0 flex items-center justify-center">

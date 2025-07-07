@@ -12,6 +12,7 @@ import {
 } from "@ant-design/icons"
 import Image from "next/image"
 import { News, NewsType } from "@/types/news"
+import { useRouter } from "next/navigation"
 
 const { Title, Paragraph, Text } = Typography
 
@@ -43,6 +44,7 @@ const getNewsTypeLabel = (type: NewsType): string => {
 }
 
 export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) {
+  const router = useRouter()
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -59,7 +61,12 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
     <div className="max-w-4xl mx-auto p-4 bg-white">
       {/* Breadcrumb */}
       <Breadcrumb className="mb-6">
-        <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
+        <Breadcrumb.Item className="hover:underline cursor-pointer" onClick={()=>{
+          router.push('/')
+        }}>Trang chủ</Breadcrumb.Item>
+        <Breadcrumb.Item className="hover:underline cursor-pointer" onClick={()=>{
+          router.push('/tin-tuc')
+        }}>Tin tức</Breadcrumb.Item>
         <Breadcrumb.Item>{news.category?.name}</Breadcrumb.Item>
         <Breadcrumb.Item className="text-gray-500 truncate max-w-xs">{news.title}</Breadcrumb.Item>
       </Breadcrumb>

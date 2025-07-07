@@ -110,10 +110,10 @@ export default function AdminPostsPage() {
 
 
   const stats = [
-    { label: "Tổng bảng tin", value: "156", color: "text-blue-600" },
-    { label: "HĐ quân sự", value: "142", color: "text-green-600" },
-    { label: "HĐ ngoài nước", value: "8", color: "text-yellow-600" },
-    { label: "HĐ sư đoàn", value: "6", color: "text-red-600" },
+    { label: "Tổng bảng tin", value: News.length, color: "text-blue-600" },
+    { label: "HĐ quân sự", value: News.filter((news:any) => news.type === "quan_su").length, color: "text-green-600" },
+    { label: "HĐ ngoài nước", value: News.filter((news:any) => news.type === "quoc_te").length, color: "text-yellow-600" },
+    { label: "HĐ sư đoàn", value: News.filter((news:any) => news.type === "hoat_dong_su_doan").length, color: "text-red-600" },
   ]
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa dòng này?");

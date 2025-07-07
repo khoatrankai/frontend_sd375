@@ -78,10 +78,10 @@ export default function AdminUsersPage() {
   // })
 
   const stats = [
-    { label: "Tổng người dùng", value: "25", color: "text-blue-600" },
-    { label: "Đang hoạt động", value: "18", color: "text-green-600" },
-    { label: "Quản trị viên", value: "3", color: "text-purple-600" },
-    { label: "Chờ kích hoạt", value: "4", color: "text-orange-600" },
+    { label: "Tổng người dùng", value: users.length, color: "text-blue-600" },
+    { label: "Đang hoạt động", value: users?.filter((dt:any)=>dt.activity).length, color: "text-green-600" },
+    { label: "Quản trị viên", value: users?.filter((dt:any)=>dt.type === "admin").length, color: "text-purple-600" },
+    { label: "Chờ kích hoạt", value: users?.filter((dt:any)=>!dt.activity).length, color: "text-orange-600" },
   ]
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

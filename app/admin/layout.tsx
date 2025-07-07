@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X, Info } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { authService } from "@/services/auth.service"
+import { userTypes } from "../gioi-thieu/lanh-dao/page"
 
 export default function AdminLayout({
   children,
@@ -15,6 +16,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [dataProfile,setDataProfile] = useState<any>()
   const pathname = usePathname();
   const menuItems = [
     { href: "/admin/dashboard", icon: Home, label: "Tổng quan" },
@@ -29,6 +31,7 @@ export default function AdminLayout({
   const checkLogin = async()=>{
     const dataUser = await authService.getCurrentUser()
     // console.log(dataUser,pathname.startsWith('/admin/login'),pathname)
+    setDataProfile(dataUser)
     if(!dataUser){
       if(!pathname.startsWith('/admin/login')){
         window.location.href = "/admin/login"
@@ -72,8 +75,14 @@ export default function AdminLayout({
       >
         <div className="flex items-center justify-between h-16 px-6 border-b">
           <div className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-red-600" />
-            <span className="text-xl font-bold text-gray-800">Admin F375</span>
+            {
+              dataProfile? <img src={dataProfile?.avatar} className="h-8 w-8 rounded-full object-cover"/> : <Shield className="h-8 w-8 text-red-600" />
+            }
+            
+            <div className="flex flex-col">
+            <span>{dataProfile ? `${userTypes.find(dt => dt.value === dataProfile?.type)?.name}`:'' }</span>
+            <span className="font-bold text-gray-800">{dataProfile ? `${dataProfile?.name}`:'Admin F375' } </span>
+            </div>
           </div>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
             <X className="h-5 w-5" />

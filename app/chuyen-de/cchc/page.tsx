@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Settings, Clock, Eye, User, ChevronRight, TrendingUp, FileText, Zap } from "lucide-react"
 import { articlesService } from "@/services/articles.service"
+import { useRouter } from "next/navigation"
 
 export default function CCHCPage() {
   const [selectedFilter, setSelectedFilter] = useState("all")
-
+  const router = useRouter()
   const filters = [
     { id: "all", name: "Tất cả", count: 12 },
     { id: "chuyen_doi_so", name: "Chuyển đổi số", count: 5 },
@@ -107,7 +108,9 @@ export default function CCHCPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Bài viết nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {featuredArticles.map((article:any) => (
-              <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/chuyen-de/${article.id}`)
+              }}>
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
                     <Badge className="bg-red-600">{article?.category?.name}</Badge>
@@ -157,7 +160,9 @@ export default function CCHCPage() {
         </h2>
         <div className="space-y-6">
           {(selectedFilter === "all" ?regularArticles:filteredArticles).map((article:any) => (
-            <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/chuyen-de/${article.id}`)
+              }}>
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

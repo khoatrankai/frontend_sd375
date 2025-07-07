@@ -47,12 +47,7 @@ export default function AdminMediaPage() {
 
 
 
-  const stats = [
-    { label: "Tổng file", value: "342", color: "text-blue-600" },
-    { label: "Hình ảnh", value: "198", color: "text-green-600" },
-    { label: "Video", value: "28", color: "text-purple-600" },
-    { label: "Dung lượng", value: "2.3 GB", color: "text-orange-600" },
-  ]
+  
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedFileVideo, setSelectedFileVideo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -270,7 +265,12 @@ export default function AdminMediaPage() {
 
 
 
-
+const stats = [
+    { label: "Tổng file", value: images.length+videos.length +tracks.length+softwares.length , color: "text-blue-600" },
+    { label: "Hình ảnh", value: images.length, color: "text-green-600" },
+    { label: "Video", value: videos.length, color: "text-purple-600" },
+    { label: "Dung lượng", value: "375 GB", color: "text-orange-600" },
+  ]
 
   return (
     <div className="p-6 space-y-6 overflow-auto max-h-screen">

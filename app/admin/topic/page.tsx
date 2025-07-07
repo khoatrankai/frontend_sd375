@@ -129,10 +129,10 @@ const [categories,setCategories] = useState<any>([
   const [filteredArticles,setFilteredArticales] = useState<any>([])
 
   const stats = [
-    { label: "CCHC & Chuyển đổi số", value: "89", color: "text-blue-600" },
-    { label: "Thông tin tuyên truyền", value: "76", color: "text-green-600" },
-    { label: "Thông tin Pháp luật", value: "8", color: "text-yellow-600" },
-    { label: "TThông tin KHQS", value: "5", color: "text-red-600" },
+    { label: "CCHC & Chuyển đổi số", value: articles.filter((dt:any) => dt.type === "cchc").length, color: "text-blue-600" },
+    { label: "Thông tin tuyên truyền", value: articles.filter((dt:any) => dt.type === "tttt").length, color: "text-green-600" },
+    { label: "Thông tin Pháp luật", value: articles.filter((dt:any) => dt.type === "ttpl").length, color: "text-yellow-600" },
+    { label: "TThông tin KHQS", value: articles.filter((dt:any) => dt.type === "khqs").length, color: "text-red-600" },
   ]
 
 
@@ -253,7 +253,7 @@ const [categories,setCategories] = useState<any>([
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <Card key={index}>
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.label}</p>

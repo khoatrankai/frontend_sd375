@@ -18,6 +18,7 @@ export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedAgency, setSelectedAgency] = useState("all")
   const [dataSave,setDataSave] = useState<any>({})
   const documentTypes = [
     { id: "all", name: "Tất cả loại" },
@@ -35,6 +36,14 @@ export default function AdminDocumentsPage() {
     { id: "logistics", name: "Phòng HC-KT" },
   ])
 
+  const [agency,setAgency] = useState([
+    { nametag: "all", name: "Tất cả đơn vị",id:"" },
+    { nametag: "command", name: "Chỉ huy sư đoàn",id:"" },
+    { nametag: "political", name: "Phòng chính trị",id:"" },
+    { nametag: "staff", name: "Phòng tham mưu",id:"" },
+    { nametag: "logistics", name: "Phòng HC-KT",id:"" },
+  ])
+
   const [documents,setDocuments] = useState<any>([
   ])
 
@@ -47,10 +56,10 @@ export default function AdminDocumentsPage() {
   // })
 
   const stats = [
-    { label: "Tổng văn bản", value: "89", color: "text-blue-600" },
-    { label: "Đã xuất bản", value: "76", color: "text-green-600" },
-    { label: "Bản nháp", value: "8", color: "text-yellow-600" },
-    { label: "Chờ duyệt", value: "5", color: "text-red-600" },
+    { label: "Chỉ thị", value: documents.filter((dt:any)=> dt.type === "chi_thi").length, color: "text-blue-600" },
+    { label: "Thông báo", value: documents.filter((dt:any)=> dt.type === "thong_bao").length, color: "text-green-600" },
+    { label: "Kế hoạch", value: documents.filter((dt:any)=> dt.type === "ke_hoach").length, color: "text-yellow-600" },
+    { label: "Quy định", value: documents.filter((dt:any)=> dt.type === "quy_dinh").length, color: "text-red-600" },
   ]
   const handleDelete = async(id:string) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
@@ -131,11 +140,16 @@ export default function AdminDocumentsPage() {
   const fetchData= async()=>{
     const res = await documentService.getDocuments()
     const res2 = await documentService.getCategories()
+    const res3 = await documentService.getAgency()
     if(res.statusCode === 200){
       setDocuments(res.data)
     }
     if(res2.statusCode === 200){
       setCategories(res2.data)
+    }
+
+    if(res3.statusCode === 200){
+      setAgency(res3.data)
     }
   }
   useEffect(()=>{
@@ -147,9 +161,10 @@ export default function AdminDocumentsPage() {
          const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
           const matchesType = selectedType === "all" || doc.type === selectedType
           const matchesCategory = selectedCategory === "all" || doc?.category?.nametag === selectedCategory
-          return matchesSearch && matchesType && matchesCategory
+          const matchesAgency = selectedAgency === "all" || doc?.agency?.nametag === selectedAgency
+          return matchesSearch && matchesType && matchesCategory && matchesAgency
     }))
-  },[documents,searchTerm,selectedType,selectedCategory])
+  },[documents,searchTerm,selectedType,selectedCategory,selectedAgency])
 
   const handleSubmit = async(e:any)=>{
     try{
@@ -248,6 +263,32 @@ export default function AdminDocumentsPage() {
                       <SelectContent>
                         {
                           categories.map((category) => {
+                            return (
+                              <SelectItem value={category.id}>{category.name}</SelectItem>
+                            )
+                          })
+                        }
+                        {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                        <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                        <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1">
+                    <label>Cơ quan ban hành *</label>
+                    <Select 
+                    onValueChange={(value:any)=>{
+                      setDataSave((preValue:any)=>{
+                        return {...preValue,agency:value}
+                      })
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn cơ quan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          agency.map((category) => {
                             return (
                               <SelectItem value={category.id}>{category.name}</SelectItem>
                             )
@@ -405,6 +446,31 @@ export default function AdminDocumentsPage() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex-1">
+                    <Select 
+                    value={selectedAgency}
+                    onValueChange={(value:any)=>{
+                      setSelectedAgency(value as string)
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn cơ quan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                         <SelectItem value={"all"}>{"Tất cả"}</SelectItem>
+                        {
+                          agency.map((category) => {
+                            return (
+                              <SelectItem value={category.nametag}>{category.name}</SelectItem>
+                            )
+                          })
+                        }
+                        {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                        <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                        <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
+                      </SelectContent>
+                    </Select>
+                  </div>
             {/* <div>
               <Button variant="outline" className="w-full">
                 <Search className="h-4 w-4 mr-2" />
@@ -511,6 +577,32 @@ export default function AdminDocumentsPage() {
                       <SelectContent>
                         {
                           categories.map((category) => {
+                            return (
+                              <SelectItem value={category.id}>{category.name}</SelectItem>
+                            )
+                          })
+                        }
+                        {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                        <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
+                        <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
+                        <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1">
+                    <label>Cơ quan ban hành *</label>
+                    <Select 
+                    onValueChange={(value:any)=>{
+                      setDataSave((preValue:any)=>{
+                        return {...preValue,agency:value}
+                      })
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn cơ quan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {
+                          agency.map((category) => {
                             return (
                               <SelectItem value={category.id}>{category.name}</SelectItem>
                             )

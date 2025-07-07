@@ -12,13 +12,15 @@ export default function Navigation() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
 
 
-  const isActive = (path: string) => {
-    console.log(pathname,path,pathname === path || pathname.startsWith(path))
+  const isActive = (path: string,type:boolean = true) => {
+    if(type){
     return pathname === path || pathname.startsWith(path)
+
+    }
+    return pathname === path
   }
 
   useEffect(()=>{
-    console.log(pathname)
   },[pathname])
   const menuItems = [
     {
@@ -124,7 +126,7 @@ export default function Navigation() {
                           key={index}
                           href={subItem.href}
                           className={`block px-4 py-3 text-gray-700 hover:bg-[#94BBE9] hover:text-white transition-colors border-b border-gray-100 last:border-b-0 ${
-                            isActive(subItem.href) ? "bg-[#94BBE9] text-white font-medium" : ""
+                            isActive(subItem.href,false) ? "bg-[#94BBE9] text-white font-medium" : ""
                           }`}
                         >
                           {subItem.label}
