@@ -76,6 +76,39 @@ export default function AdminUsersPage() {
   //   const matchesStatus = selectedStatus === "all" || user.status === selectedStatus
   //   return matchesSearch && matchesRole && matchesStatus
   // })
+  //phân trang
+  // const [report, setReport] = useState<any>([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUser = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
 
   const stats = [
     { label: "Tổng người dùng", value: users.length, color: "text-blue-600" },
@@ -508,7 +541,7 @@ export default function AdminUsersPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredUsers.map((user: any) => (
+            {currentUser.map((user: any) => (
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-center space-x-4">
                   <img
@@ -584,9 +617,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập Tên Người Dùng ..."
                               disabled
                               value={user?.name}
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, name: e.target.value })
-                            // }}
+                           
                             />
                           </div>
                           <div>
@@ -596,9 +627,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập Email ..."
                               disabled
                               value={user?.email}
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, email: e.target.value })
-                            // }}
+                           
                             />
                           </div>
                           <div>
@@ -608,17 +637,13 @@ export default function AdminUsersPage() {
                               placeholder="Nhập Chức Vụ ..."
                               value={user?.position}
                               disabled
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, position: e.target.value })
-                            // }}
+                           
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Cấp bậc(*)</label>
                             <Select
-                              //  onValueChange={(value)=>{
-                              //   setDataSave({ ...dataSave, type: value })
-                              // }}
+                             
                               disabled
                               value={user?.type}
                             >
@@ -642,9 +667,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập mail ..."
                               value={user?.email}
                               disabled
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, email: e.target.value })
-                            // }}
+                           
                             />
 
                             <div>
@@ -654,9 +677,7 @@ export default function AdminUsersPage() {
                                 className="mt-1 w-full border rounded-md p-2"
                                 placeholder="Nhập Số Điện Thoại ..."
                                 value={user?.phone}
-                              // onChange={(e) => {
-                              //   setDataSave({ ...dataSave, phone: e.target.value })
-                              // }}
+                            
                               />
                             </div>
                           </div>
@@ -667,9 +688,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập username ..."
                               value={user?.username}
                               disabled
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, username: e.target.value })
-                            // }}
+                           
                             />
                           </div>
                           <div>
@@ -679,9 +698,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập password ..."
                               value={user?.password}
                               disabled
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, password: e.target.value })
-                            // }}
+                            
                             />
                           </div>
                           <div>
@@ -700,9 +717,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập Kinh Nghiệm ..."
                               value={user?.experience}
                               disabled
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, experience: e.target.value })
-                            // }}
+                            
                             />
                           </div>
                           <div>
@@ -712,9 +727,7 @@ export default function AdminUsersPage() {
                               placeholder="Nhập Học Vấn ..."
                               value={user?.education}
                               disabled
-                            // onChange={(e) => {
-                            //   setDataSave({ ...dataSave, education: e.target.value })
-                            // }}
+                           
                             />
                           </div>
 
@@ -722,9 +735,7 @@ export default function AdminUsersPage() {
                             <div>
                               <label htmlFor="">Phòng</label>
                               <Select
-                                //   onValueChange={(value)=>{
-                                //   setDataSave({ ...dataSave, group: value })
-                                // }}
+                               
                                 disabled
                                 value={user?.group?.id}
                               >
@@ -732,10 +743,7 @@ export default function AdminUsersPage() {
                                   <SelectValue placeholder="Chọn Phòng" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {/* <SelectItem value="tin-trong-nuoc-va-quoc-te">Chỉ huy sư đoàn</SelectItem>
-                      <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
-                      <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
-                      <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
+                                
                                   {
                                     groups.map((group: any) => {
                                       return (
@@ -749,9 +757,7 @@ export default function AdminUsersPage() {
                             <div>
                               <label htmlFor="">Role</label>
                               <Select
-                                //   onValueChange={(value)=>{
-                                //   setDataSave({ ...dataSave, role: value })
-                                // }}
+                              
                                 disabled
                                 value={user?.role}
                               >
@@ -766,46 +772,14 @@ export default function AdminUsersPage() {
                                       )
                                     })
                                   }
-                                  {/* <SelectItem value="tin-trong-nuoc-va-quoc-te">Chỉ huy sư đoàn</SelectItem>
-                      <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
-                      <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
-                      <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
+                                  
                                 </SelectContent>
                               </Select>
                             </div>
                             <div>
                               <label className="block text-sm font-medium text-gray-700">Avatar</label>
                               <div className="space-y-2">
-                                {/* <Input
-                      id="imageFile"
-                      type="file"
-                      accept="image/*"
-                      className="cursor-pointer"
-                      onChange={handleFileChange}
-                    />
-
-                    {selectedFile && (
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
-                        {previewUrl && (
-                          <img
-                            src={previewUrl}
-                            alt="Preview"
-                            className="w-24 h-24 object-cover rounded"
-                          />
-                        )}
-                        <div>
-                          <span className="text-sm text-green-700 block">
-                            ✓ File đã được tải lên: <strong>{selectedFile.name}</strong>
-                          </span>
-                          <button
-                            onClick={handleRemoveFile}
-                            className="text-red-500 text-sm hover:underline mt-1"
-                          >
-                            Xóa
-                          </button>
-                        </div>
-                      </div>
-                    )} */}
+                                 
                                 {
                                   user?.avatar &&
                                   <img
@@ -817,20 +791,7 @@ export default function AdminUsersPage() {
                               </div>
                             </div>
                           </div>
-                          {/* <DialogFooter>
-                <DialogClose asChild>
-
-                  <Button type="button"  >
-                    Hủy
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
-
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                    Lưu
-                  </Button>
-                </DialogClose>
-              </DialogFooter> */}
+                         
                         </form>
                       </DialogContent>
                     </Dialog>
@@ -1126,6 +1087,52 @@ export default function AdminUsersPage() {
             ))}
           </div>
         </CardContent>
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+          >
+            Trước
+          </Button>
+
+          {/* Nút ... lùi cụm */}
+          {startPage > 1 && (
+            <Button variant="outline" onClick={handlePrevGroup}>
+              ...
+            </Button>
+          )}
+
+          {/* Các trang trong nhóm hiện tại */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const page = startPage + i;
+            return (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                onClick={() => setCurrentPage(page)}
+                className={page === currentPage ? "font-bold" : ""}
+              >
+                {page}
+              </Button>
+            );
+          })}
+
+          {/* Nút ... tiến cụm */}
+          {endPage < totalPages && (
+            <Button variant="outline" onClick={handleNextGroup}>
+              ...
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+          >
+            Tiếp
+          </Button>
+        </div>
       </Card>
     </div>
   )

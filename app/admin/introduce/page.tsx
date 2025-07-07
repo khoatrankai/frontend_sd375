@@ -17,6 +17,40 @@ export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [selectedUnit, setSelectedUnit] = useState("all")
+  //phân trang
+  const [report, setReport] = useState<any>([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentReport = report.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(report.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+
 
 
   const documentTypes = [
@@ -190,7 +224,6 @@ export default function AdminDocumentsPage() {
   }
   const [open, setOpen] = useState(false);
 
-  const [report, setReport] = useState<any>([])
   const [catagory, setCategory] = useState<any>([])
 
   const fetchData = async () => {
@@ -687,7 +720,7 @@ export default function AdminDocumentsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {report.map((doc: any) => (
+            {currentReport.map((doc: any) => (
               <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -1540,6 +1573,53 @@ export default function AdminDocumentsPage() {
             ))}
           </div>
         </CardContent>
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+          >
+            Trước
+          </Button>
+
+          {/* Nút ... lùi cụm */}
+          {startPage > 1 && (
+            <Button variant="outline" onClick={handlePrevGroup}>
+              ...
+            </Button>
+          )}
+
+          {/* Các trang trong nhóm hiện tại */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const page = startPage + i;
+            return (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                onClick={() => setCurrentPage(page)}
+                className={page === currentPage ? "font-bold" : ""}
+              >
+                {page}
+              </Button>
+            );
+          })}
+
+          {/* Nút ... tiến cụm */}
+          {endPage < totalPages && (
+            <Button variant="outline" onClick={handleNextGroup}>
+              ...
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+          >
+            Tiếp
+          </Button>
+        </div>
+
       </Card>
     </div>
   )

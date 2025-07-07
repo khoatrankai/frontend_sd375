@@ -28,7 +28,7 @@ export default function AdminDocumentsPage() {
     { id: "quy_dinh", name: "Quy định" }
   ]
 
-  const [categories,setCategories] = useState([
+  const [categories, setCategories] = useState([
     { id: "all", name: "Tất cả đơn vị" },
     { id: "command", name: "Chỉ huy sư đoàn" },
     { id: "political", name: "Phòng chính trị" },
@@ -47,7 +47,7 @@ export default function AdminDocumentsPage() {
   const [documents,setDocuments] = useState<any>([
   ])
 
-  const [filteredDocuments,setFilteredDocuments] = useState([]) 
+  const [filteredDocuments, setFilteredDocuments] = useState([])
   // documents.filter((doc) => {
   //   const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase())
   //   const matchesType = selectedType === "all" || doc.type === selectedType
@@ -61,7 +61,7 @@ export default function AdminDocumentsPage() {
     { label: "Kế hoạch", value: documents.filter((dt:any)=> dt.type === "ke_hoach").length, color: "text-yellow-600" },
     { label: "Quy định", value: documents.filter((dt:any)=> dt.type === "quy_dinh").length, color: "text-red-600" },
   ]
-  const handleDelete = async(id:string) => {
+  const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xoá?");
 
     if (confirmDelete) {
@@ -96,7 +96,7 @@ export default function AdminDocumentsPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      
+
       setSelectedFile(file);
     }
   };
@@ -136,15 +136,48 @@ export default function AdminDocumentsPage() {
   //       console.error(error);
   //     }
   //   };
+  //phân trang
+  // const [report, setReport] = useState<any>([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
 
-  const fetchData= async()=>{
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentDocument = filteredDocuments.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+
+  const fetchData = async () => {
     const res = await documentService.getDocuments()
     const res2 = await documentService.getCategories()
     const res3 = await documentService.getAgency()
     if(res.statusCode === 200){
       setDocuments(res.data)
     }
-    if(res2.statusCode === 200){
+    if (res2.statusCode === 200) {
       setCategories(res2.data)
     }
 
@@ -152,9 +185,9 @@ export default function AdminDocumentsPage() {
       setAgency(res3.data)
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     fetchData()
-  },[])
+  }, [])
 
   useEffect(()=>{
     setFilteredDocuments(documents.filter((doc:any)=>{
@@ -166,37 +199,37 @@ export default function AdminDocumentsPage() {
     }))
   },[documents,searchTerm,selectedType,selectedCategory,selectedAgency])
 
-  const handleSubmit = async(e:any)=>{
-    try{
+  const handleSubmit = async (e: any) => {
+    try {
       e.preventDefault();
-      const formData = CustomFormData({...dataSave,coverDocument:selectedFile})
+      const formData = CustomFormData({ ...dataSave, coverDocument: selectedFile })
       const res = await documentService.createDocument(formData)
-      if(res.statusCode === 201){
+      if (res.statusCode === 201) {
         fetchData()
         setDataSave({})
         setSelectedFile(null)
       }
-    }catch{
+    } catch {
       console.log("Lỗi khi lưu dữ liệu")
     }
   }
 
-  const handleSubmitUp = async(e:any,id:string)=>{
-    try{
+  const handleSubmitUp = async (e: any, id: string) => {
+    try {
       e.preventDefault();
-      const formData = CustomFormData({...dataSave,coverDocument:selectedFile})
-      const res = await documentService.updateDocument(id,formData)
-      if(res.statusCode === 201){
+      const formData = CustomFormData({ ...dataSave, coverDocument: selectedFile })
+      const res = await documentService.updateDocument(id, formData)
+      if (res.statusCode === 201) {
         fetchData()
         setDataSave({})
         setSelectedFile(null)
       }
-    }catch{
+    } catch {
       console.log("Lỗi khi lưu dữ liệu")
     }
   }
 
-  const handleFocusData = async(data:any)=>{
+  const handleFocusData = async (data: any) => {
     setDataSave(data)
   }
   return (
@@ -222,18 +255,18 @@ export default function AdminDocumentsPage() {
                 <div>
                   <label>Tiêu đề *</label>
                   <Input placeholder="Nhập tiêu đề văn bản"
-                  value={dataSave?.title || ""}
-                    onChange={(e) => setDataSave((preValue:any)=>{
-                      return {...preValue,title:e.target.value}
-                    })} 
+                    value={dataSave?.title || ""}
+                    onChange={(e) => setDataSave((preValue: any) => {
+                      return { ...preValue, title: e.target.value }
+                    })}
                   />
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <label>Loại văn bản *</label>
-                    <Select onValueChange={(value)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,type:value}
+                    <Select onValueChange={(value) => {
+                      setDataSave((preValue: any) => {
+                        return { ...preValue, type: value }
                       })
                     }}>
                       <SelectTrigger>
@@ -251,12 +284,12 @@ export default function AdminDocumentsPage() {
                   </div>
                   <div className="flex-1">
                     <label>Đơn vị đăng tải *</label>
-                    <Select 
-                    onValueChange={(value:any)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,category:value}
-                      })
-                    }}>
+                    <Select
+                      onValueChange={(value: any) => {
+                        setDataSave((preValue: any) => {
+                          return { ...preValue, category: value }
+                        })
+                      }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn loại văn bản" />
                       </SelectTrigger>
@@ -305,28 +338,28 @@ export default function AdminDocumentsPage() {
                 <div>
                   <label>Người đăng tải(kèm cấp bậc) *</label>
                   <Input placeholder="Nhập người đăng tải"
-                   value={dataSave?.organ || ""}
-                    onChange={(e) => setDataSave((preValue:any)=>{
-                      return {...preValue,organ:e.target.value}
-                    })} 
+                    value={dataSave?.organ || ""}
+                    onChange={(e) => setDataSave((preValue: any) => {
+                      return { ...preValue, organ: e.target.value }
+                    })}
                   />
                 </div>
-<div>
+                <div>
                   <label>Ngày đăng tải</label>
                   <Input placeholder="Nhập ngày đăng"
-                   value={dataSave?.date || ""}
-                    onChange={(e) => setDataSave((preValue:any)=>{
-                      return {...preValue,date:e.target.value}
-                    })} 
+                    value={dataSave?.date || ""}
+                    onChange={(e) => setDataSave((preValue: any) => {
+                      return { ...preValue, date: e.target.value }
+                    })}
                   />
                 </div>
                 <div>
                   <label>Kích thước</label>
                   <Input placeholder="Nhập kích thước"
-                   value={dataSave?.size || ""}
-                    onChange={(e) => setDataSave((preValue:any)=>{
-                      return {...preValue,size:e.target.value}
-                    })} 
+                    value={dataSave?.size || ""}
+                    onChange={(e) => setDataSave((preValue: any) => {
+                      return { ...preValue, size: e.target.value }
+                    })}
                   />
                 </div>
                 <div>
@@ -438,8 +471,8 @@ export default function AdminDocumentsPage() {
                   <SelectValue placeholder="Chọn đơn vị" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category:any) => (
-                    <SelectItem key={category.nametag} value={category.nametag}>
+                  {categories.map((category: any) => (
+                    <SelectItem key={category?.id} value={category.nametag}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -488,7 +521,7 @@ export default function AdminDocumentsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredDocuments.map((doc:any) => (
+            {currentDocument.map((doc: any) => (
               <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -497,8 +530,8 @@ export default function AdminDocumentsPage() {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 mb-2">{doc.title}</h3>
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <Badge variant="outline">{documentTypes.find((type:any) => type?.id === doc.type)?.name}</Badge>
-                  
+                      <Badge variant="outline">{documentTypes.find((type: any) => type?.id === doc.type)?.name}</Badge>
+
                       <div className="flex items-center">
                         <Building className="h-4 w-4 mr-1" />
                         {doc?.category?.name}
@@ -517,13 +550,13 @@ export default function AdminDocumentsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" onClick={()=>{downloadFile(doc?.link)}}>
+                  <Button variant="outline" size="sm" onClick={() => { downloadFile(doc?.link) }}>
                     <Download className="h-4 w-4" />
                   </Button>
 
                   <Dialog >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" onClick={()=>{handleFocusData({...doc,category:doc?.category?.id})}}>
+                      <Button variant="outline" size="sm" onClick={() => { handleFocusData({ ...doc, category: doc?.category?.id }) }}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -532,57 +565,57 @@ export default function AdminDocumentsPage() {
                       <DialogHeader>
                         <DialogTitle>Cập nhật văn bản </DialogTitle>
                       </DialogHeader>
-                       <form className="space-y-4" onSubmit={(e)=>{handleSubmitUp(e,doc?.id)}}>
-                <div>
-                  <label>Tiêu đề *</label>
-                  <Input placeholder="Nhập tiêu đề văn bản"
-                  value={dataSave?.title || ""}
-                    onChange={(e) => setDataSave((preValue:any)=>{
-                      return {...preValue,title:e.target.value}
-                    })} 
-                  />
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label>Loại văn bản *</label>
-                    <Select onValueChange={(value)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,type:value}
-                      })
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại văn bản" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="chi_thi">Chỉ thị</SelectItem>
-                        <SelectItem value="thong_bao">Thông báo</SelectItem>
-                        <SelectItem value="ke_hoach">Kế hoạch</SelectItem>
-                        <SelectItem value="quy_dinh">Quy định</SelectItem>
-                        {/* <SelectItem value="bao_cao">Báo cáo</SelectItem> */}
+                      <form className="space-y-4" onSubmit={(e) => { handleSubmitUp(e, doc?.id) }}>
+                        <div>
+                          <label>Tiêu đề *</label>
+                          <Input placeholder="Nhập tiêu đề văn bản"
+                            value={dataSave?.title || ""}
+                            onChange={(e) => setDataSave((preValue: any) => {
+                              return { ...preValue, title: e.target.value }
+                            })}
+                          />
+                        </div>
+                        <div className="flex gap-4">
+                          <div className="flex-1">
+                            <label>Loại văn bản *</label>
+                            <Select onValueChange={(value) => {
+                              setDataSave((preValue: any) => {
+                                return { ...preValue, type: value }
+                              })
+                            }}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn loại văn bản" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="chi_thi">Chỉ thị</SelectItem>
+                                <SelectItem value="thong_bao">Thông báo</SelectItem>
+                                <SelectItem value="ke_hoach">Kế hoạch</SelectItem>
+                                <SelectItem value="quy_dinh">Quy định</SelectItem>
+                                {/* <SelectItem value="bao_cao">Báo cáo</SelectItem> */}
 
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex-1">
-                    <label>Đơn vị đăng tải *</label>
-                    <Select 
-                    onValueChange={(value:any)=>{
-                      setDataSave((preValue:any)=>{
-                        return {...preValue,category:value}
-                      })
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại văn bản" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {
-                          categories.map((category) => {
-                            return (
-                              <SelectItem value={category.id}>{category.name}</SelectItem>
-                            )
-                          })
-                        }
-                        {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex-1">
+                            <label>Đơn vị đăng tải *</label>
+                            <Select
+                              onValueChange={(value: any) => {
+                                setDataSave((preValue: any) => {
+                                  return { ...preValue, category: value }
+                                })
+                              }}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn loại văn bản" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {
+                                  categories.map((category) => {
+                                    return (
+                                      <SelectItem value={category.id}>{category.name}</SelectItem>
+                                    )
+                                  })
+                                }
+                                {/* <SelectItem value="chi-huy-sd">Chỉ huy Sư đoàn</SelectItem>
                         <SelectItem value="phong-chinh-tri">Phòng chính trị</SelectItem>
                         <SelectItem value="phong-tham-muu">Phòng tham mưu</SelectItem>
                         <SelectItem value="phong-hc-kt">Phòng HC-KT</SelectItem> */}
@@ -646,15 +679,15 @@ export default function AdminDocumentsPage() {
                 <div>
                   <label htmlFor="">Tải file </label>
 
-                  <div className="space-y-2">
-                    <Input
-                      id="imageFile"
-                      type="file"
-                      className="cursor-pointer"
-                      onChange={handleFileChange}
-                    />
+                          <div className="space-y-2">
+                            <Input
+                              id="imageFile"
+                              type="file"
+                              className="cursor-pointer"
+                              onChange={handleFileChange}
+                            />
 
-                    {/* {selectedFile && (
+                            {/* {selectedFile && (
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-green-50 rounded border border-green-300">
                           {previewUrl && (
                             <img
@@ -676,23 +709,23 @@ export default function AdminDocumentsPage() {
                           </div>
                         </div>
                       )} */}
-                  </div>
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
 
-                    <Button type="button"  >
-                      Hủy
-                    </Button>
-                  </DialogClose>
-                  <DialogClose asChild>
+                            <Button type="button"  >
+                              Hủy
+                            </Button>
+                          </DialogClose>
+                          <DialogClose asChild>
 
-                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                      Chỉnh sửa
-                    </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </form>
+                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                              Chỉnh sửa
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </form>
                     </DialogContent>
 
                   </Dialog>
@@ -700,7 +733,7 @@ export default function AdminDocumentsPage() {
                     variant="outline"
                     size="sm"
                     className="text-red-600 hover:text-red-700"
-                    onClick={()=>{handleDelete(doc?.id)}}
+                    onClick={() => { handleDelete(doc?.id) }}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -709,6 +742,52 @@ export default function AdminDocumentsPage() {
             ))}
           </div>
         </CardContent>
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+          >
+            Trước
+          </Button>
+
+          {/* Nút ... lùi cụm */}
+          {startPage > 1 && (
+            <Button variant="outline" onClick={handlePrevGroup}>
+              ...
+            </Button>
+          )}
+
+          {/* Các trang trong nhóm hiện tại */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const page = startPage + i;
+            return (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                onClick={() => setCurrentPage(page)}
+                className={page === currentPage ? "font-bold" : ""}
+              >
+                {page}
+              </Button>
+            );
+          })}
+
+          {/* Nút ... tiến cụm */}
+          {endPage < totalPages && (
+            <Button variant="outline" onClick={handleNextGroup}>
+              ...
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+          >
+            Tiếp
+          </Button>
+        </div>
       </Card>
     </div>
   )

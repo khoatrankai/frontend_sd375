@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,10 +55,85 @@ export default function AdminMediaPage() {
   const [open, setOpen] = useState(false);
   const [dataSave, setDataSave] = useState<any>({});
 
+  const filterBySearch = (list: any[], type: string) =>
+  list
+    .filter((dt: any) =>
+      (dt?.title ?? dt?.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .map(item => ({ ...item, type }));
 
-  // const [title, setTitle] = useState(""); m 
-  // const [selectedthumbnail, setThumbnail] = useState<File | null>(null)
-  // const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+
+   type MediaType = "all" | "image" | "video" | "audio" | "software";
+
+// const [selectedType, setSelectedType] = useState<MediaType>("all");
+
+const dataMap: Record<Exclude<MediaType, "all">, any[]> = {
+  image: images,
+  video: videos,
+  audio: tracks,
+  software: softwares,
+};
+
+const filteredData = useMemo(() => {
+  if (selectedType === "all") {
+    const allItems = [
+      ...filterBySearch(images, "image"),
+      ...filterBySearch(videos, "video"),
+      ...filterBySearch(tracks, "audio"),
+      ...filterBySearch(softwares, "software"),
+    ];
+
+    const uniqueMap = new Map();
+    allItems.forEach(item => {
+      if (!uniqueMap.has(item.id)) {
+        uniqueMap.set(item.id, item);
+      }
+    });
+
+    return Array.from(uniqueMap.values());
+  }
+
+  return filterBySearch(dataMap[selectedType as Exclude<MediaType, "all">], selectedType);
+}, [images, videos, tracks, softwares, selectedType, searchTerm]);
+
+
+
+
+
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currenData = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+
+
 
 
   const handleReset = () => {
@@ -785,7 +860,7 @@ const stats = [
                   <p className="text-sm font-medium text-gray-600">{stat.label}</p>
                   <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
                 </div>
-                
+
               </div>
             </CardContent>
           </Card>
@@ -845,260 +920,88 @@ const stats = [
         <CardContent>
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {(selectedType === "all" || selectedType === "image") && images?.filter((dt: any) => (dt?.title ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center relative">
-                    <Image
-                      src={file.thumbnail || "/public/placeholder.svg"}
-                      alt={file.name}
-                      width={450}
-                      height={228}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div className="absolute top-2 right-2 flex gap-2">
-
-                      <Badge className=" top-2 right-2" variant="secondary">Hình ảnh</Badge>
-
-                      {file?.category?.name && (
-                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-medium text-sm line-clamp-2 mb-2">{file.title}</h4>
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Kích thước:</span>
-                        <span>{file.size}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Ngày tải:</span>
-                        <span>{file.date}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Lượt tải:</span>
-                        <span>{file.downloads}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-3">
-
-                      <Button variant="outline" size="sm" onClick={() => {
-                        downloadFile(`/public/videos?id=1b23f96b-4e6a-4c1b-8eff-e6a6d6fd8db0.mp4`)
-                      }}>
-                        <Download className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id, 'image')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
               
-              {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center relative">
-                    <Image
-                      src={file?.thumbnail || "/public/placeholder.svg"}
-                      alt={file?.title}
-                      width={450}
-                      height={228}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div className="absolute top-2 right-2 flex gap-2">
+              {currenData?.map((file: any) => {
+                const isImage = file.type === "image";
+                const isVideo = file.type === "video";
+                const isAudio = file.type === "audio";
+                const isSoftware = file.type === "software";
 
-                      <Badge className=" top-2 right-2" variant="secondary">Video</Badge>
+                return (
+                  <div key={`${file.type}-${file.id}`} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="flex justify-center relative">
+                      <Image
+                        src={file.thumbnail || "/public/placeholder.svg"}
+                        alt={file.title || file.name}
+                        width={450}
+                        height={228}
+                        className="object-cover"
+                        preview={{
+                          mask: (
+                            <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                              <Eye className="text-xl mb-1" />
+                            </div>
+                          ),
+                        }}
+                      />
+                      <div className="absolute top-2 right-2 flex gap-2">
+                        <Badge variant="secondary">
+                          {isImage && "Hình ảnh"}
+                          {isVideo && "Video"}
+                          {isAudio && "Audio"}
+                          {isSoftware && "Phần mềm"}
+                        </Badge>
+                        {file?.category?.name && (
+                          <Badge variant="default">{file.category.name}</Badge>
+                        )}
+                      </div>
+                    </div>
 
-                      {file?.category?.name && (
-                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
-                      )}
+                    <div className="p-4">
+                      <h4 className="font-medium text-sm line-clamp-2 mb-2">{file.title || file.name}</h4>
+                      <div className="text-xs text-gray-500 space-y-1">
+                        <div className="flex justify-between">
+                          <span>Kích thước:</span>
+                          <span>
+                            {isImage || isSoftware ? file.size : file.duration}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Ngày tải:</span>
+                          <span>{file.date}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>
+                            {isImage || isSoftware ? "Lượt tải" : isAudio ? "Lượt nghe" : "Lượt xem"}:
+                          </span>
+                          <span>
+                            {isImage || isSoftware ? file.downloads : isAudio ? file.plays : file.views}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2 mt-3">
+                        <Button variant="outline" size="sm" onClick={() => downloadFile(file.link)}>
+                          <Download className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDelete(file.id, file.type)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h4 className="font-medium text-sm line-clamp-2 mb-2">{file?.title}</h4>
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Kích thước:</span>
-                        <span>{file?.duration}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Ngày tải:</span>
-                        <span>{file?.date}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Lượt xem:</span>
-                        <span>{file?.views}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-3">
+                );
+              })}
 
-                      <Button variant="outline" size="sm" onClick={() => {
-                        downloadFile(file?.link)
-                      }}>
-                        <Download className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id, 'video')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-             
-              {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center relative">
-                    <Image
-                      src={"/public/placeholder.svg"}
-                      alt={file.title}
-                      width={450}
-                      height={228}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div className="absolute top-2 right-2 flex gap-2">
-
-                      <Badge className=" top-2 right-2" variant="secondary">Audio</Badge>
-
-                      {file?.category?.name && (
-                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-medium text-sm line-clamp-2 mb-2">{file?.title}</h4>
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Kích thước:</span>
-                        <span>{file?.duration}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Ngày tải:</span>
-                        <span>{file?.date}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Lượt nghe:</span>
-                        <span>{file?.plays}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-3">
-
-                      <Button variant="outline" size="sm" onClick={() => {
-                        downloadFile(file?.link)
-                      }}>
-                        <Download className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id, 'audio')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt: any) => (dt?.name ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex justify-center relative">
-                    <Image
-                      src={"/public/placeholder.svg"}
-                      alt={file.name}
-                      width={450}
-                      height={228}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div className="absolute top-2 right-2 flex gap-2">
-
-                      <Badge className=" top-2 right-2" variant="secondary">Phần mềm</Badge>
-
-                      {file?.category?.name && (
-                        <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-medium text-sm line-clamp-2 mb-2">{file?.name}</h4>
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Kích thước:</span>
-                        <span>{file?.size}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Ngày tải:</span>
-                        <span>{file?.date}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Lượt tải:</span>
-                        <span>{file?.downloads}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-3">
-
-                      <Button variant="outline" size="sm" onClick={() => {
-                        downloadFile(file?.link)
-                      }}>
-                        <Download className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(file?.id, 'software')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           ) : (
             <div className="space-y-2">
-              {(selectedType === "all" || selectedType === "image") && images?.filter((dt: any) => (dt?.title ?? ""
+              {(selectedType === "all" || selectedType === "image") && currenData?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
@@ -1150,7 +1053,7 @@ const stats = [
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" || selectedType === "video") && videos?.filter((dt: any) => (dt?.title ?? ""
+              {(selectedType === "all" || selectedType === "video") && currenData?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
@@ -1203,7 +1106,7 @@ const stats = [
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" || selectedType === "audio") && tracks?.filter((dt: any) => (dt?.title ?? ""
+              {(selectedType === "all" || selectedType === "audio") && currenData?.filter((dt: any) => (dt?.title ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
@@ -1255,7 +1158,7 @@ const stats = [
                   </div>
                 </div>
               ))}
-              {(selectedType === "all" || selectedType === "software") && softwares?.filter((dt: any) => (dt?.name ?? ""
+              {(selectedType === "all" || selectedType === "software") && currenData?.filter((dt: any) => (dt?.name ?? ""
               ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
                 <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
@@ -1310,6 +1213,52 @@ const stats = [
             </div>
           )}
         </CardContent>
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+          >
+            Trước
+          </Button>
+
+          {/* Nút ... lùi cụm */}
+          {startPage > 1 && (
+            <Button variant="outline" onClick={handlePrevGroup}>
+              ...
+            </Button>
+          )}
+
+          {/* Các trang trong nhóm hiện tại */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const page = startPage + i;
+            return (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                onClick={() => setCurrentPage(page)}
+                className={page === currentPage ? "font-bold" : ""}
+              >
+                {page}
+              </Button>
+            );
+          })}
+
+          {/* Nút ... tiến cụm */}
+          {endPage < totalPages && (
+            <Button variant="outline" onClick={handleNextGroup}>
+              ...
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+          >
+            Tiếp
+          </Button>
+        </div>
       </Card>
     </div>
   )

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Shield, User, Lock, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { authService } from "@/services/auth.service"
+import { usersService } from "@/services/users.service"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -24,8 +25,9 @@ export default function LoginPage() {
     try {
       const response = await authService.login({ username, password })
 
-      if (response.success) {
-        router.push("/admin/dashboard")
+      if (response.success && response.user) {
+        localStorage.setItem("userId", response.user.id.toString());
+        router.push("/admin/dashboard");
       } else {
         alert(response.message || "Tên đăng nhập hoặc mật khẩu không đúng!")
       }

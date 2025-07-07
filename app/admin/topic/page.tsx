@@ -16,7 +16,7 @@ import { SimpleEditor } from "@/components/tiptap/tiptap-templates/simple/simple
 
 export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [dataSave,setDataSave] = useState<any>({})
+  const [dataSave, setDataSave] = useState<any>({})
   const [selectedType, setSelectedType] = useState("all")
   const [selectedUnit, setSelectedUnit] = useState("all")
 
@@ -30,7 +30,7 @@ export default function AdminDocumentsPage() {
     { id: "khqs", name: "Thông tin KHQS" },
   ]
 
-const [categories,setCategories] = useState<any>([
+  const [categories, setCategories] = useState<any>([
   ])
 
   //   const categoryKHQS = [
@@ -126,7 +126,41 @@ const [categories,setCategories] = useState<any>([
   //   return matchesSearch && matchesType && matchesUnit
   // })
 
-  const [filteredArticles,setFilteredArticales] = useState<any>([])
+  const [filteredArticles, setFilteredArticales] = useState<any>([])
+  //phân trang
+  // const [report, setReport] = useState<any>([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTopic = filteredArticles.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+
 
   const stats = [
     { label: "CCHC & Chuyển đổi số", value: articles.filter((dt:any) => dt.type === "cchc").length, color: "text-blue-600" },
@@ -201,45 +235,45 @@ const [categories,setCategories] = useState<any>([
     setInputValue("") // Reset ô input
   }
 
-  const fetchData = async()=>{
+  const fetchData = async () => {
     const res = await articlesService.getCategories()
     const res2 = await articlesService.getArticles()
-    if(res.statusCode === 200){
+    if (res.statusCode === 200) {
       setCategories(res.data)
     }
-    if(res2.statusCode === 200){
+    if (res2.statusCode === 200) {
       setArticles(res2.data)
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchData()
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    setFilteredArticales(articles.filter((article:any)=>{
+  useEffect(() => {
+    setFilteredArticales(articles.filter((article: any) => {
       return article.title.toLowerCase().includes(searchTerm.toLowerCase()) && article.type === selectedDocType
     }))
-  },[searchTerm,articles,selectedDocType])
+  }, [searchTerm, articles, selectedDocType])
 
-  const handleSubmit = async()=>{
-    const res = await articlesService.createArticle({...dataSave,type:selectedDocType,tags:fields?.length ? fields :['']} as any) as any
-    if(res.statusCode === 201){
+  const handleSubmit = async () => {
+    const res = await articlesService.createArticle({ ...dataSave, type: selectedDocType, tags: fields?.length ? fields : [''] } as any) as any
+    if (res.statusCode === 201) {
       setDataSave({})
       fetchData()
       setFields([])
     }
-    
+
   }
 
-  const handleSubmitUp = async(id:string)=>{
-    const res = await articlesService.updateArticle(id,{...dataSave,type:selectedDocType,tags:fields?.length ? fields :['']} as any) as any
-    if(res.statusCode === 201){
+  const handleSubmitUp = async (id: string) => {
+    const res = await articlesService.updateArticle(id, { ...dataSave, type: selectedDocType, tags: fields?.length ? fields : [''] } as any) as any
+    if (res.statusCode === 201) {
       setDataSave({})
       fetchData()
       setFields([])
     }
-    
+
   }
 
   return (
@@ -313,43 +347,45 @@ const [categories,setCategories] = useState<any>([
             </div>
             <div className="text-right" >
               {/* {selectedDocType === "cchc" && ( */}
-                <Dialog >
-                  <DialogTrigger asChild>
-                    <Button
-                      className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
-                      onClick={()=>{
-                        setDataSave({})
-                        setFields([])
-                      }}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                     {
-                        selectedDocType === "cchc" ? "Thêm CCHC & Chuyển đổi số" : selectedDocType === "ttpl" ? "Thêm Thông tin Pháp luật" : selectedDocType === "khqs" ? "Thêm Thông tin KHQS" : selectedDocType === "tttt" ? "Thêm Thông tin tuyên truyền" : selectedDocType === "regulation" ? "Thêm Liên hệ góp ý" : ""
-                      }
-                    </Button>
-                  </DialogTrigger>
+              <Dialog >
+                <DialogTrigger asChild>
+                  <Button
+                    className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
+                    onClick={() => {
+                      setDataSave({})
+                      setFields([])
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {
+                      selectedDocType === "cchc" ? "Thêm CCHC & Chuyển đổi số" : selectedDocType === "ttpl" ? "Thêm Thông tin Pháp luật" : selectedDocType === "khqs" ? "Thêm Thông tin KHQS" : selectedDocType === "tttt" ? "Thêm Thông tin tuyên truyền" : selectedDocType === "regulation" ? "Thêm Liên hệ góp ý" : ""
+                    }
+                  </Button>
+                </DialogTrigger>
 
-                  <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
+                <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
-                    <DialogHeader >
-                      <DialogTitle>{
-                        selectedDocType === "cchc" ? "CCHC & Chuyển đổi số" : selectedDocType === "ttpl" ? "Thông tin Pháp luật" : selectedDocType === "khqs" ? "Thông tin KHQS" : selectedDocType === "tttt" ? "Thông tin tuyên truyền" : selectedDocType === "regulation" ? "Liên hệ góp ý" : ""
-                      }</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <label>Tiêu đề *</label>
-                        <Input value={dataSave?.title} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
+                  <DialogHeader >
+                    <DialogTitle>{
+                      selectedDocType === "cchc" ? "CCHC & Chuyển đổi số" : selectedDocType === "ttpl" ? "Thông tin Pháp luật" : selectedDocType === "khqs" ? "Thông tin KHQS" : selectedDocType === "tttt" ? "Thông tin tuyên truyền" : selectedDocType === "regulation" ? "Liên hệ góp ý" : ""
+                    }</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <label>Tiêu đề *</label>
+                      <Input value={dataSave?.title} onChange={(e: any) => {
+                        setDataSave((preValue: any) => {
+                          return {
                             ...preValue,
                             title: e.target.value
                           }
-                        })}} placeholder="Nhập tiêu đề " />
-                      </div>
+                        })
+                      }} placeholder="Nhập tiêu đề " />
+                    </div>
 
-                      <div>
-                        <label>Mô tả *</label>
-                        {/* <Textarea
+                    <div>
+                      <label>Mô tả *</label>
+                      {/* <Textarea
                           id="excerpt"
                           placeholder="Nhập mô tả "
                           value={dataSave?.excerpt}
@@ -361,130 +397,138 @@ const [categories,setCategories] = useState<any>([
                           })}}
                           rows={10}
                         /> */}
-                        <SimpleEditor content="" onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                            return{
-                              ...preValue,
-                              excerpt: e
-                            }
-                          })}}/>
-                      </div>
-                       <div>
-                        <label>Loại bài viết</label>
-                        <Select onValueChange={(value:any)=>{
-                          setDataSave((preValue:any)=>{
-                            return{
-                              ...preValue,
-                              category: value
-                            }
-                          })
-                        }}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại bài viết" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {
-                              categories.map((item:any)=>{
-                                return(
-                                  <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                                )
-                              })
-                            }
-                            {/* <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
+                      <SimpleEditor content="" onChange={(e: any) => {
+                        setDataSave((preValue: any) => {
+                          return {
+                            ...preValue,
+                            excerpt: e
+                          }
+                        })
+                      }} />
+                    </div>
+                    <div>
+                      <label>Loại bài viết</label>
+                      <Select onValueChange={(value: any) => {
+                        setDataSave((preValue: any) => {
+                          return {
+                            ...preValue,
+                            category: value
+                          }
+                        })
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn loại bài viết" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {
+                            categories.map((item: any) => {
+                              return (
+                                <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                              )
+                            })
+                          }
+                          {/* <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
                             <SelectItem value="truyen-thong">Truyền Thông</SelectItem>
                             <SelectItem value="van-hoa">Văn hóa</SelectItem> */}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                     <div>
-                        <label>Thời gian đăng</label>
-                        <Input value={dataSave?.date} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label>Thời gian đăng</label>
+                      <Input value={dataSave?.date} onChange={(e: any) => {
+                        setDataSave((preValue: any) => {
+                          return {
                             ...preValue,
                             date: e.target.value
                           }
-                        })}} placeholder="Nhập tiêu đề " />
-                      </div>
-                      <div>
-                        <label>Thời gian đọc</label>
-                        <Input value={dataSave?.readTime} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
+                        })
+                      }} placeholder="Nhập tiêu đề " />
+                    </div>
+                    <div>
+                      <label>Thời gian đọc</label>
+                      <Input value={dataSave?.readTime} onChange={(e: any) => {
+                        setDataSave((preValue: any) => {
+                          return {
                             ...preValue,
                             readTime: e.target.value
                           }
-                        })}} placeholder="Nhập tiêu đề " />
+                        })
+                      }} placeholder="Nhập tiêu đề " />
+                    </div>
+                    <div>
+                      <label>Thuộc lĩnh vực</label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Input
+                          className="w-60"
+                          placeholder="Nhập"
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleAddField()}
+                        />
+                        <Button type="button" onClick={handleAddField}>
+                          Nhập
+                        </Button>
                       </div>
-                      <div>
-                        <label>Thuộc lĩnh vực</label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Input
-                            className="w-60"
-                            placeholder="Nhập"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                          />
-                          <Button type="button" onClick={handleAddField}>
-                            Nhập
-                          </Button>
-                        </div>
 
-                        {/* Hiển thị các lĩnh vực đã nhập */}
-                        {fields.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {fields.map((field, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                      {/* Hiển thị các lĩnh vực đã nhập */}
+                      {fields.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {fields.map((field, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                            >
+                              <span>{field}</span>
+                              <button
+                                onClick={() => {
+                                  const updated = fields.filter((_, i) => i !== index)
+                                  setFields(updated)
+                                }}
+                                className="ml-2 text-red-500 hover:text-red-700"
+                                aria-label={`Xoá ${field}`}
                               >
-                                <span>{field}</span>
-                                <button
-                                  onClick={() => {
-                                    const updated = fields.filter((_, i) => i !== index)
-                                    setFields(updated)
-                                  }}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  aria-label={`Xoá ${field}`}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
-                      </div>
-                      <div>
-                        <label>Tên người đăng</label>
-                        <Input placeholder="Nhập tên "  value={dataSave?.author} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
+                    </div>
+                    <div>
+                      <label>Tên người đăng</label>
+                      <Input placeholder="Nhập tên " value={dataSave?.author} onChange={(e: any) => {
+                        setDataSave((preValue: any) => {
+                          return {
                             ...preValue,
                             author: e.target.value
                           }
-                        })}}/>
-                      </div>
-
-                      <DialogFooter >
-                        <DialogClose asChild>
-
-                          <Button type="button"  >
-                            Hủy
-                          </Button>
-                        </DialogClose>
-                        <DialogClose asChild>
-
-                          <Button type="submit" className="bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
-                            Lưu
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-
-
+                        })
+                      }} />
                     </div>
-                  </DialogContent>
 
-                </Dialog>
+                    <DialogFooter >
+                      <DialogClose asChild>
+
+                        <Button type="button"  >
+                          Hủy
+                        </Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+
+                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
+                          Lưu
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+
+
+                  </div>
+                </DialogContent>
+
+              </Dialog>
               {/* )} */}
-         
+
 
 
             </div>
@@ -493,7 +537,7 @@ const [categories,setCategories] = useState<any>([
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredArticles.map((doc:any) => (
+            {currentTopic.map((doc: any) => (
               <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -510,7 +554,7 @@ const [categories,setCategories] = useState<any>([
                       >
                         {doc?.category?.name}
                       </Badge>
-                      
+
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
                         {doc.author}
@@ -529,54 +573,54 @@ const [categories,setCategories] = useState<any>([
                     <Eye className="h-4 w-4" />
                   </Button> */}
                   {/* {selectedDocType === "report" && ( */}
-                    <Dialog >
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
+                  <Dialog >
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
 
-                      <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
+                    <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
 
-                        <DialogHeader >
-                          <DialogTitle> Xem CCHC & Chuyển đổi số</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <label>Tiêu đề *</label>
-                            <Input placeholder="xem tiêu đề " disabled value={doc?.title}/>
-                          </div>
+                      <DialogHeader >
+                        <DialogTitle> Xem CCHC & Chuyển đổi số</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <label>Tiêu đề *</label>
+                          <Input placeholder="xem tiêu đề " disabled value={doc?.title} />
+                        </div>
 
-                          <div>
-                            <label>Mô tả *</label>
-                            {/* <Textarea
+                        <div>
+                          <label>Mô tả *</label>
+                          {/* <Textarea
                               id="description"
                               placeholder="Xem mô tả "
                               rows={10}
                               disabled /> */}
-                              {/* <div dangerouslySetInnerHTML={{__html:}}/> */}
-                            <div className="body-image-with-caption" dangerouslySetInnerHTML={{__html:doc?.excerpt}}/>
-                          </div>
-                          <div>
-                            <label>Loại bài viết</label>
-                            <Select disabled value={doc?.category?.id}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Chọn loại bài viết" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                 {
-                              categories.map((item:any)=>{
-                                return(
-                                  <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                                )
-                              })
-                            }
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <label>Thuộc lĩnh vực</label>
-                            {/* <div className="flex items-center gap-2 mt-1">
+                          {/* <div dangerouslySetInnerHTML={{__html:}}/> */}
+                          <div className="body-image-with-caption" dangerouslySetInnerHTML={{ __html: doc?.excerpt }} />
+                        </div>
+                        <div>
+                          <label>Loại bài viết</label>
+                          <Select disabled value={doc?.category?.id}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Chọn loại bài viết" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {
+                                categories.map((item: any) => {
+                                  return (
+                                    <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                                  )
+                                })
+                              }
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label>Thuộc lĩnh vực</label>
+                          {/* <div className="flex items-center gap-2 mt-1">
                               <Input
                                 className="w-60"
                                 placeholder="Xem"
@@ -589,10 +633,171 @@ const [categories,setCategories] = useState<any>([
                               </Button>
                             </div> */}
 
+                          {/* Hiển thị các lĩnh vực đã nhập */}
+                          {doc?.tags?.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {doc?.tags?.map((field: any, index: number) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                                >
+                                  <span>{field}</span>
+                                  <button
+                                    onClick={() => {
+                                      const updated = fields.filter((_, i) => i !== index)
+                                      setFields(updated)
+                                    }}
+                                    className="ml-2 text-red-500 hover:text-red-700"
+                                    aria-label={`Xoá ${field}`}
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                        </div>
+                        <div>
+                          <label>Tên người đăng</label>
+                          <Input placeholder="Nhập tên " value={doc?.author} disabled />
+                        </div>
+
+
+
+
+                      </div>
+                    </DialogContent>
+
+                  </Dialog>
+                  {/* )} */}
+
+
+
+
+                  <div className="text-right">
+                    {/* {selectedDocType === "report" && ( */}
+                    <Dialog >
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" onClick={() => {
+                          setDataSave({ ...dataSave, category: doc?.category?.id })
+                          setFields(doc?.tags)
+                        }}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+
+                      <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
+
+                        <DialogHeader >
+                          <DialogTitle>Cập nhật CCHC & Chuyển đổi số</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <label>Tiêu đề *</label>
+                            <Input defaultValue={doc?.title} onChange={(e: any) => {
+                              setDataSave((preValue: any) => {
+                                return {
+                                  ...preValue,
+                                  title: e.target.value
+                                }
+                              })
+                            }} placeholder="Nhập tiêu đề " />
+                          </div>
+
+                          <div>
+                            <label>Mô tả *</label>
+                            {/* <Textarea
+                          id="excerpt"
+                          placeholder="Nhập mô tả "
+                          value={dataSave?.excerpt}
+                          onChange={(e:any)=>{setDataSave((preValue:any)=>{
+                            return{
+                              ...preValue,
+                              excerpt: e.target.value
+                            }
+                          })}}
+                          rows={10}
+                        /> */}
+                            <SimpleEditor content={doc?.excerpt} onChange={(e: any) => {
+                              setDataSave((preValue: any) => {
+                                return {
+                                  ...preValue,
+                                  excerpt: e
+                                }
+                              })
+                            }} />
+                          </div>
+                          <div>
+                            <label>Loại bài viết</label>
+                            <Select
+                              defaultValue={doc?.category?.id}
+                              onValueChange={(value: any) => {
+                                setDataSave((preValue: any) => {
+                                  return {
+                                    ...preValue,
+                                    category: value
+                                  }
+                                })
+                              }}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Chọn loại bài viết" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {
+                                  categories.map((item: any) => {
+                                    return (
+                                      <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                                    )
+                                  })
+                                }
+                                {/* <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
+                            <SelectItem value="truyen-thong">Truyền Thông</SelectItem>
+                            <SelectItem value="van-hoa">Văn hóa</SelectItem> */}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <label>Thời gian đăng</label>
+                            <Input defaultValue={doc?.date} onChange={(e: any) => {
+                              setDataSave((preValue: any) => {
+                                return {
+                                  ...preValue,
+                                  date: e.target.value
+                                }
+                              })
+                            }} placeholder="Nhập tiêu đề " />
+                          </div>
+                          <div>
+                            <label>Thời gian đọc</label>
+                            <Input defaultValue={doc?.readTime} onChange={(e: any) => {
+                              setDataSave((preValue: any) => {
+                                return {
+                                  ...preValue,
+                                  readTime: e.target.value
+                                }
+                              })
+                            }} placeholder="Nhập tiêu đề " />
+                          </div>
+                          <div>
+                            <label>Thuộc lĩnh vực</label>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Input
+                                className="w-60"
+                                placeholder="Nhập"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleAddField()}
+                              />
+                              <Button type="button" onClick={handleAddField}>
+                                Nhập
+                              </Button>
+                            </div>
+
                             {/* Hiển thị các lĩnh vực đã nhập */}
-                            {doc?.tags?.length > 0 && (
+                            {fields.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-3">
-                                {doc?.tags?.map((field:any, index:number) => (
+                                {fields.map((field, index) => (
                                   <div
                                     key={index}
                                     className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
@@ -614,191 +819,40 @@ const [categories,setCategories] = useState<any>([
                             )}
 
                           </div>
-                      <div>
-                        <label>Tên người đăng</label>
-                        <Input placeholder="Nhập tên "  value={doc?.author} disabled/>
-                      </div>
+                          <div>
+                            <label>Tên người đăng</label>
+                            <Input placeholder="Nhập tên " defaultValue={doc?.author} onChange={(e: any) => {
+                              setDataSave((preValue: any) => {
+                                return {
+                                  ...preValue,
+                                  author: e.target.value
+                                }
+                              })
+                            }} />
+                          </div>
 
+                          <DialogFooter >
+                            <DialogClose asChild>
 
+                              <Button type="button"  >
+                                Hủy
+                              </Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+
+                              <Button type="submit" className="bg-blue-600 hover:bg-blue-700" onClick={() => {
+                                handleSubmitUp(doc?.id)
+                              }}>
+                                Lưu
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
 
 
                         </div>
                       </DialogContent>
 
                     </Dialog>
-                  {/* )} */}
-                 
-
-
-
-                  <div className="text-right">
-                    {/* {selectedDocType === "report" && ( */}
-                      <Dialog >
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" onClick={()=>{
-                            setDataSave({...dataSave,category:doc?.category?.id})
-                            setFields(doc?.tags)
-                          }}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-
-                        <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
-
-                          <DialogHeader >
-                            <DialogTitle>Cập nhật CCHC & Chuyển đổi số</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <div>
-                        <label>Tiêu đề *</label>
-                        <Input defaultValue={doc?.title} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
-                            ...preValue,
-                            title: e.target.value
-                          }
-                        })}} placeholder="Nhập tiêu đề " />
-                      </div>
-
-                      <div>
-                        <label>Mô tả *</label>
-                        {/* <Textarea
-                          id="excerpt"
-                          placeholder="Nhập mô tả "
-                          value={dataSave?.excerpt}
-                          onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                            return{
-                              ...preValue,
-                              excerpt: e.target.value
-                            }
-                          })}}
-                          rows={10}
-                        /> */}
-                        <SimpleEditor content={doc?.excerpt} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                            return{
-                              ...preValue,
-                              excerpt: e
-                            }
-                          })}}/>
-                      </div>
-                       <div>
-                        <label>Loại bài viết</label>
-                        <Select 
-                        defaultValue={doc?.category?.id}
-                        onValueChange={(value:any)=>{
-                          setDataSave((preValue:any)=>{
-                            return{
-                              ...preValue,
-                              category: value
-                            }
-                          })
-                        }}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại bài viết" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {
-                              categories.map((item:any)=>{
-                                return(
-                                  <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                                )
-                              })
-                            }
-                            {/* <SelectItem value="giao-duc-chinh-tri">Giáo dục chính trị</SelectItem>
-                            <SelectItem value="truyen-thong">Truyền Thông</SelectItem>
-                            <SelectItem value="van-hoa">Văn hóa</SelectItem> */}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                     <div>
-                        <label>Thời gian đăng</label>
-                        <Input defaultValue={doc?.date} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
-                            ...preValue,
-                            date: e.target.value
-                          }
-                        })}} placeholder="Nhập tiêu đề " />
-                      </div>
-                      <div>
-                        <label>Thời gian đọc</label>
-                        <Input defaultValue={doc?.readTime} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
-                            ...preValue,
-                            readTime: e.target.value
-                          }
-                        })}} placeholder="Nhập tiêu đề " />
-                      </div>
-                      <div>
-                        <label>Thuộc lĩnh vực</label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Input
-                            className="w-60"
-                            placeholder="Nhập"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                          />
-                          <Button type="button" onClick={handleAddField}>
-                            Nhập
-                          </Button>
-                        </div>
-
-                        {/* Hiển thị các lĩnh vực đã nhập */}
-                        {fields.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {fields.map((field, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                              >
-                                <span>{field}</span>
-                                <button
-                                  onClick={() => {
-                                    const updated = fields.filter((_, i) => i !== index)
-                                    setFields(updated)
-                                  }}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  aria-label={`Xoá ${field}`}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                      </div>
-                      <div>
-                        <label>Tên người đăng</label>
-                        <Input placeholder="Nhập tên "  defaultValue={doc?.author} onChange={(e:any)=>{setDataSave((preValue:any)=>{
-                          return{
-                            ...preValue,
-                            author: e.target.value
-                          }
-                        })}}/>
-                      </div>
-
-                            <DialogFooter >
-                              <DialogClose asChild>
-
-                                <Button type="button"  >
-                                  Hủy
-                                </Button>
-                              </DialogClose>
-                              <DialogClose asChild>
-
-                                <Button type="submit" className="bg-blue-600 hover:bg-blue-700" onClick={()=>{
-                                  handleSubmitUp(doc?.id)
-                                }}>
-                                  Lưu
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-
-
-                          </div>
-                        </DialogContent>
-
-                      </Dialog>
                     {/* )} */}
                     {selectedDocType === "directive" && (
                       <Dialog >
@@ -1132,9 +1186,55 @@ const [categories,setCategories] = useState<any>([
                 </div>
               </div>
             ))}
-             
+
           </div>
         </CardContent>
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+          >
+            Trước
+          </Button>
+
+          {/* Nút ... lùi cụm */}
+          {startPage > 1 && (
+            <Button variant="outline" onClick={handlePrevGroup}>
+              ...
+            </Button>
+          )}
+
+          {/* Các trang trong nhóm hiện tại */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const page = startPage + i;
+            return (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                onClick={() => setCurrentPage(page)}
+                className={page === currentPage ? "font-bold" : ""}
+              >
+                {page}
+              </Button>
+            );
+          })}
+
+          {/* Nút ... tiến cụm */}
+          {endPage < totalPages && (
+            <Button variant="outline" onClick={handleNextGroup}>
+              ...
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+          >
+            Tiếp
+          </Button>
+        </div>
       </Card>
     </div>
   )
