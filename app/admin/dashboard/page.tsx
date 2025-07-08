@@ -18,21 +18,25 @@ import { tracksService } from "@/services/tracks.service"
 import { videosService } from "@/services/videos.service"
 import { imagesService } from "@/services/images.service"
 import { DialogClose } from "@radix-ui/react-dialog"
+import { newsService } from "@/services/news.service"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store/store"
 
 export default function AdminDashboard() {
-  const statss = [
-    { title: "Tổng bài viết", value: "156", icon: FileText, color: "text-blue-600" },
-    { title: "Hình ảnh", value: "342", icon: ImageIcon, color: "text-green-600" },
-    { title: "Video", value: "28", icon: Video, color: "text-purple-600" },
-    { title: "Lượt truy cập", value: "12,543", icon: Eye, color: "text-orange-600" },
-  ]
-
+ 
+ const { datas: dataProfile } = useSelector(
+        (state: RootState) => state.get_profile
+      );
   const recentActivities = [
     { action: "Thêm bài viết mới", item: "Hội nghị tổng kết 2024", time: "2 giờ trước" },
     { action: "Cập nhật hình ảnh", item: "Album diễn tập", time: "4 giờ trước" },
     { action: "Phê duyệt văn bản", item: "Chỉ thị số 01/CT-F375", time: "6 giờ trước" },
     { action: "Thêm phần mềm", item: "Quản lý văn bản v2.1", time: "1 ngày trước" },
   ]
+
+  const [news,setNews] = useState<any>([])
+
+
   const [searchTerm, setSearchTerm] = useState("")
     const [selectedType, setSelectedType] = useState("all")
     const [viewMode, setViewMode] = useState("grid")
@@ -114,7 +118,6 @@ export default function AdminDashboard() {
       setSelectedFileVideo(null);
     };
     useEffect(() => {
-      console.log("vao ne")
       fetchDataNews()
       fetchData()
       fetchDataSoftwares()
@@ -125,12 +128,16 @@ export default function AdminDashboard() {
   
     const fetchData = async () => {
       const res = await imagesService.getCategories()
+      const resNews = await newsService.getNews()
       const res2 = await softwareService.getPlatforms()
       const res3 = await videosService.getCategories()
       const res4 = await softwareService.getCategories()
       const res5 = await tracksService.getCategories()
       if (res.statusCode === 200) {
         setCategory(res.data)
+      }
+      if (resNews.statusCode === 200) {
+        setNews(resNews.data)
       }
       if (res2.statusCode === 200) {
         setPlatform(res2.data)
@@ -225,7 +232,18 @@ export default function AdminDashboard() {
   setSelectedDocType(value);
 };
 
-useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
+ const statss = [
+    { title: "Tổng bài viết", value: news.length, icon: FileText, color: "text-blue-600" },
+    { title: "Hình ảnh", value: images.length, icon: ImageIcon, color: "text-green-600" },
+    { title: "Video", value: videos.length, icon: Video, color: "text-purple-600" },
+    { title: "Lượt truy cập", value: news?.reduce((pre:any,curr:any)=>{
+      return pre + curr?.views
+    },0) + images?.reduce((pre:any,curr:any)=>{
+      return pre + curr?.views
+    },0) + videos?.reduce((pre:any,curr:any)=>{
+      return pre + curr?.views
+    },0), icon: Eye, color: "text-orange-600" },
+  ]
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -233,7 +251,7 @@ useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
         <div className="px-6 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">Bảng điều khiển Admin</h1>
           <div className="flex items-center space-x-4">
-            <button>
+            {/* <button>
               <div
                 onClick={(e) => {
 
@@ -245,7 +263,7 @@ useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
                 <Settings className="h-4 w-4 mr-2" />
                 Cài Đặt
               </div>
-            </button>
+            </button> */}
             <button>
               <div
                 onClick={(e) => {
@@ -295,19 +313,19 @@ useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
              <Dialog>
           <DialogTrigger asChild>
             <div className="grid grid-cols-2 gap-4 mb-4">
-                <Button onClick={() => handleTypeClick("image")} variant="outline" className="h-20 flex-col"  value="image">
+                <Button onClick={() => handleTypeClick("image")} variant="outline" className="h-20 flex-col"  value="image" disabled={dataProfile?.role === "user"}>
                   <FileText className="h-6 w-6 mb-2" />
                   Thêm Hình Ảnh
                 </Button>
-                <Button onClick={() => handleTypeClick("video")} variant="outline" className="h-20 flex-col"  value="video">
+                <Button onClick={() => handleTypeClick("video")} variant="outline" className="h-20 flex-col"  value="video" disabled={dataProfile?.role === "user"}>
                   <ImageIcon className="h-6 w-6 mb-2" />
                   Tải Video
                 </Button>
-                <Button onClick={() => handleTypeClick("audio")} variant="outline" className="h-20 flex-col"  value="audio">
+                <Button onClick={() => handleTypeClick("audio")} variant="outline" className="h-20 flex-col"  value="audio" disabled={dataProfile?.role === "user"}>
                   <Video className="h-6 w-6 mb-2" />
                   Thêm Audio
                 </Button>
-                <Button onClick={() => handleTypeClick("software")} variant="outline" className="h-20 flex-col" value="software">
+                <Button onClick={() => handleTypeClick("software")} variant="outline" className="h-20 flex-col" value="software" disabled={dataProfile?.role === "user"}>
 
                   <Download className="h-6 w-6 mb-2" />
                   Quản lý file

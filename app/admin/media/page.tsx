@@ -744,6 +744,30 @@ export default function AdminMediaPage() {
                         })} />
                     </div>
                     <div>
+                      <label className="block text-sm font-medium mb-1">Thiết bị khả dụng</label>
+                      <Input placeholder="Nhập điều kiện thiết bị"
+                        defaultValue={dataSave?.requirements}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, requirements: e.target.value }
+                        })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Nhà phát triển</label>
+                      <Input placeholder="Nhập nhà phát triển"
+                        defaultValue={dataSave?.developer}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, developer: e.target.value }
+                        })} />
+                    </div>
+                     <div>
+                      <label className="block text-sm font-medium mb-1">Giấy phép</label>
+                      <Input placeholder="Nhập giấy phép"
+                        defaultValue={dataSave?.license}
+                        onChange={(e) => setDataSave((preValue: any) => {
+                          return { ...preValue, license: e.target.value }
+                        })} />
+                    </div>
+                    <div>
                       <label className="block text-sm font-medium mb-1">Loại phần mềm</label>
                       <Select onValueChange={(e) => {
                         setDataSave((preValue: any) => {

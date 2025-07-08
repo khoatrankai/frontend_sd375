@@ -24,7 +24,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const menuItems = [
      { href: "/admin/dashboard", icon: Home, label: "Tổng quan" ,hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true},
-    { href: "/admin/introduce", icon: Info, label: "Giới thiệu",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
+    { href: "/admin/introduce", icon: Info, label: "Góp ý",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/posts", icon: FileText, label: "Bảng tin",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/media", icon: ImageIcon, label: "Thư viện",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/topic", icon: ImageIcon, label: "Chuyên đề",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
