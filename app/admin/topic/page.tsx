@@ -13,8 +13,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { usePathname } from "next/navigation"
 import { articlesService } from "@/services/articles.service"
 import { SimpleEditor } from "@/components/tiptap/tiptap-templates/simple/simple-editor"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store/store"
 
 export default function AdminDocumentsPage() {
+  const { datas: dataProfile } = useSelector(
+      (state: RootState) => state.get_profile
+    );
   const [searchTerm, setSearchTerm] = useState("")
   const [dataSave, setDataSave] = useState<any>({})
   const [selectedType, setSelectedType] = useState("all")
@@ -355,6 +360,7 @@ export default function AdminDocumentsPage() {
                       setDataSave({})
                       setFields([])
                     }}
+                    disabled={dataProfile?.role === "user"}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     {
@@ -682,7 +688,9 @@ export default function AdminDocumentsPage() {
                         <Button variant="outline" size="sm" onClick={() => {
                           setDataSave({ ...dataSave, category: doc?.category?.id })
                           setFields(doc?.tags)
-                        }}>
+                        }}
+                        disabled={dataProfile?.role === "user"}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
@@ -857,7 +865,7 @@ export default function AdminDocumentsPage() {
                     {selectedDocType === "directive" && (
                       <Dialog >
                         <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" >
+                          <Button variant="outline" size="sm" disabled={dataProfile?.role === "user"}>
                             <Edit className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -963,7 +971,7 @@ export default function AdminDocumentsPage() {
                     {selectedDocType === "notice" && (
                       <Dialog >
                         <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" >
+                          <Button variant="outline" size="sm"  disabled={dataProfile?.role === "user"}>
                             <Edit className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -1069,7 +1077,7 @@ export default function AdminDocumentsPage() {
                     {selectedDocType === "plan" && (
                       <Dialog >
                         <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" >
+                          <Button variant="outline" size="sm"  disabled={dataProfile?.role === "user"}>
                             <Edit className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
