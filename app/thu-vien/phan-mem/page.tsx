@@ -51,105 +51,51 @@ export default function SoftwarePage() {
       developer: "Trạm CNTT F375",
       license: "Miễn phí",
     },
-    {
-      id: 2,
-      name: "Ứng dụng tra cứu quy định",
-      description: "Tra cứu nhanh các quy định, thông tư, nghị định của Bộ Quốc phòng và các cơ quan",
-      version: "1.5.3",
-      size: "12.8 MB",
-      date: "10/12/2024",
-      downloads: 156,
-      rating: 4.6,
-      category: "utility",
-      categoryName: "Tiện ích",
-      platform: "android",
-      platformName: "Android",
-      featured: true,
-      requirements: "Android 6.0+, 50MB ổ cứng",
-      developer: "Phòng Pháp chế",
-      license: "Miễn phí",
-    },
-    {
-      id: 3,
-      name: "Phần mềm báo cáo tự động",
-      description: "Tự động hóa việc tạo và gửi báo cáo định kỳ, tích hợp với hệ thống quản lý",
-      version: "3.0.1",
-      size: "28.5 MB",
-      date: "08/12/2024",
-      downloads: 89,
-      rating: 4.5,
-      category: "management",
-      categoryName: "Quản lý",
-      platform: "web",
-      platformName: "Web App",
-      featured: false,
-      requirements: "Trình duyệt hiện đại, kết nối internet",
-      developer: "Phòng Tham mưu",
-      license: "Nội bộ",
-    },
-    {
-      id: 4,
-      name: "Hệ thống bảo mật mạng F375",
-      description: "Giải pháp bảo mật toàn diện cho mạng nội bộ, chống virus và malware",
-      version: "2.3.0",
-      size: "156.7 MB",
-      date: "05/12/2024",
-      downloads: 67,
-      rating: 4.9,
-      category: "security",
-      categoryName: "Bảo mật",
-      platform: "windows",
-      platformName: "Windows",
-      featured: false,
-      requirements: "Windows Server 2016+, 8GB RAM",
-      developer: "Phòng An toàn thông tin",
-      license: "Có phí",
-    },
-    {
-      id: 5,
-      name: "Cơ sở dữ liệu nhân sự",
-      description: "Quản lý thông tin nhân sự, lương bổng, khen thưởng và kỷ luật",
-      version: "1.8.2",
-      size: "67.3 MB",
-      date: "03/12/2024",
-      downloads: 45,
-      rating: 4.4,
-      category: "database",
-      categoryName: "Cơ sở dữ liệu",
-      platform: "cross",
-      platformName: "Đa nền tảng",
-      featured: false,
-      requirements: "MySQL 8.0+, PHP 7.4+",
-      developer: "Phòng Tổ chức cán bộ",
-      license: "Nội bộ",
-    },
-    {
-      id: 6,
-      name: "Ứng dụng thời tiết quân sự",
-      description: "Dự báo thời tiết chuyên dụng cho hoạt động quân sự và huấn luyện",
-      version: "1.2.1",
-      size: "23.4 MB",
-      date: "01/12/2024",
-      downloads: 123,
-      rating: 4.3,
-      category: "utility",
-      categoryName: "Tiện ích",
-      platform: "android",
-      platformName: "Android",
-      featured: false,
-      requirements: "Android 7.0+, GPS, Internet",
-      developer: "Phòng Khí tượng",
-      license: "Miễn phí",
-    },
+    
   ])
+  const [filteredSoftware,setFilteredSoftware] = useState<any>([])
 
+
+
+
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currenData = filteredSoftware.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredSoftware.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
  
   
 
 
   
 
-  const [filteredSoftware,setFilteredSoftware] = useState<any>([])
   // software.filter((item) => {
   //   const matchesSearch =
   //     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -414,10 +360,57 @@ useEffect(() => {
                   Tải xuống
                 </Button>
               </CardContent>
+              
             </Card>
           ))}
         </div>
       </section>
+       <div className="flex justify-center items-center gap-2 mt-4">
+                <Button
+                  variant="outline"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  Trước
+                </Button>
+      
+                {/* Nút ... lùi cụm */}
+                {startPage > 1 && (
+                  <Button variant="outline" onClick={handlePrevGroup}>
+                    ...
+                  </Button>
+                )}
+      
+                {/* Các trang trong nhóm hiện tại */}
+                {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                  const page = startPage + i;
+                  return (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "default" : "outline"}
+                      onClick={() => setCurrentPage(page)}
+                      className={page === currentPage ? "font-bold" : ""}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+      
+                {/* Nút ... tiến cụm */}
+                {endPage < totalPages && (
+                  <Button variant="outline" onClick={handleNextGroup}>
+                    ...
+                  </Button>
+                )}
+      
+                <Button
+                  variant="outline"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Tiếp
+                </Button>
+              </div>
 
       {/* No Results */}
       {filteredSoftware.length === 0 && (

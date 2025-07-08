@@ -12,17 +12,46 @@ export default function ImagesPage() {
   const [viewMode, setViewMode] = useState("grid")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [categories, setCategories] = useState<any>([])
+  const [images, setImages] = useState<any>([])
+  const [filteredImages, setFilteredImage] = useState<any>([])
+
+
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 8;
+
+  // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const [images, setImages] = useState<any>([])
-  const currentImages = images.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(images.length / itemsPerPage);
+  const currenData = filteredImages.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredImages.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
 
 
-  const [filteredImages, setFilteredImage] = useState<any>([])
+
+
   // selectedCategory === "all" ? images : images.filter((img:any) => img.category.nametag === selectedCategory)
 
 
@@ -100,7 +129,7 @@ export default function ImagesPage() {
           viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-4"
         }
       >
-        {currentImages.map((image: any) => (
+        {currenData.map((image: any) => (
           <Card key={image.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
             <div className="relative">
 
@@ -123,34 +152,50 @@ export default function ImagesPage() {
       </div>
 
       {/* Load More */}
-      <div className="flex justify-center items-center gap-4 mt-6">
+      <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           variant="outline"
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(prev => prev - 1)}
         >
-          Trang trước
+          Trước
         </Button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={page === currentPage ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentPage(page)}
-            className={page === currentPage ? "font-bold" : ""}
-          >
-            {page}
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
           </Button>
-        ))}
+        )}
 
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
 
         <Button
           variant="outline"
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(prev => prev + 1)}
         >
-          Trang tiếp
+          Tiếp
         </Button>
       </div>
 
