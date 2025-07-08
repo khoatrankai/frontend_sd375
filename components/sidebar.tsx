@@ -61,7 +61,7 @@ export default function Sidebar() {
       //   setTranslateY(140)
       // }
       setTranslateY((prev)=>{
-        if(prev<-(newsFilter.length * 140 + 50)){
+        if(prev<-(newsFilter.length * 140 + 50 + 256)){
           return 260
         }
         return prev - 1

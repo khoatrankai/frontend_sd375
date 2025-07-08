@@ -13,25 +13,10 @@ export default function AudioPage() {
   const [currentTrack, setCurrentTrack] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
-  //phân trang
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const [tracks, setTracks] = useState<any>([])
-  const currentTracks = tracks.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(tracks.length / itemsPerPage);
 
-  // //điều hướng trang
-  // const itemsPerPage2 = 2; // Số card mỗi slide
-  // const [pageIndex2, setPageIndex2] = useState(0);
 
-  // const totalPages2 = Math.ceil(featuredTracks.length / itemsPerPage2);
-  // const pagedTracks2 = featuredTracks.slice(
-  //   pageIndex2 * itemsPerPage2,
-  //   (pageIndex2 + 1) * itemsPerPage2
-  // );
- 
+
   const [categories, setCategories] = useState<any>([
   ])
 
@@ -54,13 +39,51 @@ export default function AudioPage() {
     setFeaturedTracks(filteredTracks.filter((track: any) => track.featured))
     setRegularTracks(filteredTracks.filter((track: any) => !track.featured))
   }, [filteredTracks])
+
+
+
+
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTracks = filteredTracks.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredTracks.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+
+
   useEffect(() => {
-    console.log(featuredTracks,regularTracks)
-   
-  }, [featuredTracks,regularTracks])
-  useEffect(()=>{
+    console.log(featuredTracks, regularTracks)
+
+  }, [featuredTracks, regularTracks])
+  useEffect(() => {
     setCurrentTrack(0)
-  },[currentPage])
+  }, [currentPage])
 
   useEffect(() => {
     setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track: any) => track.category.nametag === selectedCategory))
@@ -92,33 +115,33 @@ export default function AudioPage() {
     // if(currentTrack === totalPages -1){
     //   setCurrentTrack(1)
     // }else{
-    if(currentTrack === itemsPerPage - 1){
-      if(currentPage === totalPages){
+    if (currentTrack === itemsPerPage - 1) {
+      if (currentPage === totalPages) {
         setCurrentPage(1)
-      }else{
-        setCurrentPage((preValue)=>{
+      } else {
+        setCurrentPage((preValue) => {
           return preValue + 1
         })
       }
-    }else{
-    setCurrentTrack((prev) => (prev + 1) % currentTracks.length)
+    } else {
+      setCurrentTrack((prev) => (prev + 1) % currentTracks.length)
 
     }
     // }
   }
 
   const prevTrack = () => {
-    
-    if(currentTrack === 0){
-      if(currentPage === 1){
+
+    if (currentTrack === 0) {
+      if (currentPage === 1) {
         setCurrentPage(totalPages)
-      }else{
-        setCurrentPage((preValue)=>{
+      } else {
+        setCurrentPage((preValue) => {
           return preValue - 1
         })
       }
-    }else{
-    setCurrentTrack((prev) => (prev - 1 + currentTracks.length) % currentTracks.length)
+    } else {
+      setCurrentTrack((prev) => (prev - 1 + currentTracks.length) % currentTracks.length)
 
     }
   }
@@ -129,7 +152,7 @@ export default function AudioPage() {
     handleReset()
     // setIsPlaying(true)
   }
-  
+
 
 
 
@@ -254,8 +277,8 @@ export default function AudioPage() {
                       className={`w-full md:w-[300px] cursor-pointer transition-all hover:shadow-lg ${index === currentTrack ? "bg-red-50 border border-red-200" : "hover:bg-gray-50"
                         }`}
                       onClick={() => {
-                        setCurrentTrack(index); 
-                        setIsPlaying(true);           
+                        setCurrentTrack(index);
+                        setIsPlaying(true);
                       }}
 
                     >
@@ -265,7 +288,7 @@ export default function AudioPage() {
                             className={`w-12 h-12 rounded-full flex items-center justify-center ${index === currentTrack ? "bg-red-600 text-white" : "bg-gray-200"
                               }`}
                           >
-                             {index === currentTrack && isPlaying ? (
+                            {index === currentTrack && isPlaying ? (
                               <Pause className="h-4 w-4" />
                             ) : (
                               <Play className="h-4 w-4" />
@@ -290,7 +313,7 @@ export default function AudioPage() {
                   ))}
                 </div>
 
-                
+
               </div>
 
             </section>
@@ -301,7 +324,7 @@ export default function AudioPage() {
             <section>
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Danh sách phát</h2>
               <Card>
-                
+
                 <CardContent>
                   <div className="space-y-2">
                     {currentTracks?.map((track: any, index: number) => (
@@ -337,7 +360,7 @@ export default function AudioPage() {
                   </div>
                 </CardContent>
               </Card>
-              <div className="flex justify-center items-center gap-4 mt-6">
+              <div className="flex justify-center items-center gap-2 mt-4">
                 <Button
                   variant="outline"
                   disabled={currentPage === 1}
@@ -346,18 +369,34 @@ export default function AudioPage() {
                   Trước
                 </Button>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={page === currentPage ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className={page === currentPage ? "font-bold" : ""}
-                  >
-                    {page}
+                {/* Nút ... lùi cụm */}
+                {startPage > 1 && (
+                  <Button variant="outline" onClick={handlePrevGroup}>
+                    ...
                   </Button>
-                ))}
+                )}
 
+                {/* Các trang trong nhóm hiện tại */}
+                {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                  const page = startPage + i;
+                  return (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "default" : "outline"}
+                      onClick={() => setCurrentPage(page)}
+                      className={page === currentPage ? "font-bold" : ""}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+
+                {/* Nút ... tiến cụm */}
+                {endPage < totalPages && (
+                  <Button variant="outline" onClick={handleNextGroup}>
+                    ...
+                  </Button>
+                )}
 
                 <Button
                   variant="outline"

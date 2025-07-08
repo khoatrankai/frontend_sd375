@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
 
 export default function NewsPage() {
@@ -18,11 +18,6 @@ export default function NewsPage() {
     { id: "quan_su", name: "Quân sự" },
     { id: "hoat_dong_su_doan", name: "Hoạt động Sư đoàn" },
   ])
-   //phân trang
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4  ;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const [news, setNews] = useState([
     {
       "id": "abc",
@@ -40,10 +35,51 @@ export default function NewsPage() {
       "featured": true
     }
   ])
-  // const [news, setNews] = useState<any>([])
-  const currentNews = news.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(news.length / itemsPerPage);
+  const filteredNew = news.filter((dt: any) => {
+  if (activeType === "all") {
+    return dt?.featured === false;
+  } else {
+    return true;
+  }
+});
   
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentNew = filteredNew.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredNew.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+  
+
+
+
+
 
 
   const [filteredNews, setFilteredNews] = useState([])
@@ -58,7 +94,7 @@ export default function NewsPage() {
     console.log(res)
     if (res.statusCode === 200) {
       setNews(res.data)
- 
+
     }
   }
 
@@ -78,9 +114,9 @@ export default function NewsPage() {
   }, [])
   const router = useRouter();
 
-const loadDetail = async (id: string | number) => {
-  router.push(`/tin-tuc/${id}`); 
-};
+  const loadDetail = async (id: string | number) => {
+    router.push(`/tin-tuc/${id}`);
+  };
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -155,7 +191,7 @@ const loadDetail = async (id: string | number) => {
           {activeType === "all" ? "Tin tức khác" : types.find((c) => c.id === activeType)?.name}
         </h2>
         <div className="space-y-6">
-          {currentNews.filter((dt: any) => {
+          {currentNew.filter((dt: any) => {
             if (activeType === "all") {
               return dt?.featured === false
             } else {
@@ -211,34 +247,50 @@ const loadDetail = async (id: string | number) => {
       </section>
 
       {/* Load More */}
-      <div className="flex justify-center items-center gap-4 mt-6">
+      <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           variant="outline"
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(prev => prev - 1)}
         >
-          Trang trước
+          Trước
         </Button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={page === currentPage ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentPage(page)}
-            className={page === currentPage ? "font-bold" : ""}
-          >
-            {page}
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
           </Button>
-        ))}
+        )}
 
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
 
         <Button
           variant="outline"
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(prev => prev + 1)}
         >
-          Trang tiếp
+          Tiếp
         </Button>
       </div>
     </div>

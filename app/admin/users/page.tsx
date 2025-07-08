@@ -114,7 +114,7 @@ export default function AdminUsersPage() {
     { label: "Tổng người dùng", value: users.length, color: "text-blue-600" },
     { label: "Đang hoạt động", value: users?.filter((dt:any)=>dt.activity).length, color: "text-green-600" },
     { label: "Quản trị viên", value: users?.filter((dt:any)=>dt.type === "admin").length, color: "text-purple-600" },
-    { label: "Chờ kích hoạt", value: users?.filter((dt:any)=>!dt.activity).length, color: "text-orange-600" },
+    // { label: "Chờ kích hoạt", value: users?.filter((dt:any)=>!dt.activity).length, color: "text-orange-600" },
   ]
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -468,7 +468,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
           <Card key={index}>
             <CardContent className="p-6">
@@ -585,11 +585,11 @@ export default function AdminUsersPage() {
                           roles.find((role: any) => role.id === user.role)?.name
                         }
                       </Badge>
-                      <Badge variant={user?.activity ? 'destructive' : 'secondary'}
+                      {/* <Badge variant={user?.activity ? 'destructive' : 'secondary'}
                       >
                         {user.activity ? 'Đang hoạt động' : 'Không hoạt động'
                         }
-                      </Badge>
+                      </Badge> */}
                     </div>
                     <div className="flex items-center text-xs text-gray-500">
                       <Calendar className="h-3 w-3 mr-1" />

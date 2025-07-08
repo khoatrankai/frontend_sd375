@@ -6,28 +6,54 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
 
 export default function DomesticNewsPage() {
- 
+
+  const [news, setNews] = useState<any>([])
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const [news, setNews] = useState<any>([])
-  const currentNews= news.slice(indexOfFirstItem, indexOfLastItem);
+  const currentNew = news.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
   const totalPages = Math.ceil(news.length / itemsPerPage);
 
-  
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+
+
+
 
   useEffect(() => {
     fetchData()
   }, [])
 
   const fetchData = async () => {
-    const res = await newsService.getPosts({ type: "trong_nuoc", page: currentPage, limit: 10 })
+    const res = await newsService.getPosts({ type: " ", page: currentPage, limit: 10 })
     if (res.statusCode === 200) {
       setNews(res.data)
       setCurrentPage(currentPage + 1)
@@ -37,9 +63,9 @@ export default function DomesticNewsPage() {
   }
   const router = useRouter();
 
-const loadDetail = async (id: string | number) => {
-  router.push(`/tin-tuc/${id}`); 
-};
+  const loadDetail = async (id: string | number) => {
+    router.push(`/tin-tuc/${id}`);
+  };
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -51,7 +77,7 @@ const loadDetail = async (id: string | number) => {
 
       {/* News List */}
       <div className="space-y-6">
-        {currentNews.map((item: any) => (
+        {currentNew?.map((item: any) => (
           <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row">
@@ -98,34 +124,50 @@ const loadDetail = async (id: string | number) => {
       </div>
 
       {/* Pagination */}
-     <div className="flex justify-center items-center gap-4 mt-6">
+      <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           variant="outline"
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(prev => prev - 1)}
         >
-          Trang trước
+          Trước
         </Button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={page === currentPage ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentPage(page)}
-            className={page === currentPage ? "font-bold" : ""}
-          >
-            {page}
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
           </Button>
-        ))}
+        )}
 
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
 
         <Button
           variant="outline"
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(prev => prev + 1)}
         >
-          Trang tiếp
+          Tiếp
         </Button>
       </div>
     </div>

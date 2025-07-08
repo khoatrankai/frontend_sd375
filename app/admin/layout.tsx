@@ -23,13 +23,14 @@ export default function AdminLayout({
   const [dataProfile,setDataProfile] = useState<any>()
   const pathname = usePathname();
   const menuItems = [
-    { href: "/admin/dashboard", icon: Home, label: "Tổng quan" ,hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true},
+     { href: "/admin/dashboard", icon: Home, label: "Tổng quan" ,hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true},
     { href: "/admin/introduce", icon: Info, label: "Giới thiệu",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/posts", icon: FileText, label: "Bảng tin",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/media", icon: ImageIcon, label: "Thư viện",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/topic", icon: ImageIcon, label: "Chuyên đề",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
     { href: "/admin/documents", icon: FileText, label: "Văn bản",hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true },
-    { href: "/admin/users", icon: Users, label: "Người dùng",hidden:['admin'].includes(dataProfile?.role)?false:true },
+    { href: "/admin/users", icon: Users, label: "Người dùng",hidden:['admin'].includes(dataProfile?.role)?false:true }, 
+    
     // { href: "/admin/settings", icon: Settings, label: "Cài đặt" },
   ]
   const checkLogin = async()=>{

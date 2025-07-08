@@ -9,7 +9,8 @@ import { usersService } from "@/services/users.service"
 import { Button, Input } from "antd"
 import { Shield, Award, Users, History, Phone, Mail,Star, Medal, Trophy, Send } from "lucide-react"
 import { useEffect, useState } from "react"
-import { toast } from "sonner"
+import { toast } from "react-toastify"
+// import { toast } from "sonner"
 export const userTypes = [
   { name: "Thiếu úy", value: "thieu_uy" },
   { name: "Trung úy", value: "trung_uy" },
@@ -159,22 +160,19 @@ export default function IntroductionPage() {
             {
               histories?.map((dt:any)=>{
                 if(dt?.highlight){
-                  return <>
-                   <div className="border-l-4 border-red-600 pl-4" key={dt?.id}>
+                  return <div className="border-l-4 border-red-600 pl-4" key={dt?.id}>
                   <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
                   <p className="text-gray-700">
                     {dt?.description}
                   </p>
                 </div>
-                  </>
                 }
-                  return <><div className="border-l-4 border-blue-600 pl-4"  key={dt?.id}>
+                  return <div className="border-l-4 border-blue-600 pl-4"  key={dt?.id}>
                    <h3 className="font-bold text-lg">{dt?.year}: {dt?.title}</h3>
                   <p className="text-gray-700">
                     {dt?.description}
                   </p>
                 </div>
-                  </>
               })
             }
             
@@ -196,7 +194,7 @@ export default function IntroductionPage() {
             
               {
                 awards?.map((dt:any) =>{
-                  return <div className="text-center p-4 border rounded-lg">
+                  return <div className="text-center p-4 border rounded-lg"  key={dt?.id}>
                     <Award className="h-12 w-12 mx-auto mb-2" style={{color:dt?.color}} />
                     <h4 className="font-bold">{dt?.name}</h4>
                     <p className="text-sm text-gray-600">Năm {dt?.year}</p>
@@ -225,8 +223,7 @@ export default function IntroductionPage() {
               <div className="space-y-3">
                 {
                   users?.map((dt:any) =>{
-                    return <>
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
+                    return <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded"  key={dt?.id}>
                   <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
                     {
                       dt?.avatar ? <img src={dt?.avatar} alt="" className="w-12 h-12 rounded-full" /> : <Users className="h-6 w-6 text-white" />
@@ -238,7 +235,6 @@ export default function IntroductionPage() {
                     <p className="text-sm text-gray-600">{dt?.position}</p>
                   </div>
                 </div>
-                    </>
                   })
                 }
                 
@@ -250,12 +246,11 @@ export default function IntroductionPage() {
               <div className="space-y-2 text-sm">
                 {
                   historyLeader?.map((dt:any)=>{
-                    return <>
-                      <div className="flex justify-between">
+                    return <div className="flex justify-between" key={dt?.id}>
                         <span>{dt?.period}:</span>
                         <span>Đại tá {dt?.name}</span>
                       </div>
-                    </>
+                    
                   })
                 }
                 

@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 // import { Inter } from "next/font/google"
 import localFont from "next/font/local"  
 import "./globals.css"
+import {ToastContainer} from 'react-toastify'
 // import Header from "@/components/header"
 // import Navigation from "@/components/navigation"
 // import Sidebar from "@/components/sidebar"
@@ -45,6 +46,7 @@ export default function RootLayout({
        <LayoutHeader>
         {children}
        </LayoutHeader>
+       <ToastContainer/>
       </body>
     </html>
       </DispatchProvider>

@@ -24,8 +24,8 @@ import { RootState } from "@/redux/store/store"
 
 export default function AdminMediaPage() {
   const { datas: dataProfile } = useSelector(
-      (state: RootState) => state.get_profile
-    );
+    (state: RootState) => state.get_profile
+  );
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [viewMode, setViewMode] = useState("grid")
@@ -52,7 +52,7 @@ export default function AdminMediaPage() {
 
 
 
-  
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedFileVideo, setSelectedFileVideo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -60,46 +60,46 @@ export default function AdminMediaPage() {
   const [open, setOpen] = useState(false);
   const [dataSave, setDataSave] = useState<any>({});
 
-  const filterBySearch = (list: any[], type: string) =>
-  list
-    .filter((dt: any) =>
-      (dt?.title ?? dt?.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .map(item => ({ ...item, type }));
+  const filterBySearch = (list: any[] | null | undefined, type: string) =>
+    (list ?? []) // nếu list là null thì dùng []
+      .filter((dt: any) =>
+        (dt?.title ?? dt?.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .map(item => ({ ...item, type }));
 
 
-   type MediaType = "all" | "image" | "video" | "audio" | "software";
+  type MediaType = "all" | "image" | "video" | "audio" | "software";
 
-// const [selectedType, setSelectedType] = useState<MediaType>("all");
+  // const [selectedType, setSelectedType] = useState<MediaType>("all");
 
-const dataMap: Record<Exclude<MediaType, "all">, any[]> = {
-  image: images,
-  video: videos,
-  audio: tracks,
-  software: softwares,
-};
+  const dataMap: Record<Exclude<MediaType, "all">, any[]> = {
+    image: images,
+    video: videos,
+    audio: tracks,
+    software: softwares,
+  };
 
-const filteredData = useMemo(() => {
-  if (selectedType === "all") {
-    const allItems = [
-      ...filterBySearch(images, "image"),
-      ...filterBySearch(videos, "video"),
-      ...filterBySearch(tracks, "audio"),
-      ...filterBySearch(softwares, "software"),
-    ];
+  const filteredData = useMemo(() => {
+    if (selectedType === "all") {
+      const allItems = [
+        ...filterBySearch(images, "image"),
+        ...filterBySearch(videos, "video"),
+        ...filterBySearch(tracks, "audio"),
+        ...filterBySearch(softwares, "software"),
+      ];
 
-    const uniqueMap = new Map();
-    allItems.forEach(item => {
-      if (!uniqueMap.has(item.id)) {
-        uniqueMap.set(item.id, item);
-      }
-    });
+      const uniqueMap = new Map();
+      allItems.forEach(item => {
+        if (!uniqueMap.has(item.id)) {
+          uniqueMap.set(item.id, item);
+        }
+      });
 
-    return Array.from(uniqueMap.values());
-  }
+      return Array.from(uniqueMap.values());
+    }
 
-  return filterBySearch(dataMap[selectedType as Exclude<MediaType, "all">], selectedType);
-}, [images, videos, tracks, softwares, selectedType, searchTerm]);
+    return filterBySearch(dataMap[selectedType as Exclude<MediaType, "all">], selectedType);
+  }, [images, videos, tracks, softwares, selectedType, searchTerm]);
 
 
 
@@ -218,13 +218,7 @@ const filteredData = useMemo(() => {
   const handleRemoveFileVideo = () => {
     setSelectedFileVideo(null);
   };
-  useEffect(() => {
-    fetchDataNews()
-    fetchData()
-    fetchDataSoftwares()
-    fetchDataTracks()
-    fetchDataVideos()
-  }, [])
+
 
 
   const fetchData = async () => {
@@ -310,7 +304,7 @@ const filteredData = useMemo(() => {
 
     try {
       // Gửi dữ liệu đến API backend
-      const response = await apiClient.upload(selectedDocType === "image" ? "/images" : selectedDocType === "video" ? "/videos" : selectedDocType === "track" ? "/tracks" : selectedDocType === "software" ? "/softwares" : "/tracks", formData) as any;
+      const response = await apiClient.upload(selectedDocType === "image" ? "/images" : selectedDocType === "video" ? "/videos" : selectedDocType === "track" ? "/tracks" : selectedDocType === "software" ? "/software" : "/tracks", formData) as any;
       if (response.statusCode === 201) {
         if (selectedDocType === "image") {
           fetchDataNews()
@@ -336,23 +330,42 @@ const filteredData = useMemo(() => {
   };
 
   const resetForm = () => {
-    setCategory(null)
-    setCategoryVideos(null)
-    setCategoryTracks(null)
-    setCategorySoftwares(null)
+    // setCategory(null)
+    // setCategoryVideos(null)
+    // setCategoryTracks(null)
+    // setCategorySoftwares(null)
     setSelectedFile(null);
+    setPreviewUrl(null)
+    setSelectedFileVideo(null)
+    setTracks(null)
   };
 
 
 
 
-const stats = [
-    { label: "Tổng file", value: images.length+videos.length +tracks.length+softwares.length , color: "text-blue-600" },
-    { label: "Hình ảnh", value: images.length, color: "text-green-600" },
-    { label: "Video", value: videos.length, color: "text-purple-600" },
+  const stats = [
+    {
+      label: "Tổng file",
+      value:
+        (images?.length || 0) +
+        (videos?.length || 0) +
+        (tracks?.length || 0) +
+        (softwares?.length || 0),
+      color: "text-blue-600",
+    },
+    { label: "Hình ảnh", value: images?.length || 0, color: "text-green-600" },
+    { label: "Video", value: videos?.length || 0, color: "text-purple-600" },
     { label: "Dung lượng", value: "375 GB", color: "text-orange-600" },
-  ]
-useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
+  ];
+
+  useEffect(() => {
+    fetchDataNews()
+    fetchData()
+    fetchDataSoftwares()
+    fetchDataTracks()
+    fetchDataVideos()
+  }, [])
+  useEffect(() => { console.log(categoryTracks) }, [categoryTracks])
   return (
     <div className="p-6 space-y-6 overflow-auto max-h-screen">
       <div className="flex items-center justify-between">
@@ -365,7 +378,7 @@ useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
             </Button>
           </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md overflow-y-auto max-h-[80vh]" >
             <DialogHeader>
               <DialogTitle>Tải lên file</DialogTitle>
             </DialogHeader>
@@ -412,8 +425,6 @@ useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
                           <SelectValue placeholder="Chọn hoạt động" />
                         </SelectTrigger>
                         <SelectContent>
-                          {/* <SelectItem value="undefined">Không</SelectItem> */}
-
                           {category?.map((item: any) => (
                             <SelectItem key={item.id} value={item.id}>
                               {item?.name}
@@ -923,12 +934,16 @@ useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
       {/* Media Grid/List */}
       <Card>
         <CardHeader>
-          <CardTitle>Thư viện media ({images.length + videos.length + tracks.length + softwares.length} file)</CardTitle>
+          <CardTitle>
+            Thư viện media (
+            {(images?.length || 0) + (videos?.length || 0) + (tracks?.length || 0) + (softwares?.length || 0)} file)
+          </CardTitle>
+
         </CardHeader>
         <CardContent>
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              
+
               {currenData?.map((file: any) => {
                 const isImage = file.type === "image";
                 const isVideo = file.type === "video";

@@ -111,6 +111,7 @@
     "react-quill": "^2.0.0",
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^2.1.7",
+    "react-toastify": "^11.0.5",
     "recharts": "2.15.0",
     "redis": "latest",
     "reflect-metadata": "latest",
