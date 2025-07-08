@@ -55,10 +55,10 @@ export default function AdminDocumentsPage() {
 
   const documentTypes = [
     // { id: "all", name: "Tất cả loại" },
-    // { id: "report", name: "Giới thiệu" },
-    // { id: "directive", name: "Lịch sử chiến đấu" },
-    // { id: "notice", name: "Các phần thưởng cao quý" },
-    // { id: "plan", name: "Lãnh đạo -  Chỉ huy" },
+    { id: "report", name: "Giới thiệu" },
+    { id: "directive", name: "Lịch sử chiến đấu" },
+    { id: "notice", name: "Các phần thưởng cao quý" },
+    { id: "plan", name: "Lãnh đạo -  Chỉ huy" },
     { id: "regulation", name: "Liên hệ góp ý" },
   ]
 
@@ -278,7 +278,7 @@ export default function AdminDocumentsPage() {
               />
             </div>
             <div>
-              <Select  onValueChange={setSelectedDocType} defaultValue="regulation" >
+              <Select onValueChange={setSelectedDocType} defaultValue="report" >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn mục" />
                 </SelectTrigger>
@@ -293,12 +293,12 @@ export default function AdminDocumentsPage() {
 
             </div>
 
-            <div>
+            {/* <div>
               <Button variant="outline" className="w-full">
                 <Search className="h-4 w-4 mr-2" />
                 Tìm kiếm
               </Button>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>
@@ -312,7 +312,7 @@ export default function AdminDocumentsPage() {
 
             </div>
             <div className="text-right" >
-              {selectedDocType === "report" && (
+              {/* {selectedDocType === "report" && (
                 <Dialog >
                   <DialogTrigger asChild>
                     <Button
@@ -408,7 +408,7 @@ export default function AdminDocumentsPage() {
                   </DialogContent>
 
                 </Dialog>
-              )}
+              )} */}
               {selectedDocType === "directive" && (
                 <Dialog >
                   <DialogTrigger asChild>
@@ -1169,7 +1169,7 @@ export default function AdminDocumentsPage() {
 
 
                   <div className="text-right">
-                    {selectedDocType === "report" && (
+                    {/* {selectedDocType === "report" && (
                       <Dialog >
                         <DialogTrigger asChild>
                           <Button variant="outline" size="sm">
@@ -1262,7 +1262,7 @@ export default function AdminDocumentsPage() {
                         </DialogContent>
 
                       </Dialog>
-                    )}
+                    )} */}
                     {selectedDocType === "directive" && (
                       <Dialog >
                         <DialogTrigger asChild>

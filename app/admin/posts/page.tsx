@@ -13,10 +13,15 @@ import { DialogClose } from "@/components/ui/dialog";
 import { newsService } from "@/services/news.service"
 import { apiClient } from "@/lib/api"
 import { SimpleEditor } from "@/components/tiptap/tiptap-templates/simple/simple-editor"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store/store"
 // import RichTextEditor from "@/components/editor/TipTap"
 
 
 export default function AdminPostsPage() {
+  const { datas: dataProfile } = useSelector(
+    (state: RootState) => state.get_profile
+  );
   const [searchTerm, setSearchTerm] = useState("")
   const refBtn = useRef(null)
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
@@ -246,7 +251,7 @@ export default function AdminPostsPage() {
         <h1 className="text-3xl font-bold text-gray-800">Quản lý bảng tin</h1>
         <Dialog >
           <DialogTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700" onClick={resetForm}>
+            <Button className="bg-red-600 hover:bg-red-700" onClick={resetForm} disabled={dataProfile?.role === "user"}>
               <Plus className="h-4 w-4 mr-2" />
               Thêm bảng tin mới
             </Button>
@@ -715,7 +720,7 @@ export default function AdminPostsPage() {
                     if (open) handleFocusUpdate(post);
                   }}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" >
+                      <Button variant="outline" size="sm"  disabled={dataProfile?.role === "user"}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -898,7 +903,7 @@ export default function AdminPostsPage() {
                     size="sm"
                     className="text-red-600 hover:text-red-700"
                     onClick={() => handleDelete(post.id)}
-
+                    disabled={dataProfile?.role === "user"}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

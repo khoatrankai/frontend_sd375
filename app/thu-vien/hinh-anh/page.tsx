@@ -43,7 +43,7 @@ export default function ImagesPage() {
 
 
   useEffect(() => {
-    console.log(images)
+    // console.log(images)
     setFilteredImage(selectedCategory === "all" ? images : images.filter((img: any) => img.category.nametag === selectedCategory))
   }, [images, selectedCategory])
 

@@ -41,17 +41,19 @@ export default function AudioPage() {
   }
 
   useEffect(() => {
-    // console.log(filteredTracks)
+    console.log(filteredTracks)
     setFeaturedTracks(filteredTracks.filter((track: any) => track.featured))
     setRegularTracks(filteredTracks.filter((track: any) => !track.featured))
   }, [filteredTracks])
-
+  useEffect(() => {
+    console.log(featuredTracks,regularTracks)
+   
+  }, [featuredTracks,regularTracks])
   useEffect(()=>{
     setCurrentTrack(0)
   },[currentPage])
 
   useEffect(() => {
-    console.log(tracks, selectedCategory)
     setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track: any) => track.category.nametag === selectedCategory))
   }, [selectedCategory, tracks])
 
@@ -231,6 +233,7 @@ export default function AudioPage() {
         {/* Playlist */}
         <div className="lg:col-span-2 space-y-6">
           {/* Featured Tracks */}
+          {/* {featuredTracks.length} */}
           {featuredTracks.length > 0 && (
             <section>
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-red-600 pb-2">Bài hát nổi bật</h2>

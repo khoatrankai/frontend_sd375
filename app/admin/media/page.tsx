@@ -17,10 +17,15 @@ import { tracksService } from "@/services/tracks.service"
 import { softwareService } from "@/services/software.service"
 import { CustomFormData } from "@/lib/CustomFormData"
 import { Image } from "antd"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store/store"
 
 
 
 export default function AdminMediaPage() {
+  const { datas: dataProfile } = useSelector(
+      (state: RootState) => state.get_profile
+    );
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [viewMode, setViewMode] = useState("grid")
@@ -240,6 +245,7 @@ const filteredData = useMemo(() => {
     if (res4.statusCode === 200) {
       setCategorySoftwares(res4.data)
     }
+
     if (res5.statusCode === 200) {
       setCategoryTracks(res5.data)
     }
@@ -346,14 +352,14 @@ const stats = [
     { label: "Video", value: videos.length, color: "text-purple-600" },
     { label: "Dung lượng", value: "375 GB", color: "text-orange-600" },
   ]
-
+useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
   return (
     <div className="p-6 space-y-6 overflow-auto max-h-screen">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Quản lý thư viện</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700" onClick={resetForm}>
+            <Button className="bg-red-600 hover:bg-red-700" onClick={resetForm} disabled={dataProfile?.role === "user"}>
               <Upload className="h-4 w-4 mr-2" />
               Tải lên file mới
             </Button>
@@ -408,9 +414,9 @@ const stats = [
                         <SelectContent>
                           {/* <SelectItem value="undefined">Không</SelectItem> */}
 
-                          {category?.map((category: any) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category?.name}
+                          {category?.map((item: any) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item?.name}
                             </SelectItem>
 
                           ))}
@@ -596,9 +602,11 @@ const stats = [
                         </SelectTrigger>
                         <SelectContent>
                           {
-                            categoryTracks?.map((item: any) => (
-                              <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                            ))
+                            categoryTracks?.map((item: any) => {
+                              console.log(item)
+                              return <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                            }
+                            )
                           }
 
                         </SelectContent>
@@ -1204,6 +1212,7 @@ const stats = [
                       size="sm"
                       className="text-red-600 hover:text-red-700"
                       onClick={() => handleDelete(file?.id, 'software')}
+                      disabled={dataProfile?.role === "user"}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

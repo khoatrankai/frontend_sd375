@@ -9,18 +9,22 @@ import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X, In
 import { usePathname } from "next/navigation"
 import { authService } from "@/services/auth.service"
 import { userTypes } from "../gioi-thieu/lanh-dao/page"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/redux/store/store"
+import { fetchProfiles } from "@/redux/store/slices/usersSlices/user.slide"
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const dispatch = useDispatch<AppDispatch>();
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [dataProfile,setDataProfile] = useState<any>()
   const pathname = usePathname();
   const menuItems = [
     { href: "/admin/dashboard", icon: Home, label: "Tổng quan" },
-    { href: "/admin/introduce", icon: Info, label: "Góp ý" },
+    { href: "/admin/introduce", icon: Info, label: "Giới thiệu" },
     { href: "/admin/posts", icon: FileText, label: "Bảng tin" },
     { href: "/admin/media", icon: ImageIcon, label: "Thư viện" },
     { href: "/admin/topic", icon: ImageIcon, label: "Chuyên đề" },
@@ -30,6 +34,7 @@ export default function AdminLayout({
   ]
   const checkLogin = async()=>{
     const dataUser = await authService.getCurrentUser()
+    dispatch(fetchProfiles())
     // console.log(dataUser,pathname.startsWith('/admin/login'),pathname)
     setDataProfile(dataUser)
     if(!dataUser){
@@ -56,6 +61,8 @@ export default function AdminLayout({
       window.location.href = "/admin/login"
      }
   }
+
+  useEffect(()=>{console.log(menuItems)},[menuItems])
 
   return (
     <>
@@ -90,8 +97,9 @@ export default function AdminLayout({
         </div>
 
         <nav className="mt-6">
-          {menuItems.map((item) => (
-            <Link
+          {menuItems.map((item) => {
+            if(!item.hidden)
+            return <Link
               key={item.href}
               href={item.href}
               className="flex items-center px-6 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
@@ -99,7 +107,7 @@ export default function AdminLayout({
               <item.icon className="h-5 w-5 mr-3" />
               {item.label}
             </Link>
-          ))}
+          })}
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t">

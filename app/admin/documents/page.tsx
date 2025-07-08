@@ -13,8 +13,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { documentService } from "@/services/documents.service"
 import { downloadFile } from "@/lib/DownloadImage"
 import { CustomFormData } from "@/lib/CustomFormData"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store/store"
 
 export default function AdminDocumentsPage() {
+   const { datas: dataProfile } = useSelector(
+        (state: RootState) => state.get_profile
+      );
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -240,6 +245,7 @@ export default function AdminDocumentsPage() {
           <DialogTrigger asChild>
             <Button
               className="bg-white text-green-600 hover:bg-gray-100 shadow-lg"
+                disabled={dataProfile?.role === "user"}
             >
               <Plus className="h-4 w-4 mr-2" />
               Thêm văn bản mới
@@ -556,7 +562,7 @@ export default function AdminDocumentsPage() {
 
                   <Dialog >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" onClick={() => { handleFocusData({ ...doc, category: doc?.category?.id }) }}>
+                      <Button variant="outline" size="sm" onClick={() => { handleFocusData({ ...doc, category: doc?.category?.id }) }} disabled={dataProfile?.role === "user"}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -734,6 +740,7 @@ export default function AdminDocumentsPage() {
                     size="sm"
                     className="text-red-600 hover:text-red-700"
                     onClick={() => { handleDelete(doc?.id) }}
+                      disabled={dataProfile?.role === "user"}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

@@ -114,6 +114,7 @@ export default function AdminDashboard() {
       setSelectedFileVideo(null);
     };
     useEffect(() => {
+      console.log("vao ne")
       fetchDataNews()
       fetchData()
       fetchDataSoftwares()
@@ -140,6 +141,7 @@ export default function AdminDashboard() {
       if (res4.statusCode === 200) {
         setCategorySoftwares(res4.data)
       }
+      console.log(res5)
       if (res5.statusCode === 200) {
         setCategoryTracks(res5.data)
       }
@@ -223,7 +225,7 @@ export default function AdminDashboard() {
   setSelectedDocType(value);
 };
 
-
+useEffect(()=>{console.log(categoryTracks)},[categoryTracks])
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

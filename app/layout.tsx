@@ -8,6 +8,8 @@ import "./globals.css"
 // import Sidebar from "@/components/sidebar"
 // import Footer from "@/components/footer"
 import LayoutHeader from "./LayoutPage"
+import { StoreProvider } from "./StoreProvider"
+import { DispatchProvider } from "./DispatchProvider"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,6 +33,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+     <StoreProvider>
+
+      <DispatchProvider>
+
     <html lang="vi">
       {/* <head>
         <link rel="stylesheet" href="/build.css" />
@@ -41,5 +47,7 @@ export default function RootLayout({
        </LayoutHeader>
       </body>
     </html>
+      </DispatchProvider>
+     </StoreProvider>
   )
 }
