@@ -38,6 +38,9 @@ export default function FeaturedNews() {
     }, 6000)
     return () => clearInterval(timer)
   }, [mainNews.length])
+const latestSideNews = [...sideNews as { created_at: string }[]]
+  .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  .slice(0, 3);
 
   return (
     <section className="mb-8">
@@ -107,7 +110,7 @@ export default function FeaturedNews() {
 
         {/* Side news - 1/3 width */}
         <div className="space-y-3">
-          {sideNews.map((news:any, index) => (
+          {latestSideNews.map((news:any, index) => (
             <Card onClick={()=>{
               router.push(`/tin-tuc/${news.id}`)
             }} key={index} className="hover:shadow-md transition-shadow cursor-pointer">
