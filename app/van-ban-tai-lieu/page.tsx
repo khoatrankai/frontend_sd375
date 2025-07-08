@@ -12,8 +12,10 @@ import { documentService } from "@/services/documents.service"
 export default function DocumentsPage() {
   const types = [{name:"Tất cả",value:"all"},{name:"Chỉ thị",value:"chi_thi"},{name:"Thông báo",value:"thong_bao"},{name:"Kế hoạch",value:"ke_hoach"},{name:"Quy định",value:"quy_dinh"}]
   const [categories,setCategories] = useState<any>([])
+  const [agency,setAgency] = useState<any>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedAgency, setSelectedAgency] = useState("")
   const [selectedType, setSelectedType] = useState("")
   const [selectedOrgan, setSelectedOrgan] = useState("")
 
@@ -26,12 +28,16 @@ export default function DocumentsPage() {
   const fetchData = async()=>{
     const res = await documentService.getDocuments()
     const res2 = await documentService.getCategories()
+    const res3 = await documentService.getAgency()
     if(res.statusCode === 200){
       setDocuments(res.data)
     }
 
     if(res2.statusCode === 200){
       setCategories(res2.data)
+    }
+    if(res3.statusCode === 200){
+      setAgency(res3.data)
     }
   }
 
@@ -44,7 +50,7 @@ export default function DocumentsPage() {
       documents.filter((doc:any) => {
     return (
       doc.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedCategory === "" || doc.category?.nametag === selectedCategory || selectedCategory === "all") &&
+      (selectedCategory === "" || doc.category?.nametag === selectedCategory || selectedCategory === "all") &&(selectedAgency === "" || doc.agency?.nametag === selectedAgency || selectedAgency === "all")&&
       (selectedType === "" || doc.type === selectedType || selectedType === "all") &&
       (selectedOrgan === "" || doc.organ === selectedOrgan)
     )
@@ -126,6 +132,28 @@ export default function DocumentsPage() {
               </Select>
             </div>
 
+            <div>
+              <label className="text-sm font-medium mb-2 block">Cơ quan ban hành</label>
+              <Select value={selectedAgency} onValueChange={setSelectedAgency}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn đơn vị" />
+                </SelectTrigger>
+                <SelectContent>
+                  {
+                    agency.map((category:any) => (
+                      <SelectItem key={category.nametag} value={category.nametag}>
+                        {category.name}
+                      </SelectItem>
+                    ))
+                  }
+                  {/* <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="chi_huy_su_doan">Chỉ huy sư đoàn</SelectItem>
+                  <SelectItem value="phong_chinh_tri">Phòng chính trị</SelectItem>
+                  <SelectItem value="phong_tham_muu">Phòng tham mưu</SelectItem>
+                  <SelectItem value="hau_can_ky_thuat">Phòng Hậu cần – kỹ thuật</SelectItem> */}
+                </SelectContent>
+              </Select>
+            </div>
             {/* <div>
               <label className="text-sm font-medium mb-2 block">Cơ quan ban hành</label>
               <Select value={selectedOrgan} onValueChange={setSelectedOrgan}>

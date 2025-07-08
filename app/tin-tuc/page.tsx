@@ -162,7 +162,9 @@ const loadDetail = async (id: string | number) => {
               return true
             }
           }).map((item: any) => (
-            <Card key={item.id}  className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+            <Card key={item.id}  className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
+              router.push(`/tin-tuc/${item.id}`)
+            }}>
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">

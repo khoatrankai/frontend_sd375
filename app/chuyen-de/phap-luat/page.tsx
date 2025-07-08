@@ -30,9 +30,11 @@ export default function LawPage() {
   // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
-    { label: "Văn bản pháp luật", value: "8", icon: FileText, color: "text-blue-600" },
-    { label: "Lượt tra cứu", value: "3,733", icon: Eye, color: "text-green-600" },
-    { label: "Chuyên gia pháp lý", value: "5", icon: User, color: "text-purple-600" },
+    { label: "Văn bản pháp luật", value: articles.length, icon: FileText, color: "text-blue-600" },
+    { label: "Lượt tra cứu", value: articles.reduce((pre:any,curr:any)=>{
+    return pre + curr?.views
+  },0), icon: Eye, color: "text-green-600" },
+    { label: "Chuyên gia pháp lý", value: "5+", icon: User, color: "text-purple-600" },
     { label: "Cập nhật", value: "Hàng tháng", icon: Shield, color: "text-orange-600" },
   ]
 

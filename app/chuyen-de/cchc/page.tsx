@@ -30,9 +30,11 @@ export default function CCHCPage() {
   // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
-    { label: "Bài viết", value: "12", icon: FileText, color: "text-blue-600" },
-    { label: "Lượt xem", value: "8,547", icon: Eye, color: "text-green-600" },
-    { label: "Tác giả", value: "8", icon: User, color: "text-purple-600" },
+    { label: "Bài viết", value: articles.length, icon: FileText, color: "text-blue-600" },
+    { label: "Lượt xem", value: articles.reduce((pre:any,curr:any)=>{
+    return pre + curr?.views
+  },0), icon: Eye, color: "text-green-600" },
+    { label: "Tác giả", value: "20+", icon: User, color: "text-purple-600" },
     { label: "Cập nhật", value: "Hàng tuần", icon: TrendingUp, color: "text-orange-600" },
   ]
 

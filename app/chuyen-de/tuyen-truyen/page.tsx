@@ -30,10 +30,12 @@ export default function PropagandaPage() {
   // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
-    { label: "Bài viết", value: "10", icon: BookOpen, color: "text-blue-600" },
-    { label: "Lượt xem", value: "4,346", icon: Eye, color: "text-green-600" },
-    { label: "Chuyên gia", value: "6", icon: Users, color: "text-purple-600" },
-    { label: "Chủ đề", value: "3", icon: Megaphone, color: "text-orange-600" },
+    { label: "Bài viết", value: articles.length, icon: BookOpen, color: "text-blue-600" },
+    { label: "Lượt xem", value: articles.reduce((pre:any,curr:any)=>{
+    return pre + curr?.views
+  },0), icon: Eye, color: "text-green-600" },
+    { label: "Chuyên gia", value: "6+", icon: Users, color: "text-purple-600" },
+    { label: "Chủ đề", value: "4", icon: Megaphone, color: "text-orange-600" },
   ]
 
   const fetchData = async()=>{

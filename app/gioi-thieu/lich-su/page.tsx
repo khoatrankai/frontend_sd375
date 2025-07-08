@@ -116,15 +116,15 @@ export default function HistoryPage() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-red-600">58</div>
+              <div className="text-3xl font-bold text-red-600">{(new Date()).getFullYear() - 1968}</div>
               <div className="text-sm text-gray-600">Năm xây dựng</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">150+</div>
+              <div className="text-3xl font-bold text-blue-600">3000+</div>
               <div className="text-sm text-gray-600">Trận đánh</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">25</div>
+              <div className="text-3xl font-bold text-green-600">5</div>
               <div className="text-sm text-gray-600">Huân chương</div>
             </div>
             <div className="text-center">

@@ -30,10 +30,12 @@ const router = useRouter()
   // filteredArticles.filter((article) => !article.featured)
 
   const stats = [
-    { label: "Nghiên cứu", value: "9", icon: Microscope, color: "text-blue-600" },
-    { label: "Lượt xem", value: "4,267", icon: Eye, color: "text-green-600" },
-    { label: "Nhà khoa học", value: "7", icon: User, color: "text-purple-600" },
-    { label: "Dự án", value: "5", icon: Target, color: "text-orange-600" },
+    { label: "Nghiên cứu", value: articles.length, icon: Microscope, color: "text-blue-600" },
+    { label: "Lượt xem", value: articles.reduce((pre:any,curr:any)=>{
+    return pre + curr?.views
+  },0), icon: Eye, color: "text-green-600" },
+    { label: "Nhà khoa học", value: "7+", icon: User, color: "text-purple-600" },
+    { label: "Dự án", value: "20+", icon: Target, color: "text-orange-600" },
   ]
 
    const fetchData = async()=>{
