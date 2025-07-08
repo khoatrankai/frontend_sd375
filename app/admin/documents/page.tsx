@@ -493,7 +493,7 @@ export default function AdminDocumentsPage() {
                         {
                           agency.map((category) => {
                             return (
-                              <SelectItem value={category.nametag}>{category.name}</SelectItem>
+                              <SelectItem value={category?.nametag}>{category.name}</SelectItem>
                             )
                           })
                         }

@@ -20,7 +20,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const menuItems = [
     { href: "/admin/dashboard", icon: Home, label: "Tổng quan" },
-    { href: "/admin/introduce", icon: Info, label: "Giới thiệu" },
+    { href: "/admin/introduce", icon: Info, label: "Góp ý" },
     { href: "/admin/posts", icon: FileText, label: "Bảng tin" },
     { href: "/admin/media", icon: ImageIcon, label: "Thư viện" },
     { href: "/admin/topic", icon: ImageIcon, label: "Chuyên đề" },

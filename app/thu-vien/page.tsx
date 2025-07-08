@@ -71,7 +71,7 @@ const tabs = [
                         src={item?.link}
             />:
               <>
-                <Card key={item.id} className="hover:shadow-md transition-shadow">
+                <Card key={item?.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">

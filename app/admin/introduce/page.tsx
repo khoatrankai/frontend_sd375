@@ -55,10 +55,10 @@ export default function AdminDocumentsPage() {
 
   const documentTypes = [
     // { id: "all", name: "Tất cả loại" },
-    { id: "report", name: "Giới thiệu" },
-    { id: "directive", name: "Lịch sử chiến đấu" },
-    { id: "notice", name: "Các phần thưởng cao quý" },
-    { id: "plan", name: "Lãnh đạo -  Chỉ huy" },
+    // { id: "report", name: "Giới thiệu" },
+    // { id: "directive", name: "Lịch sử chiến đấu" },
+    // { id: "notice", name: "Các phần thưởng cao quý" },
+    // { id: "plan", name: "Lãnh đạo -  Chỉ huy" },
     { id: "regulation", name: "Liên hệ góp ý" },
   ]
 
@@ -207,7 +207,7 @@ export default function AdminDocumentsPage() {
   useEffect(() => {
     // Nếu đang ở trang giới thiệu thì tự chọn "report" và mở dialog
     if (pathname === "/admin/introduce") {
-      setSelectedDocType("report")
+      setSelectedDocType("regulation")
       // setDialogOpen(true)
     }
   }, [pathname])
@@ -244,12 +244,12 @@ export default function AdminDocumentsPage() {
   return (
     <div className="p-6 space-y-6 overflow-auto max-h-screen">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">Quản lý giới thiệu</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Quản lý góp ý</h1>
 
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <Card key={index}>
             <CardContent className="p-6">
@@ -263,12 +263,12 @@ export default function AdminDocumentsPage() {
             </CardContent>
           </Card>
         ))}
-      </div>
+      </div> */}
 
       {/* Filters */}
-      <Card>
+      <Card className="hidden">
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4" >
             <div>
               <Input
                 placeholder="Tìm kiếm văn bản..."
@@ -278,7 +278,7 @@ export default function AdminDocumentsPage() {
               />
             </div>
             <div>
-              <Select onValueChange={setSelectedDocType} defaultValue="report" >
+              <Select  onValueChange={setSelectedDocType} defaultValue="regulation" >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn mục" />
                 </SelectTrigger>
@@ -308,7 +308,8 @@ export default function AdminDocumentsPage() {
         <CardHeader>
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-4">
-              <CardTitle>Danh sách quản lý </CardTitle>
+              <CardTitle>Danh sách góp ý ({report?.length || 0})</CardTitle>
+
             </div>
             <div className="text-right" >
               {selectedDocType === "report" && (

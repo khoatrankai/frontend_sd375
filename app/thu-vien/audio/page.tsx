@@ -22,15 +22,6 @@ export default function AudioPage() {
   const currentTracks = tracks.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(tracks.length / itemsPerPage);
 
-  // //điều hướng trang
-  // const itemsPerPage2 = 2; // Số card mỗi slide
-  // const [pageIndex2, setPageIndex2] = useState(0);
-
-  // const totalPages2 = Math.ceil(featuredTracks.length / itemsPerPage2);
-  // const pagedTracks2 = featuredTracks.slice(
-  //   pageIndex2 * itemsPerPage2,
-  //   (pageIndex2 + 1) * itemsPerPage2
-  // );
  
   const [categories, setCategories] = useState<any>([
   ])
