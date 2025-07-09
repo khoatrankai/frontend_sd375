@@ -22,10 +22,13 @@ export default function AdminPostsPage() {
   const { datas: dataProfile } = useSelector(
     (state: RootState) => state.get_profile
   );
+  const types = [{name:"Trong nước",id:"trong_nuoc"},{name:"Quốc tế",id:"quoc_te"},{name:"Quân sự",id:"quan_su"},{name:"Hoạt động sư đoàn",id:"hoat_dong_su_doan"}]
   const [searchTerm, setSearchTerm] = useState("")
   const refBtn = useRef(null)
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const [selectedType, setSelectedType] = useState<string | undefined>("trong_nuoc");
   const [selectedFilterCategory, setSelectedFilterCategory] = useState<string | undefined>(undefined);
+  const [selectedFilterType, setSelectedFilterType] = useState<string | undefined>(undefined);
   const [categories, setCategories] = useState<any>([])
   const [filteredNews, setFilteredNews] = useState<any>([])
 
@@ -186,6 +189,7 @@ export default function AdminPostsPage() {
   const handleFocusUpdate = (post: any) => {
     setSelectedFile(null)
     setPreviewUrl(post?.image);
+    setSelectedType(post?.type);
     setTitle(post.title)
     setExcerpt(post.excerpt)
     setSelectedActivity(post?.categoryActivity?.id ?? undefined)
@@ -240,9 +244,9 @@ export default function AdminPostsPage() {
       return matchesSearch && 
         (selectedFilterActivity === "all" || selectedFilterActivity === post?.categoryActivity?.nametag || !selectedFilterActivity) &&
         (selectedFilterCategory === "all" || selectedFilterCategory === post?.category?.nametag || !selectedFilterCategory) &&
-        (selectedFilterRegion === "all" || selectedFilterRegion === post?.region?.nametag || !selectedFilterRegion)
+        (selectedFilterRegion === "all" || selectedFilterRegion === post?.region?.nametag || !selectedFilterRegion) && (selectedFilterType === "all" || selectedFilterType === post?.type || !selectedFilterType)
     }))
-  }, [News, selectedFilterActivity, selectedFilterCategory, selectedFilterRegion, searchTerm])
+  }, [News, selectedFilterActivity, selectedFilterCategory, selectedFilterRegion, searchTerm,selectedFilterType])
 
 
   return (
@@ -262,50 +266,17 @@ export default function AdminPostsPage() {
             </DialogHeader>
             <div className=" space-y-4 mt-4 ">
               <form className="space-y-4" onSubmit={handleSubmit}>
+                
+
+                
+                <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
                   <Input placeholder="Nhập tiêu đề bảng tin"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)} />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                  {/* <textarea
-                    className="mt-1 w-full border rounded-md p-2"
-                    rows={10}
-                    placeholder="Nhập nội dung bảng tin"
-                    value={excerpt}
-                    onChange={(e) => setExcerpt(e.target.value)}
-                  /> */}
-                  {/* <RichTextEditor content="" onChange={()=>{}}/> */}
-                  <SimpleEditor content="Thêm nội dung vào đây" onChange={(e) => setExcerpt(e)} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="">Hoạt động ngoài nước</label>
-                    <Select
-                      value={selectedRegion}
-                      onValueChange={(value) => {
-                        setSelectedRegion(value === "undefined" ? undefined : value);
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn hoạt động" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
-
-                        {Region?.map((region: any) => (
-                          <SelectItem key={region.id} value={region?.id}>
-                            {region?.name}
-                          </SelectItem>
-
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
+                   
                   <div>
                     <label htmlFor="">Hình ảnh</label>
 
@@ -343,8 +314,57 @@ export default function AdminPostsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                <div className={`grid  ${(selectedType === "trong_nuoc" || !selectedType)?'grid-cols-1':'grid-cols-2'} gap-4`}>
+                   <div>
+                    <label htmlFor="">Loại tin tức</label>
+                    <Select
+                      value={selectedType?.toString()}
+                      onValueChange={(value) => {
+                        setSelectedActivity(undefined)
+                        setSelectedRegion(undefined)
+                        setSelectedCategory(undefined)
+                        setSelectedType(value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* <SelectItem value="undefined">Không</SelectItem> */}
+
+                        {types?.map((region: any) => (
+                          <SelectItem key={region.id} value={region?.id}>
+                            {region?.name}
+                          </SelectItem>
+
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                    <div hidden={selectedType !== "quoc_te"}>
+                    <label htmlFor="">Hoạt động ngoài nước</label>
+                    <Select
+                      value={selectedRegion}
+                      onValueChange={(value) => {
+                        setSelectedRegion(value === "undefined" ? undefined : value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
+
+                        {Region?.map((region: any) => (
+                          <SelectItem key={region.id} value={region?.id}>
+                            {region?.name}
+                          </SelectItem>
+
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div hidden={selectedType !== "quan_su"}>
                     <label htmlFor="">Hoạt động quân sự</label>
 
                     <Select
@@ -368,7 +388,7 @@ export default function AdminPostsPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
+                  <div hidden={selectedType !== "hoat_dong_su_doan"}>
                     <label htmlFor="">Hoạt động sư đoàn</label>
 
                     <Select
@@ -396,7 +416,7 @@ export default function AdminPostsPage() {
 
                 </div>
 
-                <div className="flex items-center space-x-2">
+               <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     id="featured"
@@ -407,6 +427,18 @@ export default function AdminPostsPage() {
                   <label htmlFor="featured" className="text-sm text-gray-700">
                     Gắn bảng tin nổi bật
                   </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                  {/* <textarea
+                    className="mt-1 w-full border rounded-md p-2"
+                    rows={10}
+                    placeholder="Nhập nội dung bảng tin"
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                  /> */}
+                  {/* <RichTextEditor content="" onChange={()=>{}}/> */}
+                  <SimpleEditor content="Thêm nội dung vào đây" onChange={(e) => setExcerpt(e)} />
                 </div>
                 <DialogFooter className="flex-shrink-0 mt-4">
                   <DialogClose asChild>
@@ -463,8 +495,26 @@ export default function AdminPostsPage() {
                 className="w-full"
               />
             </div>
-
             <div className="flex-1 min-w-[200px]">
+              <Select value={selectedFilterType} onValueChange={(value)=>{
+                setSelectedFilterType(value)
+                setSelectedFilterCategory(undefined)
+                setSelectedFilterActivity(undefined)
+                setSelectedFilterRegion(undefined)
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Loại tin" />
+                </SelectTrigger>
+                <SelectContent>
+                  {types.map((category: any) => (
+                    <SelectItem key={category.id} value={category?.id}>
+                      {category?.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1 min-w-[200px]" hidden={selectedFilterType !== "quan_su"}>
               <Select value={selectedFilterCategory} onValueChange={setSelectedFilterCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="HĐ Quân Sự" />
@@ -479,7 +529,7 @@ export default function AdminPostsPage() {
               </Select>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
+            <div className="flex-1 min-w-[200px]" hidden={selectedFilterType !== "quoc_te"}>
               <Select value={selectedFilterRegion} onValueChange={setSelectedFilterRegion}>
                 <SelectTrigger>
                   <SelectValue placeholder="HĐ Ngoài Nước" />
@@ -494,7 +544,7 @@ export default function AdminPostsPage() {
               </Select>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
+            <div className="flex-1 min-w-[200px]" hidden={selectedFilterType !== "hoat_dong_su_doan"}>
               <Select value={selectedFilterActivity} onValueChange={setSelectedFilterActivity}>
                 <SelectTrigger>
                   <SelectValue placeholder="HĐ Sư Đoàn" />
@@ -578,44 +628,14 @@ export default function AdminPostsPage() {
 
                       <div className="space-y-4 mt-4">
                         <form className="space-y-4">
-                          <div>
+                          <div className="grid grid-cols-2 gap-4">
+ <div>
                             <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
                             <Input placeholder="Nhập tiêu đề bảng tin" disabled
                               value={post.title}
 
                             />
                           </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                            {/* <textarea
-                              className="mt-1 w-full border rounded-md p-2"
-                              rows={10}
-                              placeholder="Nhập nội dung bảng tin"
-                              value={post.excerpt}
-                              disabled /> */}
-                            {/* <div className="body-image-with-caption figcaption"> */}
-                            <div className="body-image-with-caption figcaption" dangerouslySetInnerHTML={{ __html: post.excerpt }} />
-
-                            {/* </div> */}
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label>Hoạt động ngoài nước</label>
-                              <Select value={post?.region ? post.region.id : "undefined"} disabled>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn hoạt động" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
-                                  {post?.region && (
-                                    <SelectItem value={post.region.id}>{post.region.name}</SelectItem>
-                                  )}
-
-                                </SelectContent>
-                              </Select>
-                            </div>
-
                             <div>
                               <label htmlFor="">Hình ảnh</label>
 
@@ -656,9 +676,47 @@ export default function AdminPostsPage() {
                               </div>
                             </div>
                           </div>
+                         
+                         
 
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className={`grid ${(selectedType === "trong_nuoc" || !selectedType)?'grid-cols-1':'grid-cols-2'} gap-4`}>
                             <div>
+                    <label htmlFor="">Loại tin tức</label>
+                    <Select
+                      value={post?.type}
+                      disabled
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* <SelectItem value="undefined">Không</SelectItem> */}
+
+                        {types?.map((region: any) => (
+                          <SelectItem key={region.id} value={region?.id}>
+                            {region?.name}
+                          </SelectItem>
+
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                            <div hidden={!(post?.type === "quoc_te")}>
+                              <label>Hoạt động ngoài nước</label>
+                              <Select value={post?.region ? post.region.id : "undefined"} disabled>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Chọn hoạt động" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="undefined">Không</SelectItem>
+                                  {post?.region && (
+                                    <SelectItem value={post.region.id}>{post.region.name}</SelectItem>
+                                  )}
+
+                                </SelectContent>
+                              </Select>
+                            </div>
+                             <div hidden={!(post?.type === "quan_su")}>
                               <label>Hoạt động quân sự</label>
                               <Select value={post?.category ? post.category.id : "undefined"} disabled>
                                 <SelectTrigger>
@@ -675,7 +733,7 @@ export default function AdminPostsPage() {
                               </Select>
                             </div>
 
-                            <div>
+                            <div hidden={!(post?.type === "hoat_dong_su_doan")}>
                               <label>Hoạt động sư đoàn</label>
                               <Select value={post?.categoryActivity ? post.categoryActivity.id : "undefined"} disabled>
                                 <SelectTrigger>
@@ -691,7 +749,10 @@ export default function AdminPostsPage() {
                                 </SelectContent>
                               </Select>
                             </div>
+                         
                           </div>
+
+                        
 
                           <div className="flex items-center space-x-2">
                             <input type="checkbox" id="featured" className="rounded" disabled
@@ -700,7 +761,19 @@ export default function AdminPostsPage() {
                               Gắn bảng tin nổi bật
                             </label>
                           </div>
+ <div>
+                            <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                            {/* <textarea
+                              className="mt-1 w-full border rounded-md p-2"
+                              rows={10}
+                              placeholder="Nhập nội dung bảng tin"
+                              value={post.excerpt}
+                              disabled /> */}
+                            {/* <div className="body-image-with-caption figcaption"> */}
+                            <div className="body-image-with-caption figcaption" dangerouslySetInnerHTML={{ __html: post.excerpt }} />
 
+                            {/* </div> */}
+                          </div>
                           <DialogFooter>
                             <DialogClose asChild>
 
@@ -730,50 +803,21 @@ export default function AdminPostsPage() {
                       </DialogHeader>
                       <div className=" space-y-4 mt-4 ">
                         <form className="space-y-4" onSubmit={(e) => handleSubmitUp(e, post.id)}>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
-                            <Input placeholder="Nhập tiêu đề bảng tin"
-                              value={title}
-                              onChange={(e) => setTitle(e.target.value)} />
-                          </div>
+                        
 
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700">Nội dung</label>
-                            {/* <textarea
-                              className="mt-1 w-full border rounded-md p-2"
-                              rows={10}
-                              placeholder="Nhập nội dung bảng tin"
-                              value={excerpt}
-                              onChange={(e) => setExcerpt(e.target.value)}
-                            /> */}
-                            <SimpleEditor content={excerpt} onChange={(content) => setExcerpt(content)} />
-                          </div>
+                        
+
+                         
+
                           <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label htmlFor="">Hoạt động ngoài nước</label>
-                              <Select
-                                value={selectedRegion === undefined ? "undefined" : selectedRegion}
-                                onValueChange={(value) => {
-                                  setSelectedRegion(value === "undefined" ? undefined : value);
-
-                                }}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn hoạt động" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
-
-                                  {Region?.map((region: any) => (
-                                    <SelectItem key={region?.id} value={region?.id}>
-                                      {region?.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
+                  <Input placeholder="Nhập tiêu đề bảng tin"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)} />
+                </div>
+                   
+                  <div>
                               <label htmlFor="">Hình ảnh</label>
 
                               <div className="space-y-2">
@@ -813,71 +857,133 @@ export default function AdminPostsPage() {
                                 {/* )} */}
                               </div>
                             </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label htmlFor="">Hoạt động quân sự</label>
+                </div>
+                <div className={`grid  ${(selectedType === "trong_nuoc" || !selectedType)?'grid-cols-1':'grid-cols-2'} gap-4`}>
+                   <div>
+                    <label htmlFor="">Loại tin tức</label>
+                    <Select
+                      value={selectedType?.toString()}
+                      onValueChange={(value) => {
+                        setSelectedActivity(undefined)
+                        setSelectedRegion(undefined)
+                        setSelectedCategory(undefined)
+                        setSelectedType(value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* <SelectItem value="undefined">Không</SelectItem> */}
 
-                              <Select
-                                value={selectedCategory === undefined ? "undefined" : selectedCategory}
-                                onValueChange={(value) => {
-                                  setSelectedCategory(value === "undefined" ? undefined : value);
-                                }}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn hoạt động" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
+                        {types?.map((region: any) => (
+                          <SelectItem key={region.id} value={region?.id}>
+                            {region?.name}
+                          </SelectItem>
 
-                                  {categories.map((category: any) => (
-                                    <SelectItem key={category?.id} value={category?.id}>
-                                      {category?.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div>
-                              <label htmlFor="">Hoạt động sư đoàn</label>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                    <div hidden={selectedType !== "quoc_te"}>
+                    <label htmlFor="">Hoạt động ngoài nước</label>
+                    <Select
+                      value={selectedRegion}
+                      onValueChange={(value) => {
+                        setSelectedRegion(value === "undefined" ? undefined : value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
 
-                              <Select
-                                value={selectedActivity === undefined ? "undefined" : selectedActivity}
-                                onValueChange={(value) => {
-                                  setSelectedActivity(value === "undefined" ? undefined : value);
-                                }}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn trạng thái" />
-                                </SelectTrigger>
+                        {Region?.map((region: any) => (
+                          <SelectItem key={region.id} value={region?.id}>
+                            {region?.name}
+                          </SelectItem>
 
-                                <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
-                                  {categoriesActivity.map((CategoryActivity: any) => (
-                                    <SelectItem key={CategoryActivity?.id} value={CategoryActivity?.id}>
-                                      {CategoryActivity?.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div hidden={selectedType !== "quan_su"}>
+                    <label htmlFor="">Hoạt động quân sự</label>
 
-                            </div>
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={(value) => {
+                        setSelectedCategory(value === "undefined" ? undefined : value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn hoạt động" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
+
+                        {categories.map((category: any) => (
+
+                          <SelectItem key={category.id} value={category?.id}>
+                            {category?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div hidden={selectedType !== "hoat_dong_su_doan"}>
+                    <label htmlFor="">Hoạt động sư đoàn</label>
+
+                    <Select
+                      value={selectedActivity}
+                      onValueChange={(value) => {
+                        setSelectedActivity(value === "undefined" ? undefined : value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="undefined">Không</SelectItem>
+
+                        {categoriesActivity.map((CategoryActivity: any) => (
+
+                          <SelectItem key={CategoryActivity?.id} value={CategoryActivity?.id}>
+                            {CategoryActivity?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
 
-                          </div>
+                </div>
 
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id="featured"
-                              className="rounded"
-                              checked={isFeatured}
-                              onChange={(e) => setIsFeatured(e.target.checked)}
-                            />
-                            <label htmlFor="featured" className="text-sm text-gray-700">
-                              Gắn bảng tin nổi bật
-                            </label>
-                          </div>
+               <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    className="rounded"
+                    checked={isFeatured}
+                    onChange={(e) => setIsFeatured(e.target.checked)}
+                  />
+                  <label htmlFor="featured" className="text-sm text-gray-700">
+                    Gắn bảng tin nổi bật
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nội dung</label>
+                  {/* <textarea
+                    className="mt-1 w-full border rounded-md p-2"
+                    rows={10}
+                    placeholder="Nhập nội dung bảng tin"
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                  /> */}
+                  {/* <RichTextEditor content="" onChange={()=>{}}/> */}
+                  <SimpleEditor content="Thêm nội dung vào đây" onChange={(e) => setExcerpt(e)} />
+                </div>
                           <DialogFooter className="flex-shrink-0 mt-4">
                             <DialogClose asChild>
                               <Button type="button" className="mr-2">

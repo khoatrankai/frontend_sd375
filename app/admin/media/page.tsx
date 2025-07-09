@@ -273,7 +273,6 @@ export default function AdminMediaPage() {
   }
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    console.log(selectedFile)
     const fileOK = { coverThumbnail: selectedFile, coverImage: selectedFile, coverVideo: selectedFileVideo, coverTrack: selectedFile, coverSoftware: selectedFile }
     // const dataSave = {
     //   title: title,
