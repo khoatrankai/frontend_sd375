@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 
 export default function NewsPage() {
   const [activeType, setActiveType] = useState("all")
+  const [filteredNews, setFilteredNews] = useState([])
+
   const [types, setTypes] = useState([
     { id: "all", name: "Tất cả" },
     { id: "trong_nuoc", name: "Trong nước" },
@@ -50,10 +52,10 @@ export default function NewsPage() {
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentNew = filteredNew.slice(indexOfFirstItem, indexOfLastItem);
+  const currentNew = filteredNews.slice(indexOfFirstItem, indexOfLastItem);
 
   // Tổng số trang
-  const totalPages = Math.ceil(filteredNew.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
 
   // Phân nhóm trang (2 trang mỗi cụm)
   const pagesPerGroup = 2;
@@ -82,7 +84,6 @@ export default function NewsPage() {
 
 
 
-  const [filteredNews, setFilteredNews] = useState([])
   // activeCategory === "all" ? news : news.filter((item) => item.category === activeCategory)
 
   const [featuredNews, setFeaturedNews] = useState([])
@@ -191,13 +192,7 @@ export default function NewsPage() {
           {activeType === "all" ? "Tin tức khác" : types.find((c) => c.id === activeType)?.name}
         </h2>
         <div className="space-y-6">
-          {currentNew.filter((dt: any) => {
-            if (activeType === "all") {
-              return dt?.featured === false
-            } else {
-              return true
-            }
-          }).map((item: any) => (
+          {currentNew.map((item: any) => (
             <Card key={item.id}  className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
               router.push(`/tin-tuc/${item.id}`)
             }}>
