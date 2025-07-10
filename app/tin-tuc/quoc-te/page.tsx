@@ -8,9 +8,9 @@ import { Clock, Eye, User, ChevronRight, Globe } from "lucide-react"
 import { newsService } from "@/services/news.service"
 
 export default function InternationalNewsPage() {
-  const [currentPage, setCurrentPage] = useState(1)
+  // const [currentPage, setCurrentPage] = useState(1)
 
-  const [news,setNews] = useState([
+  const [news, setNews] = useState([
     {
       id: 1,
       title: "NATO tăng cường hợp tác quốc phòng với các đối tác châu Á-Thái Bình Dương",
@@ -71,22 +71,63 @@ export default function InternationalNewsPage() {
     { id: "chau_dai_duong", name: "Châu Đại Dương", count: 3 },
   ]
 
-  useEffect(()=>{
-      fetchData()
-    },[])
-  
-    const fetchData = async()=>{
-      const res = await newsService.getPosts({type:"quoc_te",page:currentPage,limit:10})
-      if(res.statusCode === 200){
-        setNews(res.data)
-        setCurrentPage(currentPage+1)
-      }else{
-        console.log(res)
+
+  const [filteredTracks, setFilteredNews] = useState<any>([])
+
+  useEffect(() => {
+    setFilteredNews(selectedRegion === "all" ? news : news.filter((dt: any) => {
+      if (selectedRegion === "all" || dt.region.nametag === selectedRegion) {
+        return true
       }
-    }
-
+      return false
+    }))
+  })
   const [selectedRegion, setSelectedRegion] = useState("all")
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
 
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = filteredTracks.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(filteredTracks.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    const res = await newsService.getPosts({ type: "quoc_te", page: currentPage, limit: 10 })
+    if (res.statusCode === 200) {
+      setNews(res.data)
+      // setCurrentPage(currentPage+1)
+    } else {
+      console.log(res)
+    }
+  }
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -107,7 +148,7 @@ export default function InternationalNewsPage() {
             <span>{region.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                region.id === "all" ? news.length : news.filter((i:any)=>i.region.nametag === region.id).length
+                region.id === "all" ? news.length : news.filter((i: any) => i.region.nametag === region.id).length
               }
             </Badge>
           </Button>
@@ -116,12 +157,7 @@ export default function InternationalNewsPage() {
 
       {/* News List */}
       <div className="space-y-6">
-        {news.filter((dt:any)=>{
-          if(selectedRegion === "all" || dt.region.nametag === selectedRegion){
-            return true
-          }
-          return false
-        }).map((item:any) => (
+        {currentData.map((item: any) => (
           <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row">
@@ -199,14 +235,51 @@ export default function InternationalNewsPage() {
       </Card>
 
       {/* Pagination */}
-      <div className="flex justify-center space-x-2">
-        <Button variant="outline" disabled={currentPage === 1}>
-          Trang trước
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => prev - 1)}
+        >
+          Trước
         </Button>
-        <Button variant="outline">1</Button>
-        <Button variant="outline">2</Button>
-        <Button variant="outline">3</Button>
-        <Button variant="outline">Trang sau</Button>
+
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
+          </Button>
+        )}
+
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
+
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Tiếp
+        </Button>
       </div>
     </div>
   )

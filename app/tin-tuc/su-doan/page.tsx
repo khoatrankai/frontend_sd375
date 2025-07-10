@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight, Users, Award, Calendar, Activity } from "lucide-react"
 import { newsService } from "@/services/news.service"
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
 
 export default function DivisionNewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
 
-  const categories= [
+  const categories = [
     { id: "all", name: "Tất cả", icon: Activity },
     { id: "huan_luyen", name: "Huấn luyện", icon: Users },
     { id: "thi_dua", name: "Thi đua", icon: Award },
@@ -20,40 +20,40 @@ export default function DivisionNewsPage() {
     { id: "sinh_hoat", name: "Sinh hoạt", icon: Users },
   ]
 
-  const [news,setNews] = useState<any>([
-      ])
-    
-      const [filteredNews,setFilteredNews] = useState([])
-      // activeCategory === "all" ? news : news.filter((item) => item.category === activeCategory)
-    
-      const [featuredNews,setFeaturedNews] = useState([])
-      // news.filter((item) => item.featured)
-      const [regularNews,setRegularNews] = useState([]) 
-      // filteredNews.filter((item) => !item.featured)
-      const fetchData = async()=>{
-        const res = await newsService.getPosts({type:"hoat_dong_su_doan"}) as any
-        if(res.statusCode === 200){
-          setNews(res.data)
-        }
-  
-      
-      }
-    
-      useEffect(()=>{
-        setRegularNews(filteredNews.filter((item:any) => !item.featured))
-      },[filteredNews])
-    
-      useEffect(()=>{
-        setFilteredNews((selectedCategory === "all" ? news : news.filter((item:any) => item.categoryActivity.nametag === selectedCategory)) as any)
-      },[news,selectedCategory])
-    
-      useEffect(()=>{
-        setFeaturedNews(news.filter((i:any)=> i.featured) as any)
-      },[news])
-      useEffect(()=>{
-        fetchData()
-      },[])
-  
+  const [news, setNews] = useState<any>([
+  ])
+
+  const [filteredNews, setFilteredNews] = useState([])
+  // activeCategory === "all" ? news : news.filter((item) => item.category === activeCategory)
+
+  const [featuredNews, setFeaturedNews] = useState([])
+  // news.filter((item) => item.featured)
+  const [regularNews, setRegularNews] = useState([])
+  // filteredNews.filter((item) => !item.featured)
+  const fetchData = async () => {
+    const res = await newsService.getPosts({ type: "hoat_dong_su_doan" }) as any
+    if (res.statusCode === 200) {
+      setNews(res.data)
+    }
+
+
+  }
+
+  useEffect(() => {
+    setRegularNews(filteredNews.filter((item: any) => !item.featured))
+  }, [filteredNews])
+
+  useEffect(() => {
+    setFilteredNews((selectedCategory === "all" ? news : news.filter((item: any) => item.categoryActivity.nametag === selectedCategory)) as any)
+  }, [news, selectedCategory])
+
+  useEffect(() => {
+    setFeaturedNews(news.filter((i: any) => i.featured) as any)
+  }, [news])
+  useEffect(() => {
+    fetchData()
+  }, [])
+
 
   const achievements = [
     { label: "Đơn vị hoàn thành xuất sắc nhiệm vụ", value: "15/15", color: "text-green-600" },
@@ -61,12 +61,43 @@ export default function DivisionNewsPage() {
     { label: "Giải thưởng thi đua các cấp", value: "23", color: "text-purple-600" },
     { label: "Sáng kiến kỹ thuật được áp dụng", value: "12", color: "text-orange-600" },
   ]
-    const router = useRouter();
+  const router = useRouter();
 
-const loadDetail = async (id: string | number) => {
-  router.push(`/tin-tuc/${id}`); 
-};
+  const loadDetail = async (id: string | number) => {
+    router.push(`/tin-tuc/${id}`);
+  };
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
 
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = regularNews.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(regularNews.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -90,7 +121,7 @@ const loadDetail = async (id: string | number) => {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category:any) => (
+        {categories.map((category: any) => (
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
@@ -101,7 +132,7 @@ const loadDetail = async (id: string | number) => {
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                category.id === "all" ? news.length : news.filter((i:any)=>i.categoryActivity.nametag === category.id).length
+                category.id === "all" ? news.length : news.filter((i: any) => i.categoryActivity.nametag === category.id).length
               }
             </Badge>
           </Button>
@@ -113,7 +144,7 @@ const loadDetail = async (id: string | number) => {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Hoạt động nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredNews.map((item:any) => (
+            {featuredNews.map((item: any) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="relative">
                   <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
@@ -153,7 +184,7 @@ const loadDetail = async (id: string | number) => {
           {selectedCategory === "all" ? "Hoạt động khác" : categories.find((c) => c.id === selectedCategory)?.name}
         </h2>
         <div className="space-y-6">
-          {(selectedCategory === "all"? regularNews : filteredNews).map((item:any) => (
+          {(selectedCategory === "all" ? currentData : filteredNews).map((item: any) => (
             <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">
@@ -234,9 +265,50 @@ const loadDetail = async (id: string | number) => {
       </Card>
 
       {/* Load More */}
-      <div className="text-center">
-        <Button variant="outline" size="lg">
-          Xem thêm hoạt động
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => prev - 1)}
+        >
+          Trước
+        </Button>
+
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
+          </Button>
+        )}
+
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
+
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Tiếp
         </Button>
       </div>
     </div>
