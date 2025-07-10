@@ -14,7 +14,7 @@ import { removeImagesFromHTML } from "@/lib/removeImgHTML"
 export default function DivisionNewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
 
-  const categories= [
+  const categories = [
     { id: "all", name: "Tất cả", icon: Activity },
     { id: "huan_luyen", name: "Huấn luyện", icon: Users },
     { id: "thi_dua", name: "Thi đua", icon: Award },
@@ -63,12 +63,43 @@ export default function DivisionNewsPage() {
     { label: "Giải thưởng thi đua các cấp", value: "23", color: "text-purple-600" },
     { label: "Sáng kiến kỹ thuật được áp dụng", value: "12", color: "text-orange-600" },
   ]
-    const router = useRouter();
+  const router = useRouter();
 
-const loadDetail = async (id: string | number) => {
-  router.push(`/tin-tuc/${id}`); 
-};
+  const loadDetail = async (id: string | number) => {
+    router.push(`/tin-tuc/${id}`);
+  };
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
 
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = regularNews.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(regularNews.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
@@ -92,7 +123,7 @@ const loadDetail = async (id: string | number) => {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category:any) => (
+        {categories.map((category: any) => (
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
@@ -240,9 +271,50 @@ const loadDetail = async (id: string | number) => {
       </Card>
 
       {/* Load More */}
-      <div className="text-center">
-        <Button variant="outline" size="lg">
-          Xem thêm hoạt động
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => prev - 1)}
+        >
+          Trước
+        </Button>
+
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
+          </Button>
+        )}
+
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
+
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Tiếp
         </Button>
       </div>
     </div>

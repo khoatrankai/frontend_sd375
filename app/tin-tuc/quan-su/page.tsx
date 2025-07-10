@@ -16,42 +16,74 @@ export default function MilitaryNewsPage() {
   const [categories,setCategories] = useState<any>([
   ])
 
-  const [news,setNews] = useState<any>([
-    ])
-  
-    const [filteredNews,setFilteredNews] = useState([])
-    // activeCategory === "all" ? news : news.filter((item) => item.category === activeCategory)
-  
-    const [featuredNews,setFeaturedNews] = useState([])
-    // news.filter((item) => item.featured)
-    const [regularNews,setRegularNews] = useState([]) 
-    // filteredNews.filter((item) => !item.featured)
-    const fetchData = async()=>{
-      const res = await newsService.getPosts({type:"quan_su"}) as any
-      const res2 = await newsService.getCategoriesNew() as any
-      if(res.statusCode === 200){
-        setNews(res.data)
-      }
+  const [news, setNews] = useState<any>([
+  ])
 
-      if(res2.statusCode === 200){
-        setCategories(res2.data)
-      }
+  const [filteredNews, setFilteredNews] = useState([])
+  // activeCategory === "all" ? news : news.filter((item) => item.category === activeCategory)
+
+  const [featuredNews, setFeaturedNews] = useState([])
+  // news.filter((item) => item.featured)
+  const [regularNews, setRegularNews] = useState([])
+  // filteredNews.filter((item) => !item.featured)
+  const fetchData = async () => {
+    const res = await newsService.getPosts({ type: "quan_su" }) as any
+    const res2 = await newsService.getCategoriesNew() as any
+    if (res.statusCode === 200) {
+      setNews(res.data)
     }
-  
-    useEffect(()=>{
-      setRegularNews(filteredNews.filter((item:any) => !item.featured))
-    },[filteredNews])
-  
-    useEffect(()=>{
-      setFilteredNews((selectedCategory === "all" ? news : news.filter((item:any) => item?.category?.nametag === selectedCategory)) as any)
-    },[news,selectedCategory])
-  
-    useEffect(()=>{
-      setFeaturedNews(news.filter((i:any)=> i.featured) as any)
-    },[news])
-    useEffect(()=>{
-      fetchData()
-    },[])
+
+    if (res2.statusCode === 200) {
+      setCategories(res2.data)
+    }
+  }
+
+  useEffect(() => {
+    setRegularNews(filteredNews.filter((item: any) => !item.featured))
+  }, [filteredNews])
+
+  useEffect(() => {
+    setFilteredNews((selectedCategory === "all" ? news : news.filter((item: any) => item.category.nametag === selectedCategory)) as any)
+  }, [news, selectedCategory])
+
+  useEffect(() => {
+    setFeaturedNews(news.filter((i: any) => i.featured) as any)
+  }, [news])
+  useEffect(() => {
+    fetchData()
+  }, [])
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = regularNews.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(regularNews.length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+  //end phân trang
 
   return (
     <div className="space-y-8">
@@ -64,7 +96,7 @@ export default function MilitaryNewsPage() {
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category:any) => (
+        {categories.map((category: any) => (
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
@@ -126,7 +158,7 @@ export default function MilitaryNewsPage() {
       {/* Regular News */}
       <section>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">
-          {selectedCategory === "all" ? "Tin tức khác" : categories.find((c:any) => c.nametag === selectedCategory)?.name}
+          {selectedCategory === "all" ? "Tin tức khác" : categories.find((c: any) => c.nametag === selectedCategory)?.name}
         </h2>
         <div className="space-y-6">
           {(selectedCategory === "all" ?regularNews:filteredNews).map((item:any) => (
@@ -209,9 +241,50 @@ export default function MilitaryNewsPage() {
       </Card>
 
       {/* Load More */}
-      <div className="text-center">
-        <Button variant="outline" size="lg">
-          Xem thêm tin tức quân sự
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => prev - 1)}
+        >
+          Trước
+        </Button>
+
+        {/* Nút ... lùi cụm */}
+        {startPage > 1 && (
+          <Button variant="outline" onClick={handlePrevGroup}>
+            ...
+          </Button>
+        )}
+
+        {/* Các trang trong nhóm hiện tại */}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+          const page = startPage + i;
+          return (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+              className={page === currentPage ? "font-bold" : ""}
+            >
+              {page}
+            </Button>
+          );
+        })}
+
+        {/* Nút ... tiến cụm */}
+        {endPage < totalPages && (
+          <Button variant="outline" onClick={handleNextGroup}>
+            ...
+          </Button>
+        )}
+
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Tiếp
         </Button>
       </div>
     </div>
