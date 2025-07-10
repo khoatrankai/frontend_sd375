@@ -91,7 +91,7 @@ export default function Sidebar() {
   return (
     <aside className="w-80 p-4 space-y-6 bg-gray-50">
       {/* Thanh tìm kiếm */}
-      <Card>
+      {/* <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Tìm kiếm</CardTitle>
         </CardHeader>
@@ -103,7 +103,7 @@ export default function Sidebar() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Bản tin */}
       <Card>

@@ -52,7 +52,7 @@ export default function ImagesPage() {
 
 
 
-  // selectedCategory === "all" ? images : images.filter((img:any) => img.category.nametag === selectedCategory)
+  // selectedCategory === "all" ? images : images.filter((img:any) => img?.category?.nametag === selectedCategory)
 
 
 
@@ -73,7 +73,7 @@ export default function ImagesPage() {
 
   useEffect(() => {
     // console.log(images)
-    setFilteredImage(selectedCategory === "all" ? images : images.filter((img: any) => img.category.nametag === selectedCategory))
+    setFilteredImage(selectedCategory === "all" ? images : images.filter((img: any) => img?.category?.nametag === selectedCategory))
   }, [images, selectedCategory])
 
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function ImagesPage() {
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                category.nametag === "all" ? images.length : images.filter((i: any) => i.category.nametag === category.nametag).length
+                category.nametag === "all" ? images.length : images.filter((i: any) => i?.category?.nametag === category.nametag).length
               }
             </Badge>
           </Button>
@@ -138,7 +138,7 @@ export default function ImagesPage() {
                 <Eye className="h-3 w-3 mr-1" />
                 {image.views}
               </div>
-              <Badge className="absolute top-2 left-2">{image.category.name}</Badge>
+              <Badge className="absolute top-2 left-2">{image?.category?.name}</Badge>
             </div>
             <CardContent className="p-4">
               <h3 className="font-medium text-sm line-clamp-2 mb-2">{image.title}</h3>

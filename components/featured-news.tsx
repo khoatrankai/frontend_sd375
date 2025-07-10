@@ -65,14 +65,14 @@ const latestSideNews = [...sideNews as { created_at: string }[]]
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Badge variant="destructive">{news.category.name}</Badge>
+                      <Badge variant="destructive">{news?.category?.name ?? news?.categoryActivity?.name ?? news?.region?.name ?? "Trong nước"}</Badge>
                       <div className="flex items-center text-sm text-gray-200">
                         <Clock className="h-4 w-4 mr-1" />
                         {<TimeAgo date={news.created_at} />}
                       </div>
                     </div>
                     <h3 className="text-xl font-bold mb-2 line-clamp-2 hover:underline">{news.title}</h3>
-                    <p className="text-gray-200 line-clamp-2">{news.excerpt}</p>
+                    <p className="text-gray-200 line-clamp-2" dangerouslySetInnerHTML={{__html:news.excerpt}}/>
                   </div>
                 </div>
               </div>
@@ -117,7 +117,7 @@ const latestSideNews = [...sideNews as { created_at: string }[]]
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <Badge variant="outline" className="text-xs">
-                    {news.category?.name}
+                    {news?.category?.name ?? news?.categoryActivity?.name ?? news?.region?.name ?? "Trong nước"}
                   </Badge>
                   <div className="flex items-center text-xs text-gray-500">
                     <Clock className="h-3 w-3 mr-1" />

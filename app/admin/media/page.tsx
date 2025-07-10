@@ -998,7 +998,7 @@ export default function AdminMediaPage() {
                           {isSoftware && "Phần mềm"}
                         </Badge>
                         {file?.category?.name && (
-                          <Badge variant="default">{file.category.name}</Badge>
+                          <Badge variant="default">{file?.category?.name}</Badge>
                         )}
                       </div>
                     </div>
@@ -1070,7 +1070,7 @@ export default function AdminMediaPage() {
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Hình ảnh</Badge>
                         {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
                         )}
                         {/* <span>{file.size}</span> */}
                         <div className="flex items-center">
@@ -1123,7 +1123,7 @@ export default function AdminMediaPage() {
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Video</Badge>
                         {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
                         )}
                         <span>{file?.duration}</span>
                         <div className="flex items-center">
@@ -1175,7 +1175,7 @@ export default function AdminMediaPage() {
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Audio</Badge>
                         {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
                         )}
                         <span>{file?.duration}</span>
                         <div className="flex items-center">
@@ -1227,7 +1227,7 @@ export default function AdminMediaPage() {
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <Badge variant="outline">Phần mềm</Badge>
                         {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file.category.name}</Badge>
+                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
                         )}
                         <span>{file?.size}</span>
                         <div className="flex items-center">

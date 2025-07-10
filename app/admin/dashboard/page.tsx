@@ -380,7 +380,7 @@ export default function AdminDashboard() {
                           <SelectValue placeholder="Chọn hoạt động" />
                         </SelectTrigger>
                         <SelectContent>
-                          {/* <SelectItem value="undefined">Không</SelectItem> */}
+                          {/*  */}
 
                           {category?.map((category: any) => (
                             <SelectItem key={category.id} value={category.id}>

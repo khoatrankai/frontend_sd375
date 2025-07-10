@@ -289,7 +289,7 @@ export default function AdminUsersPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">mail(*)</label>
+                {/* <label className="block text-sm font-medium text-gray-700">mail(*)</label>
                 <input
                   className="mt-1 w-full border rounded-md p-2"
                   placeholder="Nhập mail ..."
@@ -297,7 +297,7 @@ export default function AdminUsersPage() {
                   onChange={(e) => {
                     setDataSave({ ...dataSave, email: e.target.value })
                   }}
-                />
+                /> */}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Số Điện Thoại(*)</label>
@@ -661,14 +661,14 @@ export default function AdminUsersPage() {
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">mail(*)</label>
+                            {/* <label className="block text-sm font-medium text-gray-700">mail(*)</label>
                             <input
                               className="mt-1 w-full border rounded-md p-2"
                               placeholder="Nhập mail ..."
                               value={user?.email}
                               disabled
                            
-                            />
+                            /> */}
 
                             <div>
                               <label className="block text-sm font-medium text-gray-700">Số Điện Thoại(*)</label>
@@ -870,7 +870,7 @@ export default function AdminUsersPage() {
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">mail(*)</label>
+                            {/* <label className="block text-sm font-medium text-gray-700">mail(*)</label>
                             <input
                               className="mt-1 w-full border rounded-md p-2"
                               placeholder="Nhập mail ..."
@@ -878,7 +878,7 @@ export default function AdminUsersPage() {
                               onChange={(e) => {
                                 setDataSave({ ...dataSave, user: e.target.value })
                               }}
-                            />
+                            /> */}
 
                             <div>
                               <label className="block text-sm font-medium text-gray-700">Số Điện Thoại(*)</label>

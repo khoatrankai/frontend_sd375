@@ -222,7 +222,7 @@ export default function AdminDocumentsPage() {
   const handleSubmitUp = async (e: any, id: string) => {
     try {
       e.preventDefault();
-      const formData = CustomFormData({ ...dataSave, coverDocument: selectedFile })
+      const formData = CustomFormData({ ...dataSave, coverDocument: selectedFile,id:undefined,created_at:undefined,updated_at:undefined,downloads:undefined })
       const res = await documentService.updateDocument(id, formData)
       if (res.statusCode === 201) {
         fetchData()
@@ -495,11 +495,11 @@ export default function AdminDocumentsPage() {
                         <SelectValue placeholder="Chọn cơ quan" />
                       </SelectTrigger>
                       <SelectContent>
-                         <SelectItem value={"all"}>{"Tất cả"}</SelectItem>
+                         {/* <SelectItem key={"25336"} value={"all"}>{"Tất cả"}</SelectItem> */}
                         {
                           agency.map((category) => {
                             return (
-                              <SelectItem value={category?.nametag}>{category.name}</SelectItem>
+                              <SelectItem key={category?.id} value={category?.nametag}>{category.name}</SelectItem>
                             )
                           })
                         }
@@ -562,7 +562,7 @@ export default function AdminDocumentsPage() {
 
                   <Dialog >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" onClick={() => { handleFocusData({ ...doc, category: doc?.category?.id }) }} disabled={dataProfile?.role === "user"}>
+                      <Button variant="outline" size="sm" onClick={() => { handleFocusData({ ...doc, category: doc?.category?.id,agency: doc?.agency?.id }) }} disabled={dataProfile?.role === "user"}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -575,7 +575,7 @@ export default function AdminDocumentsPage() {
                         <div>
                           <label>Tiêu đề *</label>
                           <Input placeholder="Nhập tiêu đề văn bản"
-                            value={dataSave?.title || ""}
+                            defaultValue={doc?.title || ""}
                             onChange={(e) => setDataSave((preValue: any) => {
                               return { ...preValue, title: e.target.value }
                             })}
@@ -584,7 +584,9 @@ export default function AdminDocumentsPage() {
                         <div className="flex gap-4">
                           <div className="flex-1">
                             <label>Loại văn bản *</label>
-                            <Select onValueChange={(value) => {
+                            <Select 
+                            defaultValue={doc?.type}
+                            onValueChange={(value) => {
                               setDataSave((preValue: any) => {
                                 return { ...preValue, type: value }
                               })
@@ -605,6 +607,7 @@ export default function AdminDocumentsPage() {
                           <div className="flex-1">
                             <label>Đơn vị đăng tải *</label>
                             <Select
+                              defaultValue={doc?.category?.id}
                               onValueChange={(value: any) => {
                                 setDataSave((preValue: any) => {
                                   return { ...preValue, category: value }
@@ -631,6 +634,7 @@ export default function AdminDocumentsPage() {
                   <div className="flex-1">
                     <label>Cơ quan ban hành *</label>
                     <Select 
+                    defaultValue={doc?.agency?.id}
                     onValueChange={(value:any)=>{
                       setDataSave((preValue:any)=>{
                         return {...preValue,agency:value}
@@ -658,7 +662,7 @@ export default function AdminDocumentsPage() {
                 <div>
                   <label>Người đăng tải(kèm cấp bậc) *</label>
                   <Input placeholder="Nhập người đăng tải"
-                   value={dataSave?.organ || ""}
+                   defaultValue={doc?.organ || ""}
                     onChange={(e) => setDataSave((preValue:any)=>{
                       return {...preValue,organ:e.target.value}
                     })} 
@@ -667,7 +671,7 @@ export default function AdminDocumentsPage() {
 <div>
                   <label>Ngày đăng tải</label>
                   <Input placeholder="Nhập ngày đăng"
-                   value={dataSave?.date || ""}
+                   defaultValue={doc?.date || ""}
                     onChange={(e) => setDataSave((preValue:any)=>{
                       return {...preValue,date:e.target.value}
                     })} 
@@ -676,7 +680,7 @@ export default function AdminDocumentsPage() {
                 <div>
                   <label>Kích thước</label>
                   <Input placeholder="Nhập kích thước"
-                   value={dataSave?.size || ""}
+                   defaultValue={doc?.size || ""}
                     onChange={(e) => setDataSave((preValue:any)=>{
                       return {...preValue,size:e.target.value}
                     })} 

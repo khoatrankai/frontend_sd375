@@ -58,7 +58,7 @@ export default function VideosPage() {
 
 
   const [featuredFVideo, setFeaturedVideo] = useState<any>()
-  selectedCategory === "all" ? videos : videos.filter((video: any) => video.category.nametag === selectedCategory)
+  selectedCategory === "all" ? videos : videos.filter((video: any) => video?.category?.nametag === selectedCategory)
 
 
   const fetchData = async () => {
@@ -80,7 +80,7 @@ export default function VideosPage() {
   }, [filteredVideos])
 
   useEffect(() => {
-    setFilteredVideos(selectedCategory === "all" ? videos : videos.filter((img: any) => img.category.nametag === selectedCategory))
+    setFilteredVideos(selectedCategory === "all" ? videos : videos.filter((img: any) => img?.category?.nametag === selectedCategory))
   }, [videos, selectedCategory])
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function VideosPage() {
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                category.nametag === "all" ? videos.length : videos.filter((i: any) => i.category.nametag === category.nametag).length
+                category.nametag === "all" ? videos.length : videos.filter((i: any) => i?.category?.nametag === category.nametag).length
               }
             </Badge>
           </Button>
@@ -171,7 +171,7 @@ export default function VideosPage() {
               </div>
 
               {/* Category Badge */}
-              <Badge className="absolute top-2 left-2 bg-red-600">{video.category.name}</Badge>
+              <Badge className="absolute top-2 left-2 bg-red-600">{video?.category?.name}</Badge>
             </div>
 
             <CardContent className="p-4">

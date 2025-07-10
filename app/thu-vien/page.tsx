@@ -240,7 +240,7 @@ export default function LibraryPage() {
                 </div>
 
                 {/* Category Badge */}
-                <Badge className="absolute top-2 left-2 bg-red-600">{video.category.name}</Badge>
+                <Badge className="absolute top-2 left-2 bg-red-600">{video?.category?.name}</Badge>
               </div>
 
               <CardContent className="p-4">
@@ -291,7 +291,7 @@ export default function LibraryPage() {
                 <Eye className="h-3 w-3 mr-1" />
                 {image.views}
               </div>
-              <Badge className="absolute top-2 left-2">{image.category.name}</Badge>
+              <Badge className="absolute top-2 left-2">{image?.category?.name}</Badge>
             </div>
             <CardContent className="p-4 mt-auto">
               <h3 className="font-medium text-sm line-clamp-2 mb-2">{image.title}</h3>

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight, Users, Award, Calendar, Activity } from "lucide-react"
 import { newsService } from "@/services/news.service"
 import { useRouter } from 'next/navigation'; 
+import TimeAgo from "@/components/time-ago"
+import { removeImagesFromHTML } from "@/lib/removeImgHTML"
 
 
 export default function DivisionNewsPage() {
@@ -44,7 +46,7 @@ export default function DivisionNewsPage() {
       },[filteredNews])
     
       useEffect(()=>{
-        setFilteredNews((selectedCategory === "all" ? news : news.filter((item:any) => item.categoryActivity.nametag === selectedCategory)) as any)
+        setFilteredNews((selectedCategory === "all" ? news : news.filter((item:any) => item?.categoryActivity?.nametag === selectedCategory)) as any)
       },[news,selectedCategory])
     
       useEffect(()=>{
@@ -101,7 +103,7 @@ const loadDetail = async (id: string | number) => {
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                category.id === "all" ? news.length : news.filter((i:any)=>i.categoryActivity.nametag === category.id).length
+                category.id === "all" ? news.length : news.filter((i:any)=>i?.categoryActivity?.nametag === category.id).length
               }
             </Badge>
           </Button>
@@ -114,10 +116,12 @@ const loadDetail = async (id: string | number) => {
           <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Hoạt động nổi bật</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {featuredNews.map((item:any) => (
-              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/tin-tuc/${item?.id}`)
+              }}>
                 <div className="relative">
                   <img src={item.image || "/public/placeholder.svg"} alt={item.title} className="w-full h-64 object-cover" />
-                  <Badge className="absolute top-4 left-4 bg-red-600">{item.categoryActivity.name}</Badge>
+                  <Badge className="absolute top-4 left-4 bg-red-600">{item?.categoryActivity?.name}</Badge>
                   <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center">
                     <Eye className="h-3 w-3 mr-1" />
                     {item.views}
@@ -127,7 +131,7 @@ const loadDetail = async (id: string | number) => {
                   <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{item.excerpt}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3" dangerouslySetInnerHTML={{__html:item.excerpt}}/>
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
@@ -136,7 +140,7 @@ const loadDetail = async (id: string | number) => {
                       </div>
                       <div className="flex items-center">
                         <Clock className="h-4 w-4 mr-1" />
-                        {item.time}
+                        {<TimeAgo date={item.created_at} />}
                       </div>
                     </div>
                   </div>
@@ -154,7 +158,9 @@ const loadDetail = async (id: string | number) => {
         </h2>
         <div className="space-y-6">
           {(selectedCategory === "all"? regularNews : filteredNews).map((item:any) => (
-            <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+            <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/tin-tuc/${item?.id}`)
+              }}>
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
@@ -166,16 +172,16 @@ const loadDetail = async (id: string | number) => {
                   </div>
                   <div className="md:w-2/3 p-6">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="outline">{item.categoryActivity.name}</Badge>
+                      <Badge variant="outline">{item?.categoryActivity?.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
-                        {item.time}
+                        {<TimeAgo date={item.created_at} />}
                       </div>
                     </div>
                     <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{item.excerpt}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2" dangerouslySetInnerHTML={{__html:removeImagesFromHTML(item.excerpt)}}/>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center">

@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
 import { useRouter } from 'next/navigation';
+import TimeAgo from "@/components/time-ago"
 
 
 export default function DomesticNewsPage() {
 
   const [news, setNews] = useState<any>([])
   //phân trang
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 2;
 
   // Tính vị trí dữ liệu
@@ -53,7 +54,7 @@ export default function DomesticNewsPage() {
   }, [])
 
   const fetchData = async () => {
-    const res = await newsService.getPosts({ type: " ", page: currentPage, limit: 10 })
+    const res = await newsService.getPosts({ type: "trong_nuoc", page: currentPage, limit: 10 })
     if (res.statusCode === 200) {
       setNews(res.data)
       setCurrentPage(currentPage + 1)
@@ -78,7 +79,9 @@ export default function DomesticNewsPage() {
       {/* News List */}
       <div className="space-y-6">
         {currentNew?.map((item: any) => (
-          <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+          <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
+                router.push(`/tin-tuc/${item?.id}`)
+              }}>
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/3">
@@ -90,16 +93,16 @@ export default function DomesticNewsPage() {
                 </div>
                 <div className="md:w-2/3 p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Badge variant="outline">{item?.category?.name}</Badge>
+                    <Badge variant="outline">{item?.category?.name ?? "Trong nước"}</Badge>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
-                      {item.time}
+                      {<TimeAgo date={item.created_at} />}
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{item.excerpt}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-2" dangerouslySetInnerHTML={{__html:item.excerpt}}/>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <div className="flex items-center">

@@ -124,7 +124,7 @@ export default function HistoryPage() {
               <div className="text-sm text-gray-600">Trận đánh</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">5</div>
+              <div className="text-3xl font-bold text-green-600">9+</div>
               <div className="text-sm text-gray-600">Huân chương</div>
             </div>
             <div className="text-center">

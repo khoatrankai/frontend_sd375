@@ -45,6 +45,7 @@ export default function AdminPostsPage() {
   const [selectedNews, setSelectedNews] = useState<string | undefined>(undefined);
 
   const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
 
@@ -91,6 +92,8 @@ export default function AdminPostsPage() {
     // Tạo đối tượng FormData để dễ dàng truyền file cùng các trường text
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("type", selectedType ?? "trong_nuoc");
+    formData.append("author", author);
     formData.append("excerpt", excerpt);
     formData.append("region", selectedRegion ?? "");
     formData.append("category", selectedCategory ?? "");
@@ -203,7 +206,9 @@ export default function AdminPostsPage() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("type", selectedType ?? "trong_nuoc");
     formData.append("excerpt", excerpt);
+    formData.append("author", author);
     formData.append("region", selectedRegion as string);
     formData.append("category", selectedCategory as string);
     formData.append("categoryActivity", selectedActivity as string);
@@ -239,8 +244,8 @@ export default function AdminPostsPage() {
   useEffect(() => {
     setFilteredNews(News.filter((post: any) => {
       const matchesSearch =
-        post?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post?.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+        post?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post?.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
       return matchesSearch && 
         (selectedFilterActivity === "all" || selectedFilterActivity === post?.categoryActivity?.nametag || !selectedFilterActivity) &&
         (selectedFilterCategory === "all" || selectedFilterCategory === post?.category?.nametag || !selectedFilterCategory) &&
@@ -330,7 +335,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn loại" />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* <SelectItem value="undefined">Không</SelectItem> */}
+                        {/*  */}
 
                         {types?.map((region: any) => (
                           <SelectItem key={region.id} value={region?.id}>
@@ -353,7 +358,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
+                        
 
                         {Region?.map((region: any) => (
                           <SelectItem key={region.id} value={region?.id}>
@@ -377,7 +382,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
+                        
 
                         {categories.map((category: any) => (
 
@@ -401,7 +406,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn trạng thái" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
+                        
 
                         {categoriesActivity.map((CategoryActivity: any) => (
 
@@ -415,7 +420,14 @@ export default function AdminPostsPage() {
 
 
                 </div>
+                <div className="grid grid-cols-2 gap-4">
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Đơn vị đăng tải(*)</label>
+                  <Input placeholder="Nhập đơn vị đăng tải"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)} />
+                </div>
                <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -427,6 +439,7 @@ export default function AdminPostsPage() {
                   <label htmlFor="featured" className="text-sm text-gray-700">
                     Gắn bảng tin nổi bật
                   </label>
+                </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nội dung</label>
@@ -586,15 +599,15 @@ export default function AdminPostsPage() {
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     {post?.category?.name && (
-                      <Badge variant="outline">{post.category.name}</Badge>
+                      <Badge variant="outline">{post?.category?.name}</Badge>
                     )}
 
                     {post?.region?.name && (
-                      <Badge variant="destructive">{post.region.name}</Badge>
+                      <Badge variant="destructive">{post?.region?.name}</Badge>
                     )}
 
                     {post?.categoryActivity?.name && (
-                      <Badge variant="default">{post.categoryActivity.name}</Badge>
+                      <Badge variant="default">{post?.categoryActivity?.name}</Badge>
                     )}
 
                     <div className="flex items-center">
@@ -690,7 +703,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn loại" />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* <SelectItem value="undefined">Không</SelectItem> */}
+                        {/*  */}
 
                         {types?.map((region: any) => (
                           <SelectItem key={region.id} value={region?.id}>
@@ -708,9 +721,9 @@ export default function AdminPostsPage() {
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
+                                  
                                   {post?.region && (
-                                    <SelectItem value={post.region.id}>{post.region.name}</SelectItem>
+                                    <SelectItem value={post.region.id}>{post?.region?.name}</SelectItem>
                                   )}
 
                                 </SelectContent>
@@ -723,10 +736,10 @@ export default function AdminPostsPage() {
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
+                                  
 
                                   {post?.category && (
-                                    <SelectItem value={post.category.id}>{post.category.name}</SelectItem>
+                                    <SelectItem value={post.category.id}>{post?.category?.name}</SelectItem>
                                   )}
 
                                 </SelectContent>
@@ -740,10 +753,10 @@ export default function AdminPostsPage() {
                                   <SelectValue placeholder="Chọn hoạt động" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="undefined">Không</SelectItem>
+                                  
 
                                   {post?.categoryActivity && (
-                                    <SelectItem value={post.categoryActivity.id}>{post.categoryActivity.name}</SelectItem>
+                                    <SelectItem value={post.categoryActivity.id}>{post?.categoryActivity?.name}</SelectItem>
                                   )}
 
                                 </SelectContent>
@@ -752,8 +765,13 @@ export default function AdminPostsPage() {
                          
                           </div>
 
-                        
-
+                         <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Đơn vị đăng tải(*)</label>
+                            <Input placeholder="Nhập đơn vị đăng tải"
+                              value={post?.author}
+                              disabled />
+                          </div>
                           <div className="flex items-center space-x-2">
                             <input type="checkbox" id="featured" className="rounded" disabled
                               checked={post.featured} />
@@ -761,6 +779,7 @@ export default function AdminPostsPage() {
                               Gắn bảng tin nổi bật
                             </label>
                           </div>
+                         </div>
  <div>
                             <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                             {/* <textarea
@@ -813,7 +832,7 @@ export default function AdminPostsPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tiêu đề(*)</label>
                   <Input placeholder="Nhập tiêu đề bảng tin"
-                    value={title}
+                    defaultValue={post?.title}
                     onChange={(e) => setTitle(e.target.value)} />
                 </div>
                    
@@ -862,7 +881,7 @@ export default function AdminPostsPage() {
                    <div>
                     <label htmlFor="">Loại tin tức</label>
                     <Select
-                      value={selectedType?.toString()}
+                      defaultValue={post?.type}
                       onValueChange={(value) => {
                         setSelectedActivity(undefined)
                         setSelectedRegion(undefined)
@@ -874,7 +893,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn loại" />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* <SelectItem value="undefined">Không</SelectItem> */}
+                        {/*  */}
 
                         {types?.map((region: any) => (
                           <SelectItem key={region.id} value={region?.id}>
@@ -888,7 +907,7 @@ export default function AdminPostsPage() {
                     <div hidden={selectedType !== "quoc_te"}>
                     <label htmlFor="">Hoạt động ngoài nước</label>
                     <Select
-                      value={selectedRegion}
+                      defaultValue={post?.region?.id}
                       onValueChange={(value) => {
                         setSelectedRegion(value === "undefined" ? undefined : value);
                       }}
@@ -897,7 +916,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
+                        
 
                         {Region?.map((region: any) => (
                           <SelectItem key={region.id} value={region?.id}>
@@ -912,7 +931,7 @@ export default function AdminPostsPage() {
                     <label htmlFor="">Hoạt động quân sự</label>
 
                     <Select
-                      value={selectedCategory}
+                      defaultValue={post?.category?.id}
                       onValueChange={(value) => {
                         setSelectedCategory(value === "undefined" ? undefined : value);
                       }}
@@ -921,7 +940,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn hoạt động" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
+                        
 
                         {categories.map((category: any) => (
 
@@ -936,7 +955,7 @@ export default function AdminPostsPage() {
                     <label htmlFor="">Hoạt động sư đoàn</label>
 
                     <Select
-                      value={selectedActivity}
+                      value={post?.categoryActivity?.id}
                       onValueChange={(value) => {
                         setSelectedActivity(value === "undefined" ? undefined : value);
                       }}
@@ -945,7 +964,7 @@ export default function AdminPostsPage() {
                         <SelectValue placeholder="Chọn trạng thái" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="undefined">Không</SelectItem>
+                        
 
                         {categoriesActivity.map((CategoryActivity: any) => (
 
@@ -959,7 +978,13 @@ export default function AdminPostsPage() {
 
 
                 </div>
-
+                <div className="grid grid-cols-2 gap-4">
+              <div>
+                  <label className="block text-sm font-medium text-gray-700">Đơn vị đăng tải(*)</label>
+                  <Input placeholder="Nhập đơn vị đăng tải"
+                    defaultValue={post?.author ?? ""}
+                    onChange={(e) => setAuthor(e.target.value)} />
+                </div>
                <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -972,6 +997,7 @@ export default function AdminPostsPage() {
                     Gắn bảng tin nổi bật
                   </label>
                 </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nội dung</label>
                   {/* <textarea
@@ -982,7 +1008,7 @@ export default function AdminPostsPage() {
                     onChange={(e) => setExcerpt(e.target.value)}
                   /> */}
                   {/* <RichTextEditor content="" onChange={()=>{}}/> */}
-                  <SimpleEditor content="Thêm nội dung vào đây" onChange={(e) => setExcerpt(e)} />
+                  <SimpleEditor content={post?.excerpt ?? ""} onChange={(e) => setExcerpt(e)} />
                 </div>
                           <DialogFooter className="flex-shrink-0 mt-4">
                             <DialogClose asChild>

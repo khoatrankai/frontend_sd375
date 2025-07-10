@@ -68,7 +68,7 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
               Nổi bật
             </Tag>
           )}
-          {article.category && <Tag color="blue">{article.category.name}</Tag>}
+          {article.category && <Tag color="blue">{article?.category?.name}</Tag>}
         </div>
 
         <Title level={2} className="!mb-4">{article.title}</Title>

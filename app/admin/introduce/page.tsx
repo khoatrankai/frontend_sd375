@@ -1137,7 +1137,7 @@ export default function AdminDocumentsPage() {
                               <SelectContent>
                                 {doc?.category && (
                                   <SelectItem value={doc.category.id}>
-                                    {doc.category.name}
+                                    {doc?.category?.name}
                                   </SelectItem>
                                 )}
                               </SelectContent>

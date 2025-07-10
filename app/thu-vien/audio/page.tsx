@@ -86,7 +86,7 @@ export default function AudioPage() {
   }, [currentPage])
 
   useEffect(() => {
-    setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track: any) => track.category.nametag === selectedCategory))
+    setFilteredTracks(selectedCategory === "all" ? tracks : tracks.filter((track: any) => track?.category?.nametag === selectedCategory))
   }, [selectedCategory, tracks])
 
   useEffect(() => {
@@ -184,7 +184,7 @@ export default function AudioPage() {
             <span>{category.name}</span>
             <Badge variant="secondary" className="ml-2">
               {
-                category.nametag === "all" ? tracks.length : tracks.filter((i: any) => i.category.nametag === category.nametag).length
+                category.nametag === "all" ? tracks.length : tracks.filter((i: any) => i?.category?.nametag === category.nametag).length
               }
             </Badge>
           </Button>
@@ -299,7 +299,7 @@ export default function AudioPage() {
                             <p className="text-sm text-gray-600">{track.artist}</p>
                             <div className="flex items-center space-x-2 mt-1">
                               <Badge variant="outline" className="text-xs">
-                                {track.category.name}
+                                {track?.category?.name}
                               </Badge>
                               <span className="text-xs text-gray-500">{track.duration}</span>
                             </div>

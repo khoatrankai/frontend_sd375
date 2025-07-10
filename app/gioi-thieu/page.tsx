@@ -123,7 +123,7 @@ export default function IntroductionPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <img
-                src="/logo.jpg"
+                src="/public/logo.jpg"
                 alt="Sư đoàn phòng không 375"
                 className="w-full h-64 object-cover rounded-lg"
               />
@@ -222,7 +222,7 @@ export default function IntroductionPage() {
               <h4 className="font-bold text-lg">Lãnh đạo hiện tại</h4>
               <div className="space-y-3">
                 {
-                  users?.map((dt:any) =>{
+                  users?.filter((dt:any) => dt.activity)?.map((dt:any) =>{
                     return <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded"  key={dt?.id}>
                   <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
                     {

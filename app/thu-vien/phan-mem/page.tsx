@@ -27,7 +27,7 @@ export default function SoftwarePage() {
     { id: "windows", name: "Windows" },
     { id: "android", name: "Android" },
     { id: "ios", name: "IOS" },
-    { id: "web", name: "Web App" },
+    { id: "web", name: "Web app" },
     { id: "cross", name: "Đa nền tảng" },
   ]
 

@@ -13,6 +13,7 @@ import {
 import Image from "next/image"
 import { News, NewsType } from "@/types/news"
 import { useRouter } from "next/navigation"
+import TimeAgo from "./time-ago"
 
 const { Title, Paragraph, Text } = Typography
 
@@ -82,10 +83,10 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
                   {getNewsTypeLabel(news.type)}
                 </Tag>
                 {news.featured && <Tag color="gold">Nổi bật</Tag>}
-                {news.category && <Tag color="blue">{news.category.name}</Tag>}
+                {news.category && <Tag color="blue">{news?.category?.name}</Tag>}
                 {news.region && (
                   <Tag color="green" icon={<EnvironmentOutlined />}>
-                    {news.region.name}
+                    {news?.region?.name}
                   </Tag>
                 )}
               </div>
@@ -105,7 +106,7 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
                 </Space>
                 <Space>
                   <ClockCircleOutlined />
-                  <Text>{news.time}</Text>
+                  <Text>{<TimeAgo date={news.created_at} />}</Text>
                 </Space>
                 <Space>
                   <EyeOutlined />
@@ -200,8 +201,8 @@ export default function NewsDetail({ news, relatedNews = [] }: NewsDetailProps) 
             <div className="flex flex-wrap justify-between items-center pt-4">
               <div className="flex flex-wrap gap-2">
                 <Text type="secondary">Danh mục:</Text>
-                {news.category && <Tag color="blue">{news.category.name}</Tag>}
-                {news.categoryActivity && <Tag color="cyan">{news.categoryActivity.name}</Tag>}
+                {news.category && <Tag color="blue">{news?.category?.name}</Tag>}
+                {news.categoryActivity && <Tag color="cyan">{news?.categoryActivity?.name}</Tag>}
               </div>
 
               {/* <div className="flex items-center gap-4 mt-2 md:mt-0">

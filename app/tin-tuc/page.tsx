@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Clock, Eye, User, ChevronRight } from "lucide-react"
 import { newsService } from "@/services/news.service"
 import { useRouter } from 'next/navigation';
+import TimeAgo from "@/components/time-ago"
+import { removeImagesFromHTML } from "@/lib/removeImgHTML"
 
 
 export default function NewsPage() {
@@ -37,45 +39,15 @@ export default function NewsPage() {
       "featured": true
     }
   ])
-  const filteredNew = news.filter((dt: any) => {
-  if (activeType === "all") {
-    return dt?.featured === false;
-  } else {
-    return true;
-  }
-});
+//   const filteredNew = news.filter((dt: any) => {
+//   if (activeType === "all") {
+//     return dt?.featured === false;
+//   } else {
+//     return true;
+//   }
+// });
   
-  //phân trang
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
-
-  // Tính vị trí dữ liệu
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentNew = filteredNews.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Tổng số trang
-  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
-
-  // Phân nhóm trang (2 trang mỗi cụm)
-  const pagesPerGroup = 2;
-  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
-  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
-
-  // Xác định các trang trong cụm hiện tại
-  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
-  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
-
-  // Chuyển nhóm
-  const handlePrevGroup = () => {
-    const newPage = Math.max(1, startPage - pagesPerGroup);
-    setCurrentPage(newPage);
-  };
-
-  const handleNextGroup = () => {
-    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
-    setCurrentPage(newPage);
-  };
+  
   //end phân trang
   
 
@@ -104,6 +76,7 @@ export default function NewsPage() {
   }, [filteredNews])
 
   useEffect(() => {
+    console.log(activeType)
     setFilteredNews((activeType === "all" ? news : news.filter((item) => item.type === activeType)) as any)
   }, [news, activeType])
 
@@ -117,6 +90,37 @@ export default function NewsPage() {
 
   const loadDetail = async (id: string | number) => {
     router.push(`/tin-tuc/${id}`);
+  };
+  //phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  // Tính vị trí dữ liệu
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentNew = (activeType === "all"?regularNews:filteredNews).slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tổng số trang
+  const totalPages = Math.ceil((activeType === "all"?regularNews:filteredNews).length / itemsPerPage);
+
+  // Phân nhóm trang (2 trang mỗi cụm)
+  const pagesPerGroup = 2;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  // const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+
+  // Xác định các trang trong cụm hiện tại
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+  // Chuyển nhóm
+  const handlePrevGroup = () => {
+    const newPage = Math.max(1, startPage - pagesPerGroup);
+    setCurrentPage(newPage);
+  };
+
+  const handleNextGroup = () => {
+    const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+    setCurrentPage(newPage);
   };
   return (
     <div className="space-y-8">
@@ -162,7 +166,7 @@ export default function NewsPage() {
                   <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{item.excerpt}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3" dangerouslySetInnerHTML={{__html:removeImagesFromHTML(item.excerpt)}}/>
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
@@ -171,7 +175,7 @@ export default function NewsPage() {
                       </div>
                       <div className="flex items-center">
                         <Clock className="h-4 w-4 mr-1" />
-                        {item.time}
+                        {<TimeAgo date={item.created_at} />}
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -210,13 +214,13 @@ export default function NewsPage() {
                       <Badge variant="outline">{types.find((i) => i.id === item.type)?.name}</Badge>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
-                        {item.time}
+                        {<TimeAgo date={item.created_at} />}
                       </div>
                     </div>
                     <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{item.excerpt}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2" dangerouslySetInnerHTML={{__html:removeImagesFromHTML(item.excerpt)}}/>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center">

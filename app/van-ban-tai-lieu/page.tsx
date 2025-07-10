@@ -208,7 +208,7 @@ export default function DocumentsPage() {
                   <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
                     <div className="flex items-center">
                       <Building className="h-4 w-4 mr-1" />
-                      <span>{doc.unit}</span>
+                      <span>{doc?.category?.name}</span>
                     </div>
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-1" />
@@ -223,7 +223,7 @@ export default function DocumentsPage() {
                     // doc.type
                     types.find((type:any)=>type.value === doc.type)?.name
                     }</Badge>
-                    <Badge variant="outline">{doc.organ}</Badge>
+                    <Badge variant="outline">{doc?.agency?.name}</Badge>
                   </div>
                 </div>
                 

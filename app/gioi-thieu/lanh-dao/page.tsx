@@ -67,10 +67,10 @@ export default function LeadershipPage() {
 
       {/* Current Leadership */}
       <section>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Ban chỉ huy hiện tại</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Chỉ huy sư đoàn hiện tại</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {currentLeadership.map((leader:any, index:number) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
+          {currentLeadership.filter((dt:any) => dt.activity).map((leader:any, index:number) => (
+            <Card key={index} className="hover:shadow-lg transition-shadow !p-0 !border-none">
               <CardContent>
                 <div className="flex items-start space-x-4">
                   {/* <div className="relative flex-1 h-full">
@@ -137,7 +137,7 @@ export default function LeadershipPage() {
       </section>
 
       {/* Departments */}
-      <section>
+      {/* <section>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">
           Các phòng ban trực thuộc
         </h2>
@@ -157,6 +157,75 @@ export default function LeadershipPage() {
                     <span className="ml-2 text-blue-600">{userTypes.find((dt)=> dt.value === dept?.head?.type)?.name} {dept?.head?.name}</span>
                   </div>
                   <p className="text-gray-700 text-sm">{dept?.description}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section> */}
+      <section>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Chỉ huy sư đoàn các thời kì</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {currentLeadership.filter((dt:any) => !dt.activity).map((leader:any, index:number) => (
+            <Card key={index} className="hover:shadow-lg transition-shadow !p-0 !border-none">
+              <CardContent>
+                <div className="flex items-start space-x-4">
+                  {/* <div className="relative flex-1 h-full">
+                    <Image
+                      width={100}
+                      height={100}
+                      src={leader?.avatar || "/public/placeholder.svg"}
+                      alt={leader?.name}
+                      className="w-full h-48 rounded-sm object-cover border-4 border-red-100"
+                    />
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                      <Star className="h-4 w-4 text-white" />
+                    </div>
+                  </div> */}
+                  <div className="flex-1 min-h-60">
+                    <Image
+                      src={leader?.avatar || "/public/placeholder.svg"}
+                      alt={leader?.name}
+                      className="!min-w-full !min-h-full rounded-sm"
+                    />
+                  </div>
+                   
+                  {/* <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-800 mb-1">{userTypes.find((dt)=> dt.value === leader?.type)?.name} {leader?.name}</h3>
+                    <Badge variant="destructive" className="mb-3">
+                      {leader?.position}
+                    </Badge>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-600">Kinh nghiệm:</span>
+                        <span className="ml-2">{leader?.experience}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Học vấn:</span>
+                        <span className="ml-2 text-xs">{leader?.education}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Thành tích:</span>
+                        <div className="mt-1 space-y-1">
+                          {leader?.achievements?.map((achievement:any, idx:number) => (
+                            <Badge key={idx} variant="outline" className="text-xs mr-1">
+                              {achievement}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4 pt-2 border-t">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Phone className="h-3 w-3 mr-1" />
+                          {leader?.phone}
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Mail className="h-3 w-3 mr-1" />
+                          {leader?.email}
+                        </div>
+                      </div>
+                    </div>
+                  </div> */}
                 </div>
               </CardContent>
             </Card>
@@ -198,7 +267,7 @@ export default function LeadershipPage() {
                 {departments.map((dept:any, index:number) => (
                   <div key={index} className="bg-white p-4 rounded-lg shadow-md">
                     <div className="font-semibold text-sm text-gray-800">{dept?.name}</div>
-                    <div className="text-xs text-gray-600 mt-1">{userTypes.find((dt)=> dt.value === dept?.head?.type)?.name} {dept?.head?.name}</div>
+                    {/* <div className="text-xs text-gray-600 mt-1">{userTypes.find((dt)=> dt.value === dept?.head?.type)?.name} {dept?.head?.name}</div> */}
                   </div>
                 ))}
               </div>
