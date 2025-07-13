@@ -13,7 +13,10 @@ export default function SoftwarePage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedPlatform, setSelectedPlatform] = useState("all")
-
+const [featuredSoftware,setFeaturedSoftware] = useState<any>([])
+  // filteredSoftware.filter((item) => item.featured)
+  const [regularSoftware,setRegularSoftware] = useState<any>([])
+  // filteredSoftware.filter((item) => !item.featured)
   const categories = [
     { id: "all", name: "Tất cả", count: 12, icon: Monitor },
     { id: "quan_ly", name: "Quản lý", count: 5, icon: FileText },
@@ -60,15 +63,15 @@ export default function SoftwarePage() {
 
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 3;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currenData = filteredSoftware.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData = (selectedCategory === "all"?regularSoftware:filteredSoftware).slice(indexOfFirstItem, indexOfLastItem);
 
   // Tổng số trang
-  const totalPages = Math.ceil(filteredSoftware.length / itemsPerPage);
+  const totalPages = Math.ceil((selectedCategory === "all"?regularSoftware:filteredSoftware).length / itemsPerPage);
 
   // Phân nhóm trang (2 trang mỗi cụm)
   const pagesPerGroup = 2;
@@ -106,14 +109,13 @@ export default function SoftwarePage() {
   //   return matchesSearch && matchesCategory && matchesPlatform
   // })
 
-  const [featuredSoftware,setFeaturedSoftware] = useState<any>([])
-  // filteredSoftware.filter((item) => item.featured)
-  const [regularSoftware,setRegularSoftware] = useState<any>([])
-  // filteredSoftware.filter((item) => !item.featured)
+  
 
   const stats = [
-    { label: "Tổng phần mềm", value: "12", icon: Monitor, color: "text-blue-600" },
-    { label: "Lượt tải xuống", value: "1,234", icon: Download, color: "text-green-600" },
+    { label: "Tổng phần mềm", value: software.length, icon: Monitor, color: "text-blue-600" },
+    { label: "Lượt tải xuống", value: software.reduce((pre:any,curr:any)=>{
+      return pre + curr?.downloads
+    },0), icon: Download, color: "text-green-600" },
     { label: "Đánh giá trung bình", value: "4.6★", icon: Star, color: "text-yellow-600" },
     { label: "Cập nhật tháng này", value: "5", icon: Calendar, color: "text-purple-600" },
   ]
@@ -234,7 +236,13 @@ useEffect(() => {
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.id)}
+            onClick={() => 
+            {
+
+              setSelectedCategory(category.id)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <category.icon className="h-4 w-4" />
@@ -317,7 +325,7 @@ useEffect(() => {
       <section>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-600 pb-2">Tất cả phần mềm</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(selectedCategory === "all"?regularSoftware:filteredSoftware).map((item:any) => (
+          {currentData.map((item:any) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="text-center mb-4">

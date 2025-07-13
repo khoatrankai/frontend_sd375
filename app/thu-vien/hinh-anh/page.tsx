@@ -29,7 +29,7 @@ export default function ImagesPage() {
   const totalPages = Math.ceil(filteredImages.length / itemsPerPage);
 
   // Phân nhóm trang (2 trang mỗi cụm)
-  const pagesPerGroup = 2;
+  const pagesPerGroup = 16;
   const currentGroup = Math.ceil(currentPage / pagesPerGroup);
   const totalGroups = Math.ceil(totalPages / pagesPerGroup);
 
@@ -92,7 +92,13 @@ export default function ImagesPage() {
           <Button
             key={category.nametag}
             variant={selectedCategory === category.nametag ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.nametag)}
+            onClick={() => 
+            {
+
+              setSelectedCategory(category.nametag)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <span>{category.name}</span>

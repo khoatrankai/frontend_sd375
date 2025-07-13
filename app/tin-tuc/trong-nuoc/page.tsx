@@ -15,7 +15,7 @@ export default function DomesticNewsPage() {
   const [news, setNews] = useState<any>([])
   //phân trang
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;

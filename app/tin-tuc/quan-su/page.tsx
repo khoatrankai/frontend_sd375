@@ -54,15 +54,15 @@ export default function MilitaryNewsPage() {
   }, [])
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = regularNews.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData = (selectedCategory === "all" ?regularNews:filteredNews).slice(indexOfFirstItem, indexOfLastItem);
 
   // Tổng số trang
-  const totalPages = Math.ceil(regularNews.length / itemsPerPage);
+  const totalPages = Math.ceil((selectedCategory === "all" ?regularNews:filteredNews).length / itemsPerPage);
 
   // Phân nhóm trang (2 trang mỗi cụm)
   const pagesPerGroup = 2;
@@ -100,7 +100,13 @@ export default function MilitaryNewsPage() {
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.nametag)}
+            onClick={() => 
+            {
+
+              setSelectedCategory(category.nametag)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <Target className="h-4 w-4" />
@@ -161,7 +167,7 @@ export default function MilitaryNewsPage() {
           {selectedCategory === "all" ? "Tin tức khác" : categories.find((c: any) => c.nametag === selectedCategory)?.name}
         </h2>
         <div className="space-y-6">
-          {(selectedCategory === "all" ?regularNews:filteredNews).map((item:any) => (
+          {currentData.map((item:any) => (
             <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
                 router.push(`/tin-tuc/${item?.id}`)
               }}>
@@ -209,38 +215,7 @@ export default function MilitaryNewsPage() {
           ))}
         </div>
       </section>
-
-      {/* Military Technology Showcase */}
-      <Card className="bg-gradient-to-r from-green-50 to-green-100 mt-12">
-        <CardContent className="p-8">
-          <h3 className="text-2xl font-bold text-center mb-6">Công nghệ quân sự hiện đại</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Target className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="font-semibold mb-2">Hệ thống tên lửa</h4>
-              <p className="text-sm text-gray-600">Công nghệ tên lửa phòng không tiên tiến</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="font-semibold mb-2">Radar cảnh báo</h4>
-              <p className="text-sm text-gray-600">Hệ thống radar thế hệ mới</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Zap className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="font-semibold mb-2">Chỉ huy tự động</h4>
-              <p className="text-sm text-gray-600">Hệ thống C4ISR hiện đại</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Load More */}
+   {/* Load More */}
       <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           variant="outline"
@@ -287,6 +262,37 @@ export default function MilitaryNewsPage() {
           Tiếp
         </Button>
       </div>
+      {/* Military Technology Showcase */}
+      <Card className="bg-gradient-to-r from-green-50 to-green-100 mt-12">
+        <CardContent className="p-8">
+          <h3 className="text-2xl font-bold text-center mb-6">Công nghệ quân sự hiện đại</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Target className="h-8 w-8 text-white" />
+              </div>
+              <h4 className="font-semibold mb-2">Hệ thống tên lửa</h4>
+              <p className="text-sm text-gray-600">Công nghệ tên lửa phòng không tiên tiến</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              <h4 className="font-semibold mb-2">Radar cảnh báo</h4>
+              <p className="text-sm text-gray-600">Hệ thống radar thế hệ mới</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Zap className="h-8 w-8 text-white" />
+              </div>
+              <h4 className="font-semibold mb-2">Chỉ huy tự động</h4>
+              <p className="text-sm text-gray-600">Hệ thống C4ISR hiện đại</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+   
     </div>
   )
 }

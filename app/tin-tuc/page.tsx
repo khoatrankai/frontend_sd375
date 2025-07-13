@@ -64,7 +64,6 @@ export default function NewsPage() {
   // filteredNews.filter((item) => !item.featured)
   const fetchData = async () => {
     const res = await newsService.getPosts() as any
-    console.log(res)
     if (res.statusCode === 200) {
       setNews(res.data)
 
@@ -93,7 +92,7 @@ export default function NewsPage() {
   };
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -137,7 +136,12 @@ export default function NewsPage() {
           <Button
             key={category.id}
             variant={activeType === category.id ? "default" : "outline"}
-            onClick={() => setActiveType(category.id)}
+            onClick={() =>
+            {
+              setActiveType(category.id)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <span>{category.name}</span>

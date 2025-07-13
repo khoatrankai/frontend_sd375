@@ -70,15 +70,15 @@ export default function DivisionNewsPage() {
   };
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = regularNews.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData = (selectedCategory === "all"? regularNews : filteredNews).slice(indexOfFirstItem, indexOfLastItem);
 
   // Tổng số trang
-  const totalPages = Math.ceil(regularNews.length / itemsPerPage);
+  const totalPages = Math.ceil((selectedCategory === "all"? regularNews : filteredNews).length / itemsPerPage);
 
   // Phân nhóm trang (2 trang mỗi cụm)
   const pagesPerGroup = 2;
@@ -110,7 +110,7 @@ export default function DivisionNewsPage() {
       </div>
 
       {/* Achievement Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {achievements.map((achievement, index) => (
           <Card key={index} className="text-center hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
@@ -119,7 +119,7 @@ export default function DivisionNewsPage() {
             </CardContent>
           </Card>
         ))}
-      </div>
+      </div> */}
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-8">
@@ -127,7 +127,13 @@ export default function DivisionNewsPage() {
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.id)}
+            onClick={() => 
+            {
+
+              setSelectedCategory(category.id)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <category.icon className="h-4 w-4" />
@@ -188,7 +194,7 @@ export default function DivisionNewsPage() {
           {selectedCategory === "all" ? "Hoạt động khác" : categories.find((c) => c.id === selectedCategory)?.name}
         </h2>
         <div className="space-y-6">
-          {(selectedCategory === "all"? regularNews : filteredNews).map((item:any) => (
+          {currentData.map((item:any) => (
             <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
                 router.push(`/tin-tuc/${item?.id}`)
               }}>
@@ -236,41 +242,7 @@ export default function DivisionNewsPage() {
           ))}
         </div>
       </section>
-
-      {/* Upcoming Events */}
-      <Card className="bg-gradient-to-r from-blue-50 to-blue-100 mt-12">
-        <CardContent className="p-8">
-          <h3 className="text-2xl font-bold text-center mb-6">Sự kiện sắp tới</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <div className="flex items-center mb-3">
-                <Calendar className="h-5 w-5 text-blue-600 mr-2" />
-                <span className="font-semibold">25/12/2024</span>
-              </div>
-              <h4 className="font-semibold mb-2">Hội nghị Đảng ủy tháng 12</h4>
-              <p className="text-sm text-gray-600">Đánh giá kết quả thực hiện nhiệm vụ năm 2024</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <div className="flex items-center mb-3">
-                <Calendar className="h-5 w-5 text-green-600 mr-2" />
-                <span className="font-semibold">30/12/2024</span>
-              </div>
-              <h4 className="font-semibold mb-2">Giao lưu văn hóa cuối năm</h4>
-              <p className="text-sm text-gray-600">Chương trình văn nghệ chào mừng năm mới</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <div className="flex items-center mb-3">
-                <Calendar className="h-5 w-5 text-red-600 mr-2" />
-                <span className="font-semibold">05/01/2025</span>
-              </div>
-              <h4 className="font-semibold mb-2">Khai mạc năm huấn luyện 2025</h4>
-              <p className="text-sm text-gray-600">Lễ khai mạc năm huấn luyện mới</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Load More */}
+ {/* Load More */}
       <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           variant="outline"
@@ -317,6 +289,40 @@ export default function DivisionNewsPage() {
           Tiếp
         </Button>
       </div>
+      {/* Upcoming Events */}
+      {/* <Card className="bg-gradient-to-r from-blue-50 to-blue-100 mt-12">
+        <CardContent className="p-8">
+          <h3 className="text-2xl font-bold text-center mb-6">Sự kiện sắp tới</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <div className="flex items-center mb-3">
+                <Calendar className="h-5 w-5 text-blue-600 mr-2" />
+                <span className="font-semibold">25/12/2024</span>
+              </div>
+              <h4 className="font-semibold mb-2">Hội nghị Đảng ủy tháng 12</h4>
+              <p className="text-sm text-gray-600">Đánh giá kết quả thực hiện nhiệm vụ năm 2024</p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <div className="flex items-center mb-3">
+                <Calendar className="h-5 w-5 text-green-600 mr-2" />
+                <span className="font-semibold">30/12/2024</span>
+              </div>
+              <h4 className="font-semibold mb-2">Giao lưu văn hóa cuối năm</h4>
+              <p className="text-sm text-gray-600">Chương trình văn nghệ chào mừng năm mới</p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <div className="flex items-center mb-3">
+                <Calendar className="h-5 w-5 text-red-600 mr-2" />
+                <span className="font-semibold">05/01/2025</span>
+              </div>
+              <h4 className="font-semibold mb-2">Khai mạc năm huấn luyện 2025</h4>
+              <p className="text-sm text-gray-600">Lễ khai mạc năm huấn luyện mới</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card> */}
+
+     
     </div>
   )
 }

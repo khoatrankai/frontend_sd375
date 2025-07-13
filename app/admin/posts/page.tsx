@@ -53,7 +53,7 @@ export default function AdminPostsPage() {
 
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -514,6 +514,7 @@ export default function AdminPostsPage() {
                 setSelectedFilterCategory(undefined)
                 setSelectedFilterActivity(undefined)
                 setSelectedFilterRegion(undefined)
+                setCurrentPage(1)
               }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Loại tin" />

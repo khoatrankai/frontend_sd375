@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api"
+import { toast } from "react-toastify"
 import type {
   Document,
   DocumentsResponse,
@@ -28,31 +29,53 @@ export class DocumentService {
   }
 
   async createDocument(document: any) {
+    const toastId = toast.loading("Đang tạo tài liệu...")
     try {
       const response = await apiClient.upload<any>("/documents", document)
+      if (response?.statusCode === 201) {
+        toast.update(toastId, { render: "Tạo thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Tạo thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Create document error:", error)
+      toast.update(toastId, { render: "Lỗi khi tạo tài liệu", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
   async updateDocument(id: string, data: any) {
+    const toastId = toast.loading("Đang cập nhật tài liệu...")
     try {
       const response = await apiClient.uploadPatch<any>(`/documents/${id}`, data)
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Cập nhật thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Cập nhật thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Update document error:", error)
+      toast.update(toastId, { render: "Lỗi khi cập nhật", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
   async deleteDocument(id: string) {
+    const toastId = toast.loading("Đang xóa tài liệu...")
     try {
       const response = await apiClient.delete<any>(`/documents/${id}`)
-      return response?.success ?? false
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Xóa thành công", type: "success", isLoading: false, autoClose: 3000 })
+        return true
+      } else {
+        toast.update(toastId, { render: "Xóa thất bại", type: "error", isLoading: false, autoClose: 3000 })
+        return false
+      }
     } catch (error) {
       console.error("Delete document error:", error)
+      toast.update(toastId, { render: "Lỗi khi xóa", type: "error", isLoading: false, autoClose: 3000 })
       return false
     }
   }
@@ -78,31 +101,45 @@ export class DocumentService {
   }
 
   async createCategory(data: { name: string; description?: string }) {
+    const toastId = toast.loading("Đang tạo danh mục...")
     try {
       const response = await apiClient.post<any>("/documents/categories", data)
+      if (response?.statusCode === 201) {
+        toast.update(toastId, { render: "Tạo danh mục thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Tạo danh mục thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Create category error:", error)
+      toast.update(toastId, { render: "Lỗi khi tạo danh mục", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
-    async getAgency() {
+  async getAgency() {
     try {
       const response = await apiClient.get<any>(`/documents/agency`)
       return response || []
     } catch (error) {
-      console.error("Get categories error:", error)
+      console.error("Get agency error:", error)
       return []
     }
   }
 
-  async createAgency(agency: { name: string,nametag:string }) {
+  async createAgency(agency: { name: string; nametag: string }) {
+    const toastId = toast.loading("Đang tạo cơ quan ban hành...")
     try {
       const response = await apiClient.post<any>(`/documents/agency`, agency)
+      if (response?.statusCode === 201) {
+        toast.update(toastId, { render: "Tạo thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Tạo thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
-      console.error("Create category error:", error)
+      console.error("Create agency error:", error)
+      toast.update(toastId, { render: "Lỗi khi tạo cơ quan", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }

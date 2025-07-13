@@ -10,8 +10,12 @@ import { Shield, User, Lock, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { authService } from "@/services/auth.service"
 import { usersService } from "@/services/users.service"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/redux/store/store"
+import { fetchProfiles } from "@/redux/store/slices/usersSlices/user.slide"
 
 export default function LoginPage() {
+  const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -24,9 +28,11 @@ export default function LoginPage() {
 
     try {
       const response = await authService.login({ username, password })
-
+      dispatch(fetchProfiles()).then(res => console.log(res))
       if (response.success && response.user) {
+        
         localStorage.setItem("userId", response.user.id.toString());
+        // dispatch(fetchProfiles())
         router.push("/admin/dashboard");
       } else {
         alert(response.message || "Tên đăng nhập hoặc mật khẩu không đúng!")

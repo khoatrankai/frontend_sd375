@@ -23,7 +23,7 @@ export default function AdminDocumentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedAgency, setSelectedAgency] = useState("all")
+  const [selectedAgency, setSelectedAgency] = useState("f375")
   const [dataSave,setDataSave] = useState<any>({})
   const documentTypes = [
     { id: "all", name: "Tất cả loại" },
@@ -42,11 +42,7 @@ export default function AdminDocumentsPage() {
   ])
 
   const [agency,setAgency] = useState([
-    { nametag: "all", name: "Tất cả đơn vị",id:"" },
-    { nametag: "command", name: "Chỉ huy sư đoàn",id:"" },
-    { nametag: "political", name: "Phòng chính trị",id:"" },
-    { nametag: "staff", name: "Phòng tham mưu",id:"" },
-    { nametag: "logistics", name: "Phòng HC-KT",id:"" },
+   
   ])
 
   const [documents,setDocuments] = useState<any>([
@@ -144,7 +140,7 @@ export default function AdminDocumentsPage() {
   //phân trang
   // const [report, setReport] = useState<any>([])
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 10;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -327,9 +323,9 @@ export default function AdminDocumentsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {
-                          agency.map((category) => {
+                          agency.map((it:any) => {
                             return (
-                              <SelectItem value={category.id}>{category.name}</SelectItem>
+                              <SelectItem value={it?.id}>{it?.name}</SelectItem>
                             )
                           })
                         }
@@ -495,11 +491,10 @@ export default function AdminDocumentsPage() {
                         <SelectValue placeholder="Chọn cơ quan" />
                       </SelectTrigger>
                       <SelectContent>
-                         {/* <SelectItem key={"25336"} value={"all"}>{"Tất cả"}</SelectItem> */}
                         {
-                          agency.map((category) => {
+                          agency.map((it:any,index:number) => {
                             return (
-                              <SelectItem key={category?.id} value={category?.nametag}>{category.name}</SelectItem>
+                              <SelectItem key={index} value={it?.nametag}>{it.name}</SelectItem>
                             )
                           })
                         }
@@ -645,9 +640,9 @@ export default function AdminDocumentsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {
-                          agency.map((category) => {
+                          agency.map((it:any) => {
                             return (
-                              <SelectItem value={category.id}>{category.name}</SelectItem>
+                              <SelectItem value={it?.id}>{it?.name}</SelectItem>
                             )
                           })
                         }

@@ -20,7 +20,7 @@ export default function AdminDocumentsPage() {
   //phân trang
   const [report, setReport] = useState<any>([])
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;

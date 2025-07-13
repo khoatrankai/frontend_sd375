@@ -53,7 +53,7 @@ export default function FeaturedImages() {
           return currentImageSet * 4 <= index && index < (currentImageSet + 1) * 4
         }
         ).map((image: any, index: number) => (
-          <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group relative">
             <div className="flex justify-center">
               {/* <img
                 src={process.env.NEXT_PUBLIC_API_CLIENT+image.thumbnail || "/public/placeholder.svg"}

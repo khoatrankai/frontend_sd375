@@ -15,7 +15,7 @@ export default function CCHCPage() {
     { id: "all", name: "Tất cả", count: 12 },
     { id: "chuyen_doi_so", name: "Chuyển đổi số", count: 5 },
     { id: "cai_cach_hanh_chinh", name: "Cải cách hành chính", count: 4 },
-    { id: "chinh_phu_dien_ty", name: "Chính phủ điện tử", count: 3 },
+    { id: "chinh_phu_dien_tu", name: "Chính phủ điện tử", count: 3 },
   ]
 
   const [articles,setArticles] = useState<any>([
@@ -44,6 +44,38 @@ export default function CCHCPage() {
       setArticles(res.data)
     }
   }
+
+  //phân trang
+      const [currentPage, setCurrentPage] = useState(1);
+      const itemsPerPage = 3;
+    
+      // Tính vị trí dữ liệu
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentData = (selectedFilter === "all" ?regularArticles:filteredArticles).slice(indexOfFirstItem, indexOfLastItem);
+    
+      // Tổng số trang
+      const totalPages = Math.ceil((selectedFilter === "all" ?regularArticles:filteredArticles).length / itemsPerPage);
+    
+      // Phân nhóm trang (2 trang mỗi cụm)
+      const pagesPerGroup = 2;
+      const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+      const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+    
+      // Xác định các trang trong cụm hiện tại
+      const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+      const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+    
+      // Chuyển nhóm
+      const handlePrevGroup = () => {
+        const newPage = Math.max(1, startPage - pagesPerGroup);
+        setCurrentPage(newPage);
+      };
+    
+      const handleNextGroup = () => {
+        const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+        setCurrentPage(newPage);
+      };
 
   useEffect(()=>{
     fetchData()
@@ -124,7 +156,7 @@ export default function CCHCPage() {
                   <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                     {article.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3" dangerouslySetInnerHTML={{__html:article?.excerpt}}/>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {article.tags.map((tag:any, index:number) => (
                       <Badge key={index} variant="outline" className="text-xs">
@@ -161,7 +193,7 @@ export default function CCHCPage() {
           {selectedFilter === "all" ? "Tất cả bài viết" : filters.find((f) => f.id === selectedFilter)?.name}
         </h2>
         <div className="space-y-6">
-          {(selectedFilter === "all" ?regularArticles:filteredArticles).map((article:any) => (
+          {currentData.map((article:any) => (
             <Card key={article.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={()=>{
                 router.push(`/chuyen-de/${article.id}`)
               }}>
@@ -178,7 +210,7 @@ export default function CCHCPage() {
                     <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                       {article.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2" dangerouslySetInnerHTML={{__html:article?.excerpt}}/>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {article.tags.map((tag:any, index:any) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -209,7 +241,52 @@ export default function CCHCPage() {
           ))}
         </div>
       </section>
+<div className="flex justify-center items-center gap-2 mt-4">
+                <Button
+                  variant="outline"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  Trước
+                </Button>
 
+                {/* Nút ... lùi cụm */}
+                {startPage > 1 && (
+                  <Button variant="outline" onClick={handlePrevGroup}>
+                    ...
+                  </Button>
+                )}
+
+                {/* Các trang trong nhóm hiện tại */}
+                {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                  const page = startPage + i;
+                  return (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "default" : "outline"}
+                      onClick={() => setCurrentPage(page)}
+                      className={page === currentPage ? "font-bold" : ""}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+
+                {/* Nút ... tiến cụm */}
+                {endPage < totalPages && (
+                  <Button variant="outline" onClick={handleNextGroup}>
+                    ...
+                  </Button>
+                )}
+
+                <Button
+                  variant="outline"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Tiếp
+                </Button>
+              </div>
       {/* Digital Transformation Showcase */}
       <Card className="bg-gradient-to-r from-blue-50 to-blue-100 mt-12">
         <CardContent className="p-8">

@@ -10,7 +10,8 @@ import { videosService } from "@/services/videos.service"
 import { tracksService } from "@/services/tracks.service"
 import { softwareService } from "@/services/software.service"
 import { downloadFile } from "@/lib/DownloadImage"
-import ReactPlayer from "react-player"
+import dynamic from "next/dynamic"
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false })
 import AudioPlayerItemUI from "@/components/audio-player-item.ui"
 import { Image } from "antd"
 
@@ -340,7 +341,13 @@ export default function LibraryPage() {
           <Button
             key={tab.id}
             variant={activeTab === tab.id ? "default" : "outline"}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() =>
+            {
+
+              setActiveTab(tab.id)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <tab.icon className="h-4 w-4" />

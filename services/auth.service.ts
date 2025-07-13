@@ -1,32 +1,68 @@
-
 import { apiLogin } from "@/lib/apiLogin"
 import type { LoginCredentials, AuthResponse, User } from "@/lib/types"
+import { toast } from "react-toastify"
 
 export class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-  try {
-    const data = await apiLogin.post<AuthResponse>("/auth/login", credentials); // <-- đã trả về data
-    if (data.success && data.token) {
-      apiLogin.setToken(data.token);
-    }
-    return data;
-  } catch (error) {
-    return {
-      success: false,
-      message: "Đăng nhập thất bại. Vui lòng thử lại.",
-    };
-  }
-}
+    const toastId = toast.loading("Đang đăng nhập...")
 
+    try {
+      const data = await apiLogin.post<AuthResponse>("/auth/login", credentials)
+
+      if (data.success && data.token) {
+        apiLogin.setToken(data.token)
+        toast.update(toastId, {
+          render: "Đăng nhập thành công",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        })
+      } else {
+        toast.update(toastId, {
+          render: data.message || "Đăng nhập thất bại",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        })
+      }
+
+      return data
+    } catch (error) {
+      console.error("Login error:", error)
+      toast.update(toastId, {
+        render: "Đăng nhập thất bại. Vui lòng thử lại.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      })
+      return {
+        success: false,
+        message: "Đăng nhập thất bại. Vui lòng thử lại.",
+      }
+    }
+  }
 
   async logout(): Promise<void> {
+    const toastId = toast.loading("Đang đăng xuất...")
     try {
-      return await apiLogin.post("/auth/logout")
+      await apiLogin.post("/auth/logout")
+      toast.update(toastId, {
+        render: "Đăng xuất thành công",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      })
     } catch (error) {
       console.error("Logout error:", error)
+      toast.update(toastId, {
+        render: "Lỗi khi đăng xuất",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      })
     } finally {
-      // apiLogin.removeToken()
-      // window.location.href = "/admin/login"
+      apiLogin.removeToken()
+      window.location.href = "/admin/login"
     }
   }
 
@@ -43,12 +79,10 @@ export class AuthService {
   async refreshToken(): Promise<boolean> {
     try {
       const response = await apiLogin.post<{ success: boolean; token: string }>("/auth/refresh")
-
       if (response.success && response.token) {
         apiLogin.setToken(response.token)
         return true
       }
-
       return false
     } catch (error) {
       console.error("Refresh token error:", error)

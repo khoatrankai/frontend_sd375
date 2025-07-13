@@ -32,12 +32,12 @@ export default function NewSoftware() {
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <CardTitle className="text-lg line-clamp-2">{item.name}</CardTitle>
-                {item.featured && (
+                {/* {item.featured && ( */}
                   <Badge variant="destructive" className="ml-2">
                     <Star className="h-3 w-3 mr-1" />
                     Nổi bật
                   </Badge>
-                )}
+                {/* )} */}
               </div>
             </CardHeader>
             <CardContent>

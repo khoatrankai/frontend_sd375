@@ -54,7 +54,7 @@ const latestSideNews = [...sideNews as { created_at: string }[]]
               <div
                 key={index}
                 className={`absolute cursor-pointer inset-0 transition-opacity duration-500 ${
-                  index === currentMainNews ? "opacity-100" : "opacity-0"
+                  index === currentMainNews ? "opacity-100 z-40" : "opacity-0 -z-50"
                 }`}
                 onClick={()=>{
                   // window.location.href = `/tin-tuc/${news?.id}`
@@ -71,7 +71,7 @@ const latestSideNews = [...sideNews as { created_at: string }[]]
                         {<TimeAgo date={news.created_at} />}
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold mb-2 line-clamp-2 hover:underline">{news.title}</h3>
+                    <h3 className="text-xl font-bold mb-2 line-clamp-2 hover:underline" >{news.title}</h3>
                     <p className="text-gray-200 line-clamp-2" dangerouslySetInnerHTML={{__html:news.excerpt}}/>
                   </div>
                 </div>
@@ -81,7 +81,7 @@ const latestSideNews = [...sideNews as { created_at: string }[]]
             <Button
               variant="outline"
               size="icon"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 z-50"
               onClick={() => setCurrentMainNews((prev) => (prev - 1 + mainNews.length) % mainNews.length)}
             >
               <ChevronLeft className="h-4 w-4 text-white" />
@@ -90,13 +90,13 @@ const latestSideNews = [...sideNews as { created_at: string }[]]
             <Button
               variant="outline"
               size="icon"
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 z-50"
               onClick={() => setCurrentMainNews((prev) => (prev + 1) % mainNews.length)}
             >
               <ChevronRight className="h-4 w-4 text-white" />
             </Button>
 
-            <div className="absolute bottom-20 left-6 flex space-x-2">
+            <div className="absolute bottom-20 left-6 flex space-x-2 z-50">
               {mainNews.map((_, index) => (
                 <button
                   key={index}

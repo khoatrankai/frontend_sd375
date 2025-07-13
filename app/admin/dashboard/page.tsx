@@ -21,20 +21,18 @@ import { DialogClose } from "@radix-ui/react-dialog"
 import { newsService } from "@/services/news.service"
 import { useSelector } from "react-redux"
 import { RootState } from "@/redux/store/store"
+import TimeAgo from "@/components/time-ago"
 
 export default function AdminDashboard() {
  
  const { datas: dataProfile } = useSelector(
         (state: RootState) => state.get_profile
       );
-  const recentActivities = [
-    { action: "Thêm bài viết mới", item: "Hội nghị tổng kết 2024", time: "2 giờ trước" },
-    { action: "Cập nhật hình ảnh", item: "Album diễn tập", time: "4 giờ trước" },
-    { action: "Phê duyệt văn bản", item: "Chỉ thị số 01/CT-F375", time: "6 giờ trước" },
-    { action: "Thêm phần mềm", item: "Quản lý văn bản v2.1", time: "1 ngày trước" },
-  ]
 
-  const [news,setNews] = useState<any>([])
+      const [news,setNews] = useState<any>([])
+  
+
+  // const [news,setNews] = useState<any>([])
 
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -244,6 +242,13 @@ export default function AdminDashboard() {
       return pre + curr?.views
     },0), icon: Eye, color: "text-orange-600" },
   ]
+
+  const recentActivities = [
+    { action: "Thêm bài viết mới", item: news?.[0]?.title,time:<TimeAgo date={news?.[0]?.createdAt} /> },
+    { action: "Thêm hình ảnh mới", item: images?.[0]?.title,time:<TimeAgo date={images?.[0]?.createdAt} /> },
+    { action: "Thêm video mới", item: videos?.[0]?.title,time:<TimeAgo date={videos?.[0]?.createdAt} /> },
+    { action: "Thêm phần mềm mới", item: softwares?.[0]?.name,time:<TimeAgo date={softwares?.[0]?.createdAt} /> },
+  ]
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -264,7 +269,7 @@ export default function AdminDashboard() {
                 Cài Đặt
               </div>
             </button> */}
-            <button>
+            {/* <button>
               <div
                 onClick={(e) => {
                   e.preventDefault();
@@ -277,7 +282,7 @@ export default function AdminDashboard() {
                 <LogOut className="h-4 w-4 mr-2" />
                 Đăng xuất
               </div>
-            </button>
+            </button> */}
 
           </div>
         </div>
@@ -835,8 +840,8 @@ export default function AdminDashboard() {
                 {recentActivities.map((activity, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
                     <div>
-                      <p className="font-medium text-sm">{activity.action}</p>
-                      <p className="text-sm text-gray-600">{activity.item}</p>
+                      <p className="font-medium text-sm line-clamp-1">{activity.action}</p>
+                      <p className="text-sm text-gray-600 line-clamp-1">{activity.item?.slice(0,60)}...</p>
                     </div>
                     <Badge variant="outline" className="text-xs">
                       {activity.time}

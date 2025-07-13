@@ -75,7 +75,7 @@ export default function InternationalNewsPage() {
   ]
 
 
-  const [filteredTracks, setFilteredNews] = useState<any>([])
+  const [filteredNews, setFilteredNews] = useState<any>([])
 
   useEffect(() => {
     setFilteredNews(selectedRegion === "all" ? news : news.filter((dt: any) => {
@@ -88,15 +88,15 @@ export default function InternationalNewsPage() {
   const [selectedRegion, setSelectedRegion] = useState("all")
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = filteredTracks.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData = filteredNews.slice(indexOfFirstItem, indexOfLastItem);
 
   // Tổng số trang
-  const totalPages = Math.ceil(filteredTracks.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
 
   // Phân nhóm trang (2 trang mỗi cụm)
   const pagesPerGroup = 2;
@@ -144,7 +144,12 @@ export default function InternationalNewsPage() {
           <Button
             key={region.id}
             variant={selectedRegion === region.id ? "default" : "outline"}
-            onClick={() => setSelectedRegion(region.id)}
+            onClick={() => 
+            {
+              setSelectedRegion(region.id)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <Globe className="h-4 w-4" />
@@ -160,7 +165,7 @@ export default function InternationalNewsPage() {
 
       {/* News List */}
       <div className="space-y-6">
-        {news.filter((dt:any)=>{
+        {currentData.filter((dt:any)=>{
           if(selectedRegion === "all" || dt?.region?.nametag === selectedRegion){
             return true
           }
@@ -214,37 +219,7 @@ export default function InternationalNewsPage() {
         ))}
       </div>
 
-      {/* World Map Section */}
-      <Card className="bg-gradient-to-r from-blue-50 to-blue-100">
-        <CardContent className="p-8">
-          <h3 className="text-2xl font-bold text-center mb-6">Bản đồ tin tức thế giới</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-white font-bold">18</span>
-              </div>
-              <h4 className="font-semibold">Châu Á</h4>
-              <p className="text-sm text-gray-600">Tin tức quốc phòng</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-white font-bold">12</span>
-              </div>
-              <h4 className="font-semibold">Châu Âu</h4>
-              <p className="text-sm text-gray-600">Tin tức NATO</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-white font-bold">8</span>
-              </div>
-              <h4 className="font-semibold">Châu Mỹ</h4>
-              <p className="text-sm text-gray-600">Tin tức an ninh</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Pagination */}
+{/* Pagination */}
       <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           variant="outline"
@@ -291,6 +266,37 @@ export default function InternationalNewsPage() {
           Tiếp
         </Button>
       </div>
+      {/* World Map Section */}
+      <Card className="bg-gradient-to-r from-blue-50 to-blue-100">
+        <CardContent className="p-8">
+          <h3 className="text-2xl font-bold text-center mb-6">Bản đồ tin tức thế giới</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span className="text-white font-bold">18</span>
+              </div>
+              <h4 className="font-semibold">Châu Á</h4>
+              <p className="text-sm text-gray-600">Tin tức quốc phòng</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span className="text-white font-bold">12</span>
+              </div>
+              <h4 className="font-semibold">Châu Âu</h4>
+              <p className="text-sm text-gray-600">Tin tức NATO</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span className="text-white font-bold">8</span>
+              </div>
+              <h4 className="font-semibold">Châu Mỹ</h4>
+              <p className="text-sm text-gray-600">Tin tức an ninh</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      
     </div>
   )
 }

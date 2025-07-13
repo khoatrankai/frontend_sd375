@@ -9,9 +9,10 @@ import { Shield, Home, FileText, ImageIcon, Users, Settings, LogOut, Menu, X, In
 import { usePathname } from "next/navigation"
 import { authService } from "@/services/auth.service"
 import { userTypes } from "../gioi-thieu/lanh-dao/page"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/redux/store/store"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "@/redux/store/store"
 import { fetchProfiles } from "@/redux/store/slices/usersSlices/user.slide"
+import { Image } from "antd"
 
 export default function AdminLayout({
   children,
@@ -19,8 +20,10 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const dispatch = useDispatch<AppDispatch>();
+  const { datas: dataProfile } = useSelector(
+        (state: RootState) => state.get_profile
+      );
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [dataProfile,setDataProfile] = useState<any>()
   const pathname = usePathname();
   const menuItems = [
      { href: "/admin/dashboard", icon: Home, label: "Tổng quan" ,hidden: ['admin','btv','user'].includes(dataProfile?.role)?false:true},
@@ -34,15 +37,13 @@ export default function AdminLayout({
     // { href: "/admin/settings", icon: Settings, label: "Cài đặt" },
   ]
   const checkLogin = async()=>{
-    const dataUser = await authService.getCurrentUser()
-    dispatch(fetchProfiles())
-    // console.log(dataUser,pathname.startsWith('/admin/login'),pathname)
-    setDataProfile(dataUser)
-    if(!dataUser){
-      if(!pathname.startsWith('/admin/login')){
-        window.location.href = "/admin/login"
-      }
-    }
+    
+   dispatch(fetchProfiles()).then((res)=>{
+     if(!res.payload && !pathname.startsWith('/admin/login')){
+      window.location.href = "/admin/login"
+     }
+   })
+  }
     // if(!pathname.startsWith('/admin/login')){
     //   // window.location.href = "/admin/login"
     // }
@@ -51,7 +52,7 @@ export default function AdminLayout({
     //     window.location.href = "/admin/dashboard"
     //   }
     // }
-  }
+  
   useEffect(()=>{
     checkLogin()
   },[])
@@ -63,7 +64,7 @@ export default function AdminLayout({
      }
   }
 
-  useEffect(()=>{console.log(menuItems)},[menuItems])
+  
 
   return (
     <>
@@ -84,7 +85,7 @@ export default function AdminLayout({
         <div className="flex items-center justify-between h-16 px-6 border-b">
           <div className="flex items-center space-x-2">
             {
-              dataProfile? <img src={dataProfile?.avatar} className="h-8 w-8 rounded-full object-cover"/> : <Shield className="h-8 w-8 text-red-600" />
+              dataProfile? <Image width={32} height={32} src={dataProfile?.avatar} className="h-8 w-8 rounded-full object-cover"/> : <Shield className="h-8 w-8 text-red-600" />
             }
             
             <div className="flex flex-col">

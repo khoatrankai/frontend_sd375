@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api"
-import type { ApiResponse, PaginationParams } from "@/lib/types"
+import { toast } from "react-toastify"
+import type { ApiResponse } from "@/lib/types"
 
 export class HistoryService {
   // --- History ---
@@ -27,31 +28,53 @@ export class HistoryService {
   }
 
   async createHistory(data: any) {
+    const toastId = toast.loading("Đang tạo lịch sử...")
     try {
       const response = await apiClient.post<any>("/histories", data)
+      if (response?.statusCode === 201) {
+        toast.update(toastId, { render: "Tạo thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Tạo thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Create history error:", error)
+      toast.update(toastId, { render: "Lỗi khi tạo", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
   async updateHistory(id: string, data: any) {
+    const toastId = toast.loading("Đang cập nhật lịch sử...")
     try {
       const response = await apiClient.patch<any>(`/histories/${id}`, data)
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Cập nhật thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Cập nhật thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Update history error:", error)
+      toast.update(toastId, { render: "Lỗi khi cập nhật", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
   async deleteHistory(id: string) {
+    const toastId = toast.loading("Đang xóa lịch sử...")
     try {
       const response = await apiClient.delete<any>(`/histories/${id}`)
-      return response
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Xóa thành công", type: "success", isLoading: false, autoClose: 3000 })
+        return true
+      } else {
+        toast.update(toastId, { render: "Xóa thất bại", type: "error", isLoading: false, autoClose: 3000 })
+        return false
+      }
     } catch (error) {
       console.error("Delete history error:", error)
+      toast.update(toastId, { render: "Lỗi khi xóa", type: "error", isLoading: false, autoClose: 3000 })
       return false
     }
   }
@@ -78,31 +101,53 @@ export class HistoryService {
   }
 
   async createLeader(data: any) {
+    const toastId = toast.loading("Đang tạo lãnh đạo...")
     try {
       const response = await apiClient.post<any>("/histories/leaders", data)
+      if (response?.statusCode === 201) {
+        toast.update(toastId, { render: "Tạo thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Tạo thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Create leader error:", error)
+      toast.update(toastId, { render: "Lỗi khi tạo", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
   async updateLeader(id: string, data: any) {
+    const toastId = toast.loading("Đang cập nhật lãnh đạo...")
     try {
       const response = await apiClient.patch<any>(`/histories/leaders/${id}`, data)
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Cập nhật thành công", type: "success", isLoading: false, autoClose: 3000 })
+      } else {
+        toast.update(toastId, { render: "Cập nhật thất bại", type: "error", isLoading: false, autoClose: 3000 })
+      }
       return response || null
     } catch (error) {
       console.error("Update leader error:", error)
+      toast.update(toastId, { render: "Lỗi khi cập nhật", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
   async deleteLeader(id: string) {
+    const toastId = toast.loading("Đang xóa lãnh đạo...")
     try {
-      const response = await apiClient.delete<ApiResponse>(`/histories/leaders/${id}`)
-      return response
+      const response = await apiClient.delete<any>(`/histories/leaders/${id}`)
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Xóa thành công", type: "success", isLoading: false, autoClose: 3000 })
+        return true
+      } else {
+        toast.update(toastId, { render: "Xóa thất bại", type: "error", isLoading: false, autoClose: 3000 })
+        return false
+      }
     } catch (error) {
       console.error("Delete leader error:", error)
+      toast.update(toastId, { render: "Lỗi khi xóa", type: "error", isLoading: false, autoClose: 3000 })
       return false
     }
   }

@@ -1,5 +1,5 @@
-
 import { apiClient } from "@/lib/api"
+import { toast } from "react-toastify"
 import type { AxiosResponse } from "axios"
 
 export interface Slide {
@@ -22,7 +22,6 @@ export interface CreateSlidePayload {
 export interface UpdateSlidePayload extends Partial<CreateSlidePayload> {}
 
 export const slideService = {
-  // GET /slides?news=...
   async getSlides(news?: string) {
     try {
       const response: AxiosResponse<Slide[]> = await apiClient.get("/slides", {
@@ -35,7 +34,6 @@ export const slideService = {
     }
   },
 
-  // GET /slides/:id
   async getSlideById(id: string) {
     try {
       const response: AxiosResponse<Slide> = await apiClient.get(`/slides/${id}`)
@@ -46,8 +44,8 @@ export const slideService = {
     }
   },
 
-  // POST /slides
   async createSlide(data: CreateSlidePayload) {
+    const toastId = toast.loading("Đang tạo slide...")
     try {
       const formData = new FormData()
       if (data.title) formData.append("title", data.title)
@@ -56,15 +54,27 @@ export const slideService = {
       if (data.coverImage) formData.append("coverImage", data.coverImage)
 
       const response: AxiosResponse<Slide> = await apiClient.upload("/slides", formData)
+      toast.update(toastId, {
+        render: "Tạo slide thành công!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      })
       return response
     } catch (error) {
       console.error("Create slide error:", error)
+      toast.update(toastId, {
+        render: "Tạo slide thất bại!",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      })
       return null
     }
   },
 
-  // PATCH /slides/:id
   async updateSlide(id: string, data: UpdateSlidePayload) {
+    const toastId = toast.loading("Đang cập nhật slide...")
     try {
       const formData = new FormData()
       if (data.title) formData.append("title", data.title)
@@ -73,20 +83,44 @@ export const slideService = {
       if (data.coverImage) formData.append("coverImage", data.coverImage)
 
       const response: AxiosResponse<Slide> = await apiClient.uploadPatch(`/slides/${id}`, formData)
+      toast.update(toastId, {
+        render: "Cập nhật slide thành công!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      })
       return response
     } catch (error) {
       console.error("Update slide error:", error)
+      toast.update(toastId, {
+        render: "Cập nhật slide thất bại!",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      })
       return null
     }
   },
 
-  // DELETE /slides/:id
   async deleteSlide(id: string): Promise<boolean> {
+    const toastId = toast.loading("Đang xoá slide...")
     try {
       await apiClient.delete(`/slides/${id}`)
+      toast.update(toastId, {
+        render: "Xoá slide thành công!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      })
       return true
     } catch (error) {
       console.error("Delete slide error:", error)
+      toast.update(toastId, {
+        render: "Xoá slide thất bại!",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      })
       return false
     }
   }

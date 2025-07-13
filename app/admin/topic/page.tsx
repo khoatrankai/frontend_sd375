@@ -135,7 +135,7 @@ export default function AdminDocumentsPage() {
   //phân trang
   // const [report, setReport] = useState<any>([])
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 2;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -318,7 +318,10 @@ export default function AdminDocumentsPage() {
               />
             </div>
             <div>
-              <Select onValueChange={setSelectedDocType} defaultValue="cchc" >
+              <Select onValueChange={(value)=>{
+                setSelectedType(value)
+                setCurrentPage(1)
+              }} defaultValue="cchc" >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn mục" />
                 </SelectTrigger>
@@ -439,7 +442,7 @@ export default function AdminDocumentsPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+                    {/* <div>
                       <label>Thời gian đăng</label>
                       <Input value={dataSave?.date} onChange={(e: any) => {
                         setDataSave((preValue: any) => {
@@ -460,7 +463,7 @@ export default function AdminDocumentsPage() {
                           }
                         })
                       }} placeholder="Nhập tiêu đề " />
-                    </div>
+                    </div> */}
                     <div>
                       <label>Thuộc lĩnh vực</label>
                       <div className="flex items-center gap-2 mt-1">
@@ -765,7 +768,7 @@ export default function AdminDocumentsPage() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div>
+                          {/* <div>
                             <label>Thời gian đăng</label>
                             <Input defaultValue={doc?.date} onChange={(e: any) => {
                               setDataSave((preValue: any) => {
@@ -786,7 +789,7 @@ export default function AdminDocumentsPage() {
                                 }
                               })
                             }} placeholder="Nhập tiêu đề " />
-                          </div>
+                          </div> */}
                           <div>
                             <label>Thuộc lĩnh vực</label>
                             <div className="flex items-center gap-2 mt-1">

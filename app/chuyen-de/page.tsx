@@ -72,6 +72,40 @@ export default function SpecialarticlesPage() {
       
     }
   }
+
+    //phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 3;
+  
+    // Tính vị trí dữ liệu
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentData = (activeCategory === "all"? regularArticles:filteredArticles).slice(indexOfFirstItem, indexOfLastItem);
+  
+    // Tổng số trang
+    const totalPages = Math.ceil((activeCategory === "all"?regularArticles:filteredArticles).length / itemsPerPage);
+  
+    // Phân nhóm trang (2 trang mỗi cụm)
+    const pagesPerGroup = 2;
+    const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+    const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+  
+    // Xác định các trang trong cụm hiện tại
+    const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+  
+    // Chuyển nhóm
+    const handlePrevGroup = () => {
+      const newPage = Math.max(1, startPage - pagesPerGroup);
+      setCurrentPage(newPage);
+    };
+  
+    const handleNextGroup = () => {
+      const newPage = Math.min(totalPages, startPage + pagesPerGroup);
+      setCurrentPage(newPage);
+    };
+
+
   useEffect(()=> {
     fetchData()
   },[])
@@ -163,7 +197,7 @@ export default function SpecialarticlesPage() {
                   <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                     {topic.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{topic.excerpt}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3" dangerouslySetInnerHTML={{__html:topic?.excerpt}}/>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {topic.tags.map((tag:any, index:number) => (
                       <Badge key={index} variant="outline" className="text-xs">
@@ -200,7 +234,7 @@ export default function SpecialarticlesPage() {
           {activeCategory === "all" ? "Tất cả chuyên đề" : categories.find((c) => c.id === activeCategory)?.name}
         </h2>
         <div className="space-y-6">
-          {(activeCategory === "all"?regularArticles:filteredArticles).map((topic:any) => (
+          {currentData.map((topic:any) => (
             <Card key={topic.id} className="hover:shadow-md transition-shadow cursor-pointer"  onClick={()=>{
                 router.push(`/chuyen-de/${topic.id}`)
               }}>
@@ -217,7 +251,7 @@ export default function SpecialarticlesPage() {
                     <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-red-600 transition-colors">
                       {topic.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{topic.excerpt}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2" dangerouslySetInnerHTML={{__html:topic?.excerpt}}/>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {topic?.tags.map((tag:any, index:number) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -250,11 +284,52 @@ export default function SpecialarticlesPage() {
       </section>
 
       {/* Load More */}
-      <div className="text-center">
-        <Button variant="outline" size="lg">
-          Xem thêm chuyên đề
-        </Button>
-      </div>
+     <div className="flex justify-center items-center gap-2 mt-4">
+                <Button
+                  variant="outline"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  Trước
+                </Button>
+
+                {/* Nút ... lùi cụm */}
+                {startPage > 1 && (
+                  <Button variant="outline" onClick={handlePrevGroup}>
+                    ...
+                  </Button>
+                )}
+
+                {/* Các trang trong nhóm hiện tại */}
+                {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                  const page = startPage + i;
+                  return (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "default" : "outline"}
+                      onClick={() => setCurrentPage(page)}
+                      className={page === currentPage ? "font-bold" : ""}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+
+                {/* Nút ... tiến cụm */}
+                {endPage < totalPages && (
+                  <Button variant="outline" onClick={handleNextGroup}>
+                    ...
+                  </Button>
+                )}
+
+                <Button
+                  variant="outline"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Tiếp
+                </Button>
+              </div>
     </div>
   )
 }

@@ -21,7 +21,7 @@ export default function VideosPage() {
 
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 12;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -101,7 +101,13 @@ export default function VideosPage() {
           <Button
             key={category.id}
             variant={selectedCategory === category.nametag ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.nametag)}
+            onClick={() => 
+            {
+
+              setSelectedCategory(category.nametag)
+              setCurrentPage(1)
+            }
+            }
             className="flex items-center space-x-2"
           >
             <span>{category.name}</span>

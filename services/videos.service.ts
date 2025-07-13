@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api"
+import { toast } from "react-toastify"
 
 export class VideosService {
-  // Get all videos or filter by category
   async getVideos(params?: { category?: string }) {
     try {
       const response = await apiClient.get<any>("/videos", params)
@@ -12,7 +12,6 @@ export class VideosService {
     }
   }
 
-  // Get a single video by ID
   async getVideo(id: string) {
     try {
       const response = await apiClient.get<any>(`/videos/${id}`)
@@ -23,29 +22,32 @@ export class VideosService {
     }
   }
 
-  // Create a new video
   async createVideo(data: any) {
+    const toastId = toast.loading("Đang tạo video...")
     try {
       const response = await apiClient.post<any>("/videos", data)
+      toast.update(toastId, { render: "Tạo video thành công!", type: "success", isLoading: false, autoClose: 3000 })
       return response || null
     } catch (error) {
       console.error("Create video error:", error)
+      toast.update(toastId, { render: "Tạo video thất bại!", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
-  // Update an existing video
   async updateVideo(id: string, data: any) {
+    const toastId = toast.loading("Đang cập nhật video...")
     try {
       const response = await apiClient.patch<any>(`/videos/${id}`, data)
+      toast.update(toastId, { render: "Cập nhật video thành công!", type: "success", isLoading: false, autoClose: 3000 })
       return response || null
     } catch (error) {
       console.error("Update video error:", error)
+      toast.update(toastId, { render: "Cập nhật video thất bại!", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }
 
-  // Increment the views count of a video
   async incrementViews(id: string) {
     try {
       const response = await apiClient.patch<any>(`/videos/${id}/views`)
@@ -56,18 +58,24 @@ export class VideosService {
     }
   }
 
-  // Delete a video by ID
   async deleteVideo(id: string) {
+    const toastId = toast.loading("Đang xoá video...")
     try {
       const response = await apiClient.delete<any>(`/videos/${id}`)
-      return response?.statusCode === 200
+      if (response?.statusCode === 200) {
+        toast.update(toastId, { render: "Xoá video thành công!", type: "success", isLoading: false, autoClose: 3000 })
+        return true
+      } else {
+        toast.update(toastId, { render: "Xoá video thất bại!", type: "error", isLoading: false, autoClose: 3000 })
+        return false
+      }
     } catch (error) {
       console.error("Delete video error:", error)
+      toast.update(toastId, { render: "Xoá video thất bại!", type: "error", isLoading: false, autoClose: 3000 })
       return false
     }
   }
 
-  // Get all video categories
   async getCategories() {
     try {
       const response = await apiClient.get<any>("/videos/categories")
@@ -78,13 +86,15 @@ export class VideosService {
     }
   }
 
-  // Create a new category for videos
   async createCategory(data: { name: string }) {
+    const toastId = toast.loading("Đang tạo danh mục video...")
     try {
       const response = await apiClient.post<any>("/videos/categories", data)
+      toast.update(toastId, { render: "Tạo danh mục thành công!", type: "success", isLoading: false, autoClose: 3000 })
       return response || null
     } catch (error) {
       console.error("Create video category error:", error)
+      toast.update(toastId, { render: "Tạo danh mục thất bại!", type: "error", isLoading: false, autoClose: 3000 })
       return null
     }
   }

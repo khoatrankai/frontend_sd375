@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev -p 80",
     "build": "next build",
-    "start": "node server.js -p 80",
-    "lint": "next lint"
+    "start": "set PORT=80 && node .next/standalone/server.js -p 80",
+    "lint": "next lint",
+    "postbuild": "xcopy public .next\\standalone\\public /E /I /Y && xcopy .next\\static .next\\standalone\\.next\\static /E /I /Y"
+
   },
   "dependencies": {
     "@fastify/static": "latest",

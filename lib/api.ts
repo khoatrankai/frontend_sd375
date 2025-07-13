@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
+import { toast } from "react-toastify"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_CLIENT || "/api"
 
 class ApiClient {
@@ -77,34 +78,56 @@ class ApiClient {
     )
   }
 
-  upload<T>(endpoint: string, formData: FormData) {
-    return this.handleRequest<T>(
+  async upload<T>(endpoint: string, formData: FormData) {
+    const toastId = toast.loading("Đang tạo ...")
+    const res = await this.handleRequest<T>(
       this.axiosInstance.post<T>(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-    )
+    ) as any
+    console.log(res)
+    if(res.statusCode === 201 || res.statusCode === 200){
+      toast.update(toastId, { render: "Tạo thành công!", type: "success", isLoading: false, autoClose: 3000 })
+    }else{
+      toast.update(toastId, { render: "Tạo thất bại!", type: "error", isLoading: false, autoClose: 3000 })
+    }
+    return res
   }
 
-   uploadPatch<T>(endpoint: string, formData: FormData) {
-    return this.handleRequest<T>(
+  async uploadPatch<T>(endpoint: string, formData: FormData) {
+    const toastId = toast.loading("Đang tạo ...")
+    const res = await this.handleRequest<T>(
       this.axiosInstance.patch<T>(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-    )
+    ) as any
+    if(res.statusCode === 200){
+      toast.update(toastId, { render: "Cập nhật thành công!", type: "success", isLoading: false, autoClose: 3000 })
+    }else{
+      toast.update(toastId, { render: "Cập nhật thất bại!", type: "error", isLoading: false, autoClose: 3000 })
+    }
+    return res
   }
 
-  uploadPut<T>(endpoint: string, formData: FormData) {
-    return this.handleRequest<T>(
+  async uploadPut<T>(endpoint: string, formData: FormData) {
+    const toastId = toast.loading("Đang tạo ...")
+    const res = await this.handleRequest<T>(
       this.axiosInstance.put<T>(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-    )
+    ) as any
+    if(res.statusCode === 200){
+      toast.update(toastId, { render: "Cập nhật thành công!", type: "success", isLoading: false, autoClose: 3000 })
+    }else{
+      toast.update(toastId, { render: "Cập nhật thất bại!", type: "error", isLoading: false, autoClose: 3000 })
+    }
+    return res
   }
 }
 

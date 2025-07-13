@@ -79,7 +79,7 @@ export default function AdminUsersPage() {
   //phân trang
   // const [report, setReport] = useState<any>([])
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 10;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -137,7 +137,7 @@ export default function AdminUsersPage() {
     if (confirmDelete) {
       const res = await usersService.deleteUser(id)
       fetchData()
-      if (res?.statusCode === 200) {
+      if (res) {
 
       }
       console.log("Đã xoá tài khoản");
@@ -497,7 +497,10 @@ export default function AdminUsersPage() {
               />
             </div>
             <div>
-              <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <Select value={selectedRole} onValueChange={(value)=>{
+                setSelectedRole(value)
+                setCurrentPage(1)
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn vai trò" />
                 </SelectTrigger>

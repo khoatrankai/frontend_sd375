@@ -107,7 +107,7 @@ export default function AdminMediaPage() {
 
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 12;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -920,7 +920,10 @@ export default function AdminMediaPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64"
               />
-              <Select value={selectedType} onValueChange={setSelectedType}>
+              <Select value={selectedType} onValueChange={(value)=>{
+                setSelectedType(value)
+                setCurrentPage(1)
+              }}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Chọn hoạt động" />
                 </SelectTrigger>
@@ -1047,216 +1050,64 @@ export default function AdminMediaPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {(selectedType === "all" || selectedType === "image") && currenData?.filter((dt: any) => (dt?.title ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center space-x-4">
-                    <Image
-                      src={file.thumbnail || "/public/placeholder.svg"}
-                      alt={file.title}
-                      width={50}
-                      height={50}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
+              {currenData?.map((file: any) => 
+                {
+                  const isImage = file.type === "image";
+                const isVideo = file.type === "video";
+                const isAudio = file.type === "audio";
+                const isSoftware = file.type === "software";
+                return <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                    <div className="flex items-center space-x-4">
+                      <Image
+                        src={file.thumbnail || "/public/placeholder.svg"}
+                        alt={file.title ?? file?.name}
+                        width={50}
+                        height={50}
+                        className=" object-cover"
+                        preview={{
+                          mask: (
+                            <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
+                              <Eye className="text-xl mb-1" />
+                            </div>
+                          ),
+                        }}
+                      />
+                      <div>
+                        <h4 className="font-medium">{file.title ?? file?.name}</h4>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <Badge variant="outline">{isImage?'Hình ảnh':isAudio?'Audio':isSoftware?'Phần mềm':'Video'}</Badge>
+                          {file?.category?.name && (
+                            <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
+                          )}
+                          {/* <span>{file.size}</span> */}
+                          <div className="flex items-center">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {file.date}
                           </div>
-                        ),
-                      }}
-                    />
-                    <div>
-                      <h4 className="font-medium">{file.title}</h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <Badge variant="outline">Hình ảnh</Badge>
-                        {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                        )}
-                        {/* <span>{file.size}</span> */}
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {file.date}
+                          <span>{file?.views ?? file?.downloads} {file?.views ? 'lượt xem':'lượt tải'}</span>
                         </div>
-                        <span>{file?.views} lượt xem</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2">
 
-                    <Button variant="outline" size="sm" onClick={() => {
-                      downloadFile(file?.thumbnail)
-                    }}>
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id, 'image')}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              {(selectedType === "all" || selectedType === "video") && currenData?.filter((dt: any) => (dt?.title ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center space-x-4">
-                    <Image
-
-                      src={file.thumbnail || "/public/placeholder.svg"}
-                      alt={file.title}
-                      width={50}
-                      height={50}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div>
-                      <h4 className="font-medium">{file.title}</h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <Badge variant="outline">Video</Badge>
-                        {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                        )}
-                        <span>{file?.duration}</span>
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {file.date}
-                        </div>
-                        <span>{file?.views} lượt tải</span>
-                      </div>
+                      <Button variant="outline" size="sm" onClick={() => {
+                        downloadFile(file?.link ?? file?.thumbnail)
+                      }}>
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={() => handleDelete(file?.id, 'image')}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-
-                    <Button variant="outline" size="sm" onClick={() => {
-                      downloadFile(file?.link)
-                    }}>
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id, 'video')}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              {(selectedType === "all" || selectedType === "audio") && currenData?.filter((dt: any) => (dt?.title ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center space-x-4">
-                    <Image
-                      src={file.thumbnail || "/public/placeholder.svg"}
-                      alt={file.title}
-                      width={50}
-                      height={50}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div>
-                      <h4 className="font-medium">{file.title}</h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <Badge variant="outline">Audio</Badge>
-                        {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                        )}
-                        <span>{file?.duration}</span>
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {file.date}
-                        </div>
-                        <span>{file?.views} lượt nghe</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-
-                    <Button variant="outline" size="sm" onClick={() => {
-                      downloadFile(file?.link)
-                    }}>
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id, 'audio')}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              {(selectedType === "all" || selectedType === "software") && currenData?.filter((dt: any) => (dt?.name ?? ""
-              ).toLowerCase().includes(searchTerm.toLowerCase())).map((file: any) => (
-                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center space-x-4">
-                    <Image
-                      src={file.thumbnail || "/public/placeholder.svg"}
-                      alt={file?.name}
-                      width={50}
-                      height={50}
-                      className=" object-cover"
-                      preview={{
-                        mask: (
-                          <div className="text-white text-base font-semibold flex flex-col items-center justify-center">
-                            <Eye className="text-xl mb-1" />
-                          </div>
-                        ),
-                      }}
-                    />
-                    <div>
-                      <h4 className="font-medium">{file?.name}</h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <Badge variant="outline">Phần mềm</Badge>
-                        {file?.category?.name && (
-                          <Badge className=" top-2 right-2" variant="default">{file?.category?.name}</Badge>
-                        )}
-                        <span>{file?.size}</span>
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {file.date}
-                        </div>
-                        <span>{file?.downloads} lượt tải</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-
-                    <Button variant="outline" size="sm" onClick={() => {
-                      downloadFile(file?.link)
-                    }}>
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(file?.id, 'software')}
-                      disabled={dataProfile?.role === "user"}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                }
+              )}
+              
             </div>
           )}
         </CardContent>

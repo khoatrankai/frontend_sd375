@@ -45,7 +45,7 @@ export default function AudioPage() {
 
   //phân trang
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -174,6 +174,7 @@ export default function AudioPage() {
             onClick={() => {
               setSelectedCategory(category.nametag)
               // refBtn.current.click()
+              setCurrentPage(1)
               handleReset()
             }
 
