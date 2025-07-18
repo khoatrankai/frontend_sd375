@@ -8,7 +8,7 @@ export async function GET(
   const id = request.nextUrl.searchParams.get("id")
   try {
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_API_CLIENT}/public/documents/${id}`
+      `${process.env.NEXT_PUBLIC_API_OK}/public/documents/${id}`
     )
   } catch (error) {
     return NextResponse.json(

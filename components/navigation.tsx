@@ -89,6 +89,8 @@ export default function Navigation() {
     setActiveDropdown(activeDropdown === itemId ? null : itemId)
   }
 
+  useEffect(()=>{console.log(pathname)},[pathname])
+
   return (
     <nav className="bg-gradient-to-r text-black shadow-xl relative z-30 px-4 py-2">
       <div className="px-0 w-full">
@@ -101,7 +103,7 @@ export default function Navigation() {
                   <div className="relative">
                     <button
                       className={`flex items-center space-x-2 px-4 bg-transparent py-4  hover:bg-[#94BBE9] transition-all duration-200 rounded-t-lg ${
-                        isActive(item.submenu[0]?.href || "") ? "!bg-[#94BBE9] text-white" : ""
+                        isActive(item?.submenu?.[0]?.href || item?.href || "") ? "!bg-[#94BBE9] text-white" : ""
                       }`}
                       onMouseEnter={() => setActiveDropdown(item.id)}
                       onMouseLeave={() => setActiveDropdown(null)}

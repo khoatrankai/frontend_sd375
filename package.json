@@ -5,10 +5,8 @@
   "scripts": {
     "dev": "next dev -p 80",
     "build": "next build",
-    "start": "set PORT=80 && node .next/standalone/server.js -p 80",
-    "lint": "next lint",
-    "postbuild": "xcopy public .next\\standalone\\public /E /I /Y && xcopy .next\\static .next\\standalone\\.next\\static /E /I /Y"
-
+    "start": "set PORT=80 && node server.js -p 80",
+    "lint": "next lint"
   },
   "dependencies": {
     "@fastify/static": "latest",
@@ -109,6 +107,7 @@
     "react-day-picker": "8.10.1",
     "react-dom": "^19",
     "react-hook-form": "^7.54.1",
+    "react-owl-carousel": "^2.3.3",
     "react-player": "^2.16.0",
     "react-quill": "^2.0.0",
     "react-redux": "^9.2.0",

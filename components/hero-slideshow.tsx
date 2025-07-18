@@ -3,25 +3,33 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { slideService } from "@/services/slides.service"
+import { articlesService } from "@/services/articles.service"
+import { getFirstImageSrcFromHTML } from "@/lib/getFristImgHTML"
+import { useRouter } from "next/navigation"
 
 export default function HeroSlideshow() {
   const [currentSlide, setCurrentSlide] = useState(0)
-
+  const router = useRouter()
   const [slides,setSlides] = useState([
     {
       image: "/public/placeholder.svg?height=400&width=800",
       title: "Sư đoàn phòng không 375 - Bảo vệ vững chắc vùng trời Tổ quốc",
       description: "Đơn vị anh hùng với truyền thống vẻ vang trong sự nghiệp bảo vệ Tổ quốc",
+      link: "Đơn vị anh hùng với truyền thống vẻ vang trong sự nghiệp bảo vệ Tổ quốc",
     },
     {
       image: "/public/placeholder.svg?height=400&width=800",
       title: "Diễn tập phòng thủ khu vực năm 2024",
       description: "Nâng cao khả năng sẵn sàng chiến đấu, bảo vệ vùng trời quan trọng",
+      link: "Đơn vị anh hùng với truyền thống vẻ vang trong sự nghiệp bảo vệ Tổ quốc",
+
     },
     {
       image: "/public/placeholder.svg?height=400&width=800",
       title: "Thi đua quyết thắng - Xây dựng đơn vị vững mạnh toàn diện",
       description: "Phát huy truyền thống, đoàn kết, kỷ luật, sáng tạo trong công tác",
+      link: "Đơn vị anh hùng với truyền thống vẻ vang trong sự nghiệp bảo vệ Tổ quốc",
+
     },
   ])
 
@@ -30,10 +38,17 @@ export default function HeroSlideshow() {
   },[])
 
   const fetchData = async()=>{
-    const res = await slideService.getSlides() as any
-    console.log(res)
+    // const res = await slideService.getSlides() as any
+    const res = await articlesService.getArticles()
     if(res.statusCode === 200){
-      setSlides(res.data)
+      setSlides(res?.data?.filter((dt:any)=> dt?.tags?.includes('slide'))?.map((dt:any)=>{
+        return {
+          title:dt?.title,
+          description:dt?.excerpt,
+          image:getFirstImageSrcFromHTML(dt?.excerpt),
+          link:`/chuyen-de/${dt?.id}`
+        }
+      }))
     }
   }
 
@@ -52,20 +67,25 @@ export default function HeroSlideshow() {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
   }
 
+
+
   return (
     <div className="relative w-full h-96 overflow-hidden rounded-lg shadow-lg">
       {slides.map((slide, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-500 ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
+          onClick={()=>{
+            router.push(slide?.link)
+          }}
+          className={`absolute inset-0 cursor-pointer transition-opacity duration-500 ${
+            index === currentSlide ? "opacity-100" : "opacity-0 invisible"
           }`}
         >
           <img src={slide.image || "/public/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div className="text-center text-white p-8">
-              <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>
-              <p className="text-lg">{slide.description}</p>
+              <h2 className="text-3xl font-bold mb-4 hover:underline transition-all line-clamp-1">{slide.title}</h2>
+              <p className="text-lg line-clamp-2" dangerouslySetInnerHTML={{__html:slide.description}}/>
             </div>
           </div>
         </div>

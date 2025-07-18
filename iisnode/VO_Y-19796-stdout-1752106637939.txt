@@ -1,5 +1,0 @@
-> Ready on http://localhost:\\.\pipe\0fdb6f6a-3b63-4861-b5b7-0f92a8d8d7a0
-{ username: 'admin', password: '123' }
-{ username: 'admin', password: '123' }
-{ username: 'dh.phuong@f375.pkkq', password: '123456789' }
-{ username: 'dh.phuong@f375.pkkq', password: '123456' }

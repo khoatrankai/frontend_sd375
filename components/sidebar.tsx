@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation"
 export default function Sidebar() {
   const router = useRouter()
   const playerRef = useRef<any>(null)
-  const quickLinks = [{ name: "Quản lý văn bản", link: "http://quanlyvanban.bqp" }, { name: "Hệ thông tin CĐ-ĐH QC", link: "http://htt.qcpkkq.bqp" }, { name: "Hệ thông tin CĐ-ĐH F375", link: "https://192.168.1.120" }, { name: "Mail QS", link: "https://mail.bqp" }, { name: "Cổng TTĐT QC", link: "http://qcpkkq.bqp" }]
+  const quickLinks = [{ name: "Quản lý văn bản", link: "http://quanlyvanban.bqp" }, { name: "Hệ thông tin CĐ-ĐH QC", link: "http://htt.qcpkkq.bqp" }, { name: "Hệ thông tin CĐ-ĐH F375", link: "https://192.168.1.120" }, { name: "Mail QS", link: "https://mail.bqp" }, { name: "Cổng TTĐT QC", link: "http://qcpkkq.bqp" },{ name: "Bình dân học vụ số", link: "http://qlms.bqp" },{ name: "Thi trực tuyến", link: "http://lms.bqp" },{ name: "Kho phần mềm QS", link: "http://khophanmem.bqp" }]
   const [imageTop, setImageTop] = useState<any>()
   const [isPlaying, setPlaying] = useState<boolean>(false)
   const [videoTop, setVideoTop] = useState<any>()

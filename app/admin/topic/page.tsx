@@ -22,7 +22,6 @@ export default function AdminDocumentsPage() {
     );
   const [searchTerm, setSearchTerm] = useState("")
   const [dataSave, setDataSave] = useState<any>({})
-  const [selectedType, setSelectedType] = useState("all")
   const [selectedUnit, setSelectedUnit] = useState("all")
 
 
@@ -135,7 +134,7 @@ export default function AdminDocumentsPage() {
   //phân trang
   // const [report, setReport] = useState<any>([])
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   // Tính vị trí dữ liệu
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -319,7 +318,7 @@ export default function AdminDocumentsPage() {
             </div>
             <div>
               <Select onValueChange={(value)=>{
-                setSelectedType(value)
+                setSelectedDocType(value)
                 setCurrentPage(1)
               }} defaultValue="cchc" >
                 <SelectTrigger>

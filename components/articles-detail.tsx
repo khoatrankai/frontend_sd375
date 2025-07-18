@@ -94,7 +94,7 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
 
         {/* Nội dung chính */}
         <div className="mb-6">
-          <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: article.excerpt }} />
+          <div className="prose prose-lg max-w-none body-image-with-caption figcaption" dangerouslySetInnerHTML={{ __html: article.excerpt }} />
         </div>
 
         {/* Tags */}

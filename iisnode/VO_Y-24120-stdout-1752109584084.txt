@@ -1,2 +1,0 @@
-> Ready on http://localhost:\\.\pipe\7e2e8246-335a-4c29-97ac-2ec41e543bd7
-{ username: 'dh.phuong@f375.pkkq', password: '123456' }
